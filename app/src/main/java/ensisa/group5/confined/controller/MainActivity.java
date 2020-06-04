@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-
 import ensisa.group5.confined.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isUsernameFormatCorrect(s.toString()));
+                signinBtn.setEnabled(loginValidation.isUsernameFormatCorrect(s.toString()) &&
+                         loginValidation.isPasswordFormatCorrect(
+                                 passwordEdit.getText().toString()));
             }
 
             @Override
@@ -66,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isPasswordFormatCorrect(s.toString()));
+                signinBtn.setEnabled(loginValidation.isPasswordFormatCorrect(s.toString()) &&
+                        loginValidation.isUsernameFormatCorrect(
+                                usernameEdit.getText().toString()));
             }
 
             @Override
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 signinBtn.setEnabled(loginValidation.isPasswordConfirmMatch(
                         passwordEdit.getText().toString(),
                         s.toString()));
+                System.out.println(passwordEdit.getText().toString() + " : " + s.toString());
             }
 
             @Override
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
+                //System.out.println(new DataBase().execute("select * from panier"));
                 //String status = getResources().getString(R.string.STATUS_SUCCESS);
                 if (loginValidation.isUsernameExist(username)) {
                     if (loginValidation.isEmailValid(username)) {
