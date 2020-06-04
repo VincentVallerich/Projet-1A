@@ -6,19 +6,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import ensisa.group5.confined.exceptions.DataBaseException;
+
 /**
  * Author VALLERICH Vincent on 05-06-2020
  */
 
-public class DataBase {
-    private static final String url = "mysql://ensisa-gr5.yj.fr/ensiamve_confined";
-    private static final String login = "admin";
+public class DataBase implements Runnable{
+    private static final String url = "mysql://localhost:3306/ensiamve_confined";
+    private static final String login = "ensiamve_admin";
     private static final String password = "$VSfN=u,dw.zFWG&HT";
 
     private Connection connection = null;
     private PreparedStatement pstate = null;
 
-    public DataBase() {
+    @Override
+    public void run(){
         try {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(url, login, password);
@@ -27,8 +30,10 @@ public class DataBase {
         }
     }
 
-    public ResultSet execute(String sql) {
+    public ResultSet execute(String sql) throws DataBaseException {
         try {
+            if (connection == null)
+                throw new DataBaseException();
             pstate = connection.prepareStatement(sql);
             return pstate.executeQuery();
         } catch (SQLException e) {

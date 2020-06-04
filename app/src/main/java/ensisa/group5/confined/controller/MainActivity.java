@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.exceptions.DataBaseException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -89,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                 signinBtn.setEnabled(loginValidation.isPasswordConfirmMatch(
                         passwordEdit.getText().toString(),
                         s.toString()));
-                System.out.println(passwordEdit.getText().toString() + " : " + s.toString());
             }
 
             @Override
@@ -102,7 +102,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
-                //System.out.println(new DataBase().execute("select * from panier"));
+                DataBase db = new DataBase();
+                Thread thread = new Thread(db);
+                thread.start();
+
                 //String status = getResources().getString(R.string.STATUS_SUCCESS);
                 if (loginValidation.isUsernameExist(username)) {
                     if (loginValidation.isEmailValid(username)) {
@@ -118,6 +121,11 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
                     confirmEdit.setVisibility(View.VISIBLE);
+                    try {
+                        System.out.println(db.execute("select * from panier"));
+                    } catch (DataBaseException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
