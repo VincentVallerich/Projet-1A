@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="login_edit_height">50dp</dimen>
+    <dimen name="login_edit_width">300dp</dimen>
+    <dimen name="login_btn_marginTop">30dp</dimen>
+    <dimen name="login_padding_sides">30dp</dimen>
+    <dimen name="login_padding_top_bottom">10dp</dimen>
+    <dimen name="login_edit_marginTop">20dp</dimen>
+</resources>
