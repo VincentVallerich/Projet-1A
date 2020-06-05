@@ -34,7 +34,6 @@ import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
->>>>>>> fe6fae7f09804e37e4ec060150e5221e388dabad
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.exceptions.DataBaseException;
@@ -132,15 +131,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
-<<<<<<< HEAD
                 //DataBase db = new DataBase();
                 MongoDatabase db = new MongoDatabase();
                 Thread thread = new Thread(db);
                 thread.start();
-
-=======
-                 String pswd = passwordEdit.getText().toString();
->>>>>>> fe6fae7f09804e37e4ec060150e5221e388dabad
+                String pswd = passwordEdit.getText().toString();
                 //String status = getResources().getString(R.string.STATUS_SUCCESS);
                 String finalUsername = username;
                 new Thread(new Runnable() {
