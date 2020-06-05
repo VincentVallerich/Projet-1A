@@ -11,29 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.util.Log;
 
-
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.mongodb.lang.NonNull;
 import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.StitchAppClient;
 import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteFindIterable;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
-import com.mongodb.stitch.core.auth.providers.anonymous.AnonymousCredential;
 import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteFindOptions;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateOptions;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
-
-import org.bson.Document;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.exceptions.DataBaseException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,12 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
         signinBtn.setEnabled(true);
 
-
-        /* partie tests */
-
-
-
-
         usernameEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -75,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isUsernameFormatCorrect(s.toString()));
+                signinBtn.setEnabled(loginValidation.isUsernameFormatCorrect(s.toString()) &&
+                         loginValidation.isPasswordFormatCorrect(
+                                 passwordEdit.getText().toString()));
             }
 
             @Override
@@ -92,7 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isPasswordFormatCorrect(s.toString()));
+                signinBtn.setEnabled(loginValidation.isPasswordFormatCorrect(s.toString()) &&
+                        loginValidation.isUsernameFormatCorrect(
+                                usernameEdit.getText().toString()));
             }
 
             @Override
@@ -120,83 +104,50 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        signinBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = usernameEdit.getText().toString();
-                 String pswd = passwordEdit.getText().toString();
-                //String status = getResources().getString(R.string.STATUS_SUCCESS);
-                String finalUsername = username;
-                new Thread(new Runnable() {
-                    public void run() {
-                        UserPasswordCredential credential = new UserPasswordCredential(finalUsername,  pswd );
-                        Stitch.initializeDefaultAppClient("apptest-vzuxl");
-                        Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential)
-                                .addOnCompleteListener(new OnCompleteListener<StitchUser>() {
-                                       @Override
-                                       public void onComplete(@NonNull final Task<StitchUser> task) {
-                                           if (task.isSuccessful()) {
-                                               Log.d("stitch", "Successfully logged in as user " + task.getResult().getId());
-                                               Log.d("stitch", finalUsername);
-                                               Log.d("stitch", pswd);
-                                           } else {
-                                               Log.e("stitch", "Error logging in with email/password auth:", task.getException());
+        signinBtn.setOnClickListener(v -> {
+            String username = usernameEdit.getText().toString();
+            String pswd = passwordEdit.getText().toString();
 
-                                           }
-                                       }
-                                   }
-                                );
+            DataBase db = new DataBase();
+            Thread thread = new Thread(db);
+            thread.start();
 
-
-                    }
-                }).start();
-                if (loginValidation.isUsernameExist(username)) {
-                    if (loginValidation.isEmailValid(username)) {
-                        username = preferences.getString(getResources()
-                                        .getString(R.string.PREF_KEY_MAIL),
-                                null);
-                    }
-                    else {
-                        username = preferences.getString(getResources()
-                                        .getString(R.string.PREF_KEY_USERNAME),
-                                null);
-                    }
-                } else {
-                    confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
-                    confirmEdit.setVisibility(View.VISIBLE);
+            String finalUsername = username;
+            /*new Thread(() -> {
+                UserPasswordCredential credential = new UserPasswordCredential(finalUsername,  pswd );
+                Stitch.initializeDefaultAppClient("apptest-vzuxl");
+                Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("stitch", "Successfully logged in as user " + task.getResult().getId());
+                                Log.d("stitch", finalUsername);
+                                Log.d("stitch", pswd);
+                            } else {
+                                Log.e("stitch", "Error logging in with email/password auth:", task.getException());
+                            }
+                        }
+                        );
+            }).start();*/
+            if (loginValidation.isUsernameExist(username)) {
+                if (loginValidation.isEmailValid(username)) {
+                    username = preferences.getString(getResources()
+                                    .getString(R.string.PREF_KEY_MAIL),
+                            null);
+                }
+                else {
+                    username = preferences.getString(getResources()
+                                    .getString(R.string.PREF_KEY_USERNAME),
+                            null);
+                }
+            } else {
+                confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
+                confirmEdit.setVisibility(View.VISIBLE);
+                try {
+                    System.out.println(db.execute("Select * from panier"));
+                } catch (DataBaseException e) {
+                    e.printStackTrace();
                 }
             }
         });
     }
 }
-
-/*
-final StitchAppClient client =
-                                Stitch.initializeDefaultAppClient("apptest-vzuxl");
-                        final RemoteMongoClient mongoClient =
-                                client.getServiceClient(RemoteMongoClient.factory, "mongodb-atlas");
-                        final RemoteMongoCollection<Document> coll =
-                                mongoClient.getDatabase("sample_airbnb").getCollection("listingsAndReviews");
-
-                        Document filterDoc = new Document();
-
-                        RemoteFindIterable findResults = coll
-                                .find(filterDoc);
-                        Task <List<Document>> itemsTask = findResults.into(new ArrayList<Document>());
-                        itemsTask.addOnCompleteListener(new OnCompleteListener <List<Document>> () {
-                            @Override
-                            public void onComplete(@NonNull Task<List<Document>> task) {
-                                if (task.isSuccessful()) {
-                                    List<Document> items = task.getResult();
-                                    Log.d("app", String.format("successfully found %d documents", items.size()));
-                                    for (Document item: items) {
-                                        Log.d("app", String.format("successfully found:  %s", item.toString()));
-                                    }
-                                } else {
-                                    Log.e("app", "failed to find documents with: ", task.getException());
-                                }
-                            }
-                        });
-
-
- */
