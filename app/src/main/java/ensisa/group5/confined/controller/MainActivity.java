@@ -102,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
-                DataBase db = new DataBase();
+                //DataBase db = new DataBase();
+                MongoDatabase db = new MongoDatabase();
                 Thread thread = new Thread(db);
                 thread.start();
 
@@ -121,11 +122,11 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
                     confirmEdit.setVisibility(View.VISIBLE);
-                    try {
+                    /*try {
                         System.out.println(db.execute("select * from panier"));
                     } catch (DataBaseException e) {
                         e.printStackTrace();
-                    }
+                    }*/
                 }
             }
         });
