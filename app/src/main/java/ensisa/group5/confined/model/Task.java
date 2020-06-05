@@ -1,23 +1,25 @@
 package ensisa.group5.confined.model;
 
-/**
- * Author VALLERICH Vincent on 05-06-2020
- */
-
 public class Task {
     private int id;
     private String name;
     private String description;
-    private int priority;
-    private int points;
     private enum Priority {MINOR, IMPORTANT, URGENT};
+    private Priority priority;
+    private int points;
 
-    public int getPriority() {
-        return priority;
+    public Task(){
+        this.name = "EmptyTask";
+        this.description = "UndefinedTask";
+        this.priority = Priority.MINOR;
+        this.points = 0;
     }
 
-    public void setPriority(int priority) {
+    public Task(String name, String description,Priority priority,int points){
+        this.name = name;
+        this.description = description;
         this.priority = priority;
+        this.points = points;
     }
 
     public int getId() {
@@ -46,6 +48,14 @@ public class Task {
 
     public int getPoints() {
         return points;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
     }
 
     public void setPoints(int points) {
