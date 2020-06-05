@@ -14,7 +14,7 @@ import ensisa.group5.confined.exceptions.DataBaseException;
 
 public class DataBase implements Runnable{
     private static final String url = "mysql://localhost:3306/ensiamve_confined";
-    private static final String login = "ensiamve_admin";
+    private static final String login = "ensiamve";
     private static final String password = "$VSfN=u,dw.zFWG&HT";
 
     private Connection connection = null;
@@ -25,6 +25,7 @@ public class DataBase implements Runnable{
         try {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(url, login, password);
+            System.out.println("CONNECTION");
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
