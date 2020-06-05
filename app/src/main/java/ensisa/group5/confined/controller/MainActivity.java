@@ -9,17 +9,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.util.Log;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.mongodb.lang.NonNull;
-import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.exceptions.DataBaseException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -106,28 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
         signinBtn.setOnClickListener(v -> {
             String username = usernameEdit.getText().toString();
-            String pswd = passwordEdit.getText().toString();
-
-            DataBase db = new DataBase();
-            Thread thread = new Thread(db);
-            thread.start();
-
-            String finalUsername = username;
-            /*new Thread(() -> {
-                UserPasswordCredential credential = new UserPasswordCredential(finalUsername,  pswd );
-                Stitch.initializeDefaultAppClient("apptest-vzuxl");
-                Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Log.d("stitch", "Successfully logged in as user " + task.getResult().getId());
-                                Log.d("stitch", finalUsername);
-                                Log.d("stitch", pswd);
-                            } else {
-                                Log.e("stitch", "Error logging in with email/password auth:", task.getException());
-                            }
-                        }
-                        );
-            }).start();*/
             if (loginValidation.isUsernameExist(username)) {
                 if (loginValidation.isEmailValid(username)) {
                     username = preferences.getString(getResources()

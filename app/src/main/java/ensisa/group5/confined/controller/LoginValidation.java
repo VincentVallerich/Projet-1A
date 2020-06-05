@@ -51,16 +51,7 @@ public class LoginValidation {
 
         usernameKey = context.getResources().getString(R.string.PREF_KEY_USERNAME);
         mailKey = context.getResources().getString(R.string.PREF_KEY_MAIL);
-
-
-
-
-
-
     }
-
-
-
 
     /**
      * @param username
@@ -111,61 +102,3 @@ public class LoginValidation {
         return matcher.matches();
     }
 }
-
-/*
-
-final StitchAppClient client =
-                            Stitch.initializeDefaultAppClient("apptest-vzuxl");
-
-                    final RemoteMongoClient mongoClient =
-                            client.getServiceClient(RemoteMongoClient.factory, "mongodb-atlas");
-
-                    final RemoteMongoCollection<Document> coll =
-                            mongoClient.getDatabase("<DATABASE>").getCollection("<COLLECTION>");
-
-                    client.getAuth().loginWithCredential(new AnonymousCredential()).continueWithTask(
-                            new Continuation<StitchUser, Task<RemoteUpdateResult>>() {
-
-                                @Override
-                                public Task<RemoteUpdateResult> then(@NonNull Task<StitchUser> task) throws Exception {
-                                    if (!task.isSuccessful()) {
-                                        Log.e("STITCH", "Login failed!");
-                                        throw task.getException();
-                                    }
-
-                                    final Document updateDoc = new Document(
-                                            "owner_id",
-                                            task.getResult().getId()
-                                    );
-
-                                    updateDoc.put("number", 42);
-                                    return coll.updateOne(
-                                            null, updateDoc, new RemoteUpdateOptions().upsert(true)
-                                    );
-                                }
-                            }
-                    ).continueWithTask(new Continuation<RemoteUpdateResult, Task<List<Document>>>() {
-                        @Override
-                        public Task<List<Document>> then(@NonNull Task<RemoteUpdateResult> task) throws Exception {
-                            if (!task.isSuccessful()) {
-                                Log.e("STITCH", "Update failed!");
-                                throw task.getException();
-                            }
-                            List<Document> docs = new ArrayList<>();
-                            return coll
-                                    .find(new Document("owner_id", client.getAuth().getUser().getId()))
-                                    .limit(100)
-                                    .into(docs);
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<List<Document>>() {
-                        @Override
-                        public void onComplete(@NonNull Task<List<Document>> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("STITCH", "Found docs: " + task.getResult().toString());
-                                return;
-                            }
-                            Log.e("STITCH", "Error: " + task.getException().toString());
-                            task.getException().printStackTrace();
-                        }
-                    });
- */
