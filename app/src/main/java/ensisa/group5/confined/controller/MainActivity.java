@@ -2,6 +2,7 @@ package ensisa.group5.confined.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -38,11 +39,14 @@ import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.ui.TaskActivity;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.lt;
@@ -70,16 +74,7 @@ public class MainActivity extends AppCompatActivity {
         passwordEdit = (EditText) findViewById(R.id.login_password_edit);
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
-
         signinBtn.setEnabled(true);
-
-
-
-        /* partie tests */
-
-
-
-
         usernameEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -138,53 +133,21 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
                  String pswd = passwordEdit.getText().toString();
-                //String status = getResources().getString(R.string.STATUS_SUCCESS);
-                String finalUsername = username;
-                new Thread(new Runnable() {
-                    public void run() {
-                        UserPasswordCredential credential = new UserPasswordCredential(finalUsername,  pswd );
-                        Stitch.initializeDefaultAppClient("apptest-vzuxl");
-                        StitchAppClient appclient = Stitch.getDefaultAppClient();
-                        Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential)
-                                .addOnCompleteListener(new OnCompleteListener<StitchUser>() {
-                                       @Override
-                                       public void onComplete(@NonNull final Task<StitchUser> task) {
-                                           if (task.isSuccessful()) {
-                                               Log.d("stitch", "Successfully logged in as user " + task.getResult().getId());
-                                               // Get a remote client
-                                               final RemoteMongoClient remoteMongoClient =
-                                                       Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "mongodb-atlas");
-                                               RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_Score");
-                                                 String userid = Stitch.getDefaultAppClient().getAuth().getUser().getId();
-                                               Task<Document> res = collection.findOne(eq("_id",new ObjectId("5eda3134355c4069c9c2ab49")));
-                                                   // Print documents to the log.
-                                                   Log.d("stitch", "Got document: " + res.toString());
-                                               Log.d("stitch", pswd);
+                try {
+                    if (loginValidation.isUserAuthenticated(username,pswd)) {
+                        // enregistrer les preferences
 
-                                           } else {
-                                               Log.d("stitch", "Error logging in with email/password auth:", task.getException());
-                                               Log.d("stitch", pswd);
-                                           }
-                                       }
-                                   }
-                                );
+                        // redirect sur une autre page
+                        Intent taskactivity = new Intent(MainActivity.this, TaskActivity.class);
+                        startActivity(taskactivity);
 
-                    }
-                }).start();
-                if (loginValidation.isUsernameExist(username)) {
-                    if (loginValidation.isEmailValid(username)) {
-                        username = preferences.getString(getResources()
-                                        .getString(R.string.PREF_KEY_MAIL),
-                                null);
                     }
                     else {
-                        username = preferences.getString(getResources()
-                                        .getString(R.string.PREF_KEY_USERNAME),
-                                null);
+                        confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
+                        confirmEdit.setVisibility(View.VISIBLE);
                     }
-                } else {
-                    confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
-                    confirmEdit.setVisibility(View.VISIBLE);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         });

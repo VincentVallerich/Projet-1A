@@ -1,12 +1,31 @@
 package ensisa.group5.confined.controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.mongodb.lang.NonNull;
+import com.mongodb.stitch.android.core.Stitch;
+import com.mongodb.stitch.android.core.auth.StitchUser;
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
+import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.ui.TaskActivity;
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Author VALLERICH Vincent on 04-06-2020
@@ -14,6 +33,7 @@ import ensisa.group5.confined.R;
 
 public class LoginValidation {
 
+    private static  boolean authenticated;
     private Context context;
     private static SharedPreferences preferences;
 
@@ -22,6 +42,16 @@ public class LoginValidation {
     String usernameKey;
     String mailKey;
 
+    public  boolean isAuthenticated() {
+        return this.authenticated;
+    }
+
+    public  void setAuthenticated(boolean auth) {
+        this.authenticated = auth;
+    }
+
+
+
     /**
      * @param context
      * @param preferences
@@ -29,6 +59,7 @@ public class LoginValidation {
     public LoginValidation(Context context, SharedPreferences preferences) {
         this.context = context;
         this.preferences = preferences;
+        this.authenticated = false;
 
         usernameKey = context.getResources().getString(R.string.PREF_KEY_USERNAME);
         mailKey = context.getResources().getString(R.string.PREF_KEY_MAIL);
@@ -81,5 +112,24 @@ public class LoginValidation {
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    public  boolean isUserAuthenticated(String email, String password) throws InterruptedException {
+        UserPasswordCredential credential = new UserPasswordCredential(email, password );
+        Stitch.initializeDefaultAppClient("apptest-vzuxl");
+        Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
+        Boolean res = false;
+        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
+            Log.d("stitch","successful login");
+            res =true;
+        }
+        else {
+            Log.d("stitch","non successful login");
+            res =false;
+        }
+
+
+        Log.d("stitch",String.valueOf(res));
+        return res;
     }
 }
