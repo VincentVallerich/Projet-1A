@@ -13,7 +13,7 @@ import ensisa.group5.confined.exceptions.DataBaseException;
  */
 
 public class DataBase implements Runnable{
-    private static final String url = "jdbc:mysql://fdb25.atspace.me:3306/3462862_confined";
+    private static final String url = "jdbc:mysql://fdb25.atspace.me/3462862_confined";
     private static final String login = "3462862_confined";
     private static final String password = "42NNYZFJx@j5ZA3";
 
@@ -24,12 +24,10 @@ public class DataBase implements Runnable{
     public void run(){
         try {
             Class.forName("com.mysql.jdbc.Driver");
+            System.out.println("Driver OK");
             this.connection = DriverManager.getConnection(url,login,password);
-            try {
-                System.out.println(execute("select id from panier where id=1").toString());
-            } catch (DataBaseException e) {
-                e.printStackTrace();
-            }
+            System.out.println("Connexion OK");
+            this.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -39,8 +37,10 @@ public class DataBase implements Runnable{
         try {
             if (this.connection == null)
                 throw new DataBaseException();
-            pstate = connection.prepareStatement(sql);
-            return pstate.executeQuery();
+            else {
+                pstate = connection.prepareStatement(sql);
+                return pstate.executeQuery();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -142,11 +142,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
                 confirmEdit.setVisibility(View.VISIBLE);
-                try {
-                    System.out.println(db.execute("Select * from panier"));
-                } catch (DataBaseException e) {
-                    e.printStackTrace();
-                }
             }
         });
     }
