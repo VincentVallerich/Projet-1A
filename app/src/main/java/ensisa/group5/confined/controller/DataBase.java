@@ -12,16 +12,15 @@ import ensisa.group5.confined.exceptions.DataBaseException;
  * Author VALLERICH Vincent on 05-06-2020
  */
 
-public class DataBase implements Runnable{
-    private static final String url = "jdbc:mysql://fdb25.atspace.me/3462862_confined";
+public class DataBase{
+    private static final String url = "jdbc:mysql://fdb25.atspace.me:3306/3462862_confined";
     private static final String login = "3462862_confined";
     private static final String password = "42NNYZFJx@j5ZA3";
 
     private Connection connection = null;
     private PreparedStatement pstate = null;
 
-    @Override
-    public void run(){
+    public DataBase(){
         try {
             Class.forName("com.mysql.jdbc.Driver");
             System.out.println("Driver OK");
