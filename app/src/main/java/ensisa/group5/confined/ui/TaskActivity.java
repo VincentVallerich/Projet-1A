@@ -98,7 +98,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 else
                 {
                     modifyTaskPopup = new NewTaskPopup(activity);
-                    modifyTaskPopup.setTitle(R.string.modifytask_popup_title);
+                    modifyTaskPopup.setTitle(getString(R.string.modifytask_popup_title));
                     modifyTaskPopup.setImg(item.getImg());
                     modifyTaskPopup.setName(item.getName());
                     modifyTaskPopup.setDescription(item.getDescription());
