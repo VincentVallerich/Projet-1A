@@ -8,6 +8,7 @@ public class TaskListItem
     private int importance;
     private int score;
     private String frequency;
+    private boolean selected = false;
 
     public TaskListItem(String name, String img, String description, int importance, int score, String frequency)
     {
@@ -52,5 +53,15 @@ public class TaskListItem
     public String getFrequency()
     {
         return frequency;
+    }
+
+    public boolean isSelected()
+    {
+        return selected;
+    }
+
+    public void setSelected(boolean selected)
+    {
+        this.selected = selected;
     }
 }

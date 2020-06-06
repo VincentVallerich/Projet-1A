@@ -25,4 +25,9 @@
     <string name="mytasks">Mes tâches</string>
     <string name="leaderboard">Classement</string>
     <string name="profile">Profil</string>
+    <string name="modifytask_popup_title">Modifier la tâche</string>
+    <string name="modifytask_popup_add_button_name">Modifier</string>
+    <string name="newtask_popup_template_cancel_btn">Annuler</string>
+    <string name="newtask_popup_template_addtask_btn">Ajouter la tâche</string>
+    <string name="newtask_popup_template_name_lbl">Nom :</string>
 </resources>
