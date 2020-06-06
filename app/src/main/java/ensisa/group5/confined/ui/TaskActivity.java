@@ -5,16 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.MainActivity;
+import ensisa.group5.confined.ui.adapter.TaskListAdapter;
+import ensisa.group5.confined.ui.model.TaskListItem;
 
 public class TaskActivity extends AppCompatActivity implements View.OnClickListener
 {
     private TaskActivity activity;
+    private NewTaskPopup newTaskPopup;
+    private List<TaskListItem> taskListItem;
+    private ListView taskListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,6 +41,17 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
         ImageButton profileButton = findViewById(R.id.profile_button);
         profileButton.setOnClickListener(this);
+
+        ImageButton addTaskButton = findViewById(R.id.add_task);
+        addTaskButton.setOnClickListener(this);
+
+        // item list
+        // → interrogation base de données
+        taskListItem = new ArrayList<>();
+
+        // list view
+        taskListView = findViewById(R.id.task_list_view);
+        taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
     }
 
     @Override
@@ -49,6 +69,33 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.profile_button:
                 Toast.makeText(activity, "Profile!", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.add_task:
+                Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
+                newTaskPopup = new NewTaskPopup(activity);
+                newTaskPopup.getCancelButton().setOnClickListener(this);
+                newTaskPopup.getAddButton().setOnClickListener(this);
+                newTaskPopup.build();
+                break;
+            case R.id.newtask_popup_template_cancel_btn:
+                newTaskPopup.dismiss();
+                break;
+            case R.id.newtask_popup_template_addtask_btn:
+                //check empty fields
+                String name = newTaskPopup.getName();
+                String img = newTaskPopup.getImg();
+                String description = newTaskPopup.getDescription();
+                int importance = newTaskPopup.getImportance();
+                int score = newTaskPopup.getScore();
+                String frequency = newTaskPopup.getFrequency();
+                //int frequency = newTaskPopup.getFrequency();
+
+                //store the new task in the bdd
+
+                //add new tasks in the list
+                taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency));
+                taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
+                newTaskPopup.dismiss();
                 break;
         }
     }
