@@ -14,4 +14,15 @@
     <string name="PREF_KEY_MAIL">mail</string>
     <string name="STATUS_SUCCESS">success</string>
     <string name="STATUS_FAIL">fail</string>
+    <string name="newtask_popup_template_title">Créer une tâche</string>
+    <string name="newtask_popup_template_type_lbl">Type :</string>
+    <string name="newtask_popup_template_score_lbl">Points :</string>
+    <string name="newtask_popup_template_frequency_lbl">Fréquence :</string>
+    <string name="newtask_popup_template_importance_lbl">Urgence :</string>
+    <string name="newtask_popup_template_description_lbl">Description :</string>
+    <string name="adapter_tasklist_default_name">Nouvelle tâche</string>
+    <string name="board">Board</string>
+    <string name="mytasks">Mes tâches</string>
+    <string name="leaderboard">Classement</string>
+    <string name="profile">Profil</string>
 </resources>
