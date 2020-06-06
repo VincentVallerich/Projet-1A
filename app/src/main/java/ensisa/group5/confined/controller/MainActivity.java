@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import android.util.Log;
 
 import ensisa.group5.confined.R;
 
@@ -31,15 +32,13 @@ public class MainActivity extends AppCompatActivity {
         preferences = getPreferences(MODE_PRIVATE);
         /* just for tests */
         //preferences.edit().clear().apply();
-
         loginValidation = new LoginValidation(this, preferences);
-
         usernameEdit = (EditText) findViewById(R.id.login_username_edit);
         passwordEdit = (EditText) findViewById(R.id.login_password_edit);
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
 
-        signinBtn.setEnabled(false);
+        signinBtn.setEnabled(true);
 
         usernameEdit.addTextChangedListener(new TextWatcher() {
             @Override
@@ -49,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isUsernameFormatCorrect(s.toString()));
+                signinBtn.setEnabled(loginValidation.isUsernameFormatCorrect(s.toString()) &&
+                         loginValidation.isPasswordFormatCorrect(
+                                 passwordEdit.getText().toString()));
             }
 
             @Override
@@ -66,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isPasswordFormatCorrect(s.toString()));
+                signinBtn.setEnabled(loginValidation.isPasswordFormatCorrect(s.toString()) &&
+                        loginValidation.isUsernameFormatCorrect(
+                                usernameEdit.getText().toString()));
             }
 
             @Override
@@ -98,14 +101,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
-                //String status = getResources().getString(R.string.STATUS_SUCCESS);
                 if (loginValidation.isUsernameExist(username)) {
                     if (loginValidation.isEmailValid(username)) {
                         username = preferences.getString(getResources()
                                         .getString(R.string.PREF_KEY_MAIL),
                                 null);
-                    }
-                    else {
+                    } else {
                         username = preferences.getString(getResources()
                                         .getString(R.string.PREF_KEY_USERNAME),
                                 null);

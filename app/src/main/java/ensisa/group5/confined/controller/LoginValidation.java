@@ -67,7 +67,7 @@ public class LoginValidation {
      * @return true if password and confirm same false otherwise
      */
     public boolean isPasswordConfirmMatch(String password, String confirm) {
-        return password == confirm;
+        return password.equals(confirm);
     }
 
     /**
