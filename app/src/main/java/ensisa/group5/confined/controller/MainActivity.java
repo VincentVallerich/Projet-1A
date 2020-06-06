@@ -36,9 +36,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getPreferences(MODE_PRIVATE);
         /* just for tests */
         //preferences.edit().clear().apply();
-
         loginValidation = new LoginValidation(this, preferences);
-
         usernameEdit = (EditText) findViewById(R.id.login_username_edit);
         passwordEdit = (EditText) findViewById(R.id.login_password_edit);
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
