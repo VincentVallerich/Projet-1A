@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.game.ScoreBordActivity;
 import ensisa.group5.confined.ui.TaskActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText passwordEdit;
     private EditText confirmEdit;
     private Button signinBtn;
+    private Button gameBtn;
+    private Button uiBtn;
 
     private SharedPreferences preferences;
     private LoginValidation loginValidation;
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         passwordEdit = (EditText) findViewById(R.id.login_password_edit);
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
+        gameBtn = (Button) findViewById(R.id.game_btn);
+        uiBtn = (Button) findViewById(R.id.ui_btn);
 
         signinBtn.setEnabled(true);
 
@@ -121,6 +126,14 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+        });
+
+        gameBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, ScoreBordActivity.class));
+        });
+
+        uiBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, TaskActivity.class));
         });
     }
 }
