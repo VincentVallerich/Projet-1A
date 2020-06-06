@@ -23,9 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.ui.TaskActivity;
-
-import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Author VALLERICH Vincent on 04-06-2020
@@ -33,7 +30,6 @@ import static com.mongodb.client.model.Filters.eq;
 
 public class LoginValidation {
 
-    private static  boolean authenticated;
     private Context context;
     private static SharedPreferences preferences;
 
@@ -41,14 +37,6 @@ public class LoginValidation {
     public static final int MIN_LEN_INPUT_PASSWORD = 6;
     String usernameKey;
     String mailKey;
-
-    public  boolean isAuthenticated() {
-        return this.authenticated;
-    }
-
-    public  void setAuthenticated(boolean auth) {
-        this.authenticated = auth;
-    }
 
 
 
@@ -59,7 +47,6 @@ public class LoginValidation {
     public LoginValidation(Context context, SharedPreferences preferences) {
         this.context = context;
         this.preferences = preferences;
-        this.authenticated = false;
 
         usernameKey = context.getResources().getString(R.string.PREF_KEY_USERNAME);
         mailKey = context.getResources().getString(R.string.PREF_KEY_MAIL);
