@@ -75,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isUsernameFormatCorrect(s.toString()));
+                signinBtn.setEnabled(loginValidation.isUsernameFormatCorrect(s.toString()) &&
+                         loginValidation.isPasswordFormatCorrect(
+                                 passwordEdit.getText().toString()));
             }
 
             @Override
@@ -92,7 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isPasswordFormatCorrect(s.toString()));
+                signinBtn.setEnabled(loginValidation.isPasswordFormatCorrect(s.toString()) &&
+                        loginValidation.isUsernameFormatCorrect(
+                                usernameEdit.getText().toString()));
             }
 
             @Override
@@ -119,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
 
         signinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
