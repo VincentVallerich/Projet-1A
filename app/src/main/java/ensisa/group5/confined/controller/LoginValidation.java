@@ -128,7 +128,6 @@ public class LoginValidation {
             res =false;
         }
 
-
         Log.d("stitch",String.valueOf(res));
         return res;
     }

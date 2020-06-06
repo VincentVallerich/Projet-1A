@@ -176,7 +176,8 @@ final StitchAppClient client =
                                     for (Document item: items) {
                                         Log.d("app", String.format("successfully found:  %s", item.toString()));
                                     }
-                                } else {
+                                }
+                                else {
                                     Log.e("app", "failed to find documents with: ", task.getException());
                                 }
                             }
