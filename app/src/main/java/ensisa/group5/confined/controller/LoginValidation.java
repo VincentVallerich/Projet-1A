@@ -2,9 +2,10 @@ package ensisa.group5.confined.controller;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.mongodb.stitch.android.core.Stitch;
+import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
 
 import ensisa.group5.confined.R;
 
@@ -36,17 +37,6 @@ public class LoginValidation {
 
     /**
      * @param username
-     * @return true if user exist false otherwise
-     * */
-    public boolean isUsernameExist(String username) {
-        if (isEmailValid(username))
-            return preferences.getString(mailKey,null) != null;
-        else
-            return preferences.getString(usernameKey, null) != null;
-    }
-
-    /**
-     * @param username
      * @return true if the username pattern is correct false otherwise
      * */
     public boolean isUsernameFormatCorrect(String username) {
@@ -67,19 +57,30 @@ public class LoginValidation {
      * @return true if password and confirm same false otherwise
      */
     public boolean isPasswordConfirmMatch(String password, String confirm) {
-        return password.equals(confirm);
+        return password == confirm;
     }
 
     /**
-     * method is used for checking valid email id format.
+     * method is used for checking if user exist.
      *
      * @param email
      * @return boolean true for valid false for invalid
      */
-    public boolean isEmailValid(String email) {
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
+    public  boolean isUserAuthenticated(String email, String password) throws InterruptedException {
+        UserPasswordCredential credential = new UserPasswordCredential(email, password );
+        Stitch.initializeDefaultAppClient("apptest-vzuxl");
+        Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
+        Boolean res = false;
+        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
+            Log.d("stitch","successful login");
+            res =true;
+        }
+        else {
+            Log.d("stitch","non successful login");
+            res =false;
+        }
+
+        Log.d("stitch",String.valueOf(res));
+        return res;
     }
 }
