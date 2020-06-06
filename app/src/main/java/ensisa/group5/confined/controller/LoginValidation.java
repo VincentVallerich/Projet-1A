@@ -1,7 +1,6 @@
 package ensisa.group5.confined.controller;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -15,10 +14,9 @@ import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
 import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
 
 import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,8 +36,6 @@ public class LoginValidation {
     String usernameKey;
     String mailKey;
 
-
-
     /**
      * @param context
      * @param preferences
@@ -50,7 +46,16 @@ public class LoginValidation {
 
         usernameKey = context.getResources().getString(R.string.PREF_KEY_USERNAME);
         mailKey = context.getResources().getString(R.string.PREF_KEY_MAIL);
+
+
+
+
+
+
     }
+
+
+
 
     /**
      * @param username
@@ -100,6 +105,7 @@ public class LoginValidation {
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
+
 
     public  boolean isUserAuthenticated(String email, String password) throws InterruptedException {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
