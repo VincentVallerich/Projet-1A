@@ -56,15 +56,6 @@ public class TaskImgAdapter extends BaseAdapter
         int imgId = context.getResources().getIdentifier(img, "drawable", context.getPackageName());
         imgIconView.setImageResource(imgId);
 
-        /*convertView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                System.out.println("nom : " + img);
-            }
-        });*/
-
         return convertView;
     }
 }

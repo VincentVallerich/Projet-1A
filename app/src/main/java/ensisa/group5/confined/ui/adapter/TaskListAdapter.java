@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.content.Context;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -18,15 +19,21 @@ public class TaskListAdapter extends BaseAdapter
 {
     private Context context;
     private List<TaskListItem> taskListItem;
-    private LayoutInflater inflater;
+    //private LayoutInflater inflater;
+    private boolean longClick;
 
     public TaskListAdapter(Context context, List<TaskListItem> taskListItem)
     {
-        this.context = context;
-        this.taskListItem = taskListItem;
-        this.inflater = LayoutInflater.from(context);
+        this(context, taskListItem, false);
     }
 
+    public TaskListAdapter(Context context, List<TaskListItem> taskListItem, boolean longClick)
+    {
+        this.context = context;
+        this.taskListItem = taskListItem;
+        //this.inflater = LayoutInflater.from(context);
+        this.longClick = longClick;
+    }
 
     @Override
     public int getCount() {
@@ -46,6 +53,7 @@ public class TaskListAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         convertView = inflater.inflate(R.layout.adapter_tasklist, null);
 
         TaskListItem currentItem = (TaskListItem) getItem(position);
@@ -80,6 +88,16 @@ public class TaskListAdapter extends BaseAdapter
         String taskFrequency = currentItem.getFrequency();
         TextView frequency = convertView.findViewById(R.id.adapter_tasklist_frequency);
         frequency.setText(taskFrequency);
+
+        // selected
+        boolean taskSelected = currentItem.isSelected();
+        CheckBox selected = convertView.findViewById(R.id.adapter_tasklist_selected);
+        selected.setChecked(taskSelected);
+
+        if ( longClick )
+            selected.setVisibility(View.VISIBLE);
+        else
+            selected.setVisibility(View.GONE);
 
         return convertView;
     }
