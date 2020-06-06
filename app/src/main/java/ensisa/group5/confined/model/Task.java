@@ -1,5 +1,7 @@
 package ensisa.group5.confined.model;
 
+import java.util.UUID;
+
 public class Task {
     private int id;
     private String name;
@@ -9,13 +11,12 @@ public class Task {
     private int points;
 
     public Task(){
-        this.name = "EmptyTask";
-        this.description = "UndefinedTask";
         this.priority = Priority.MINOR;
         this.points = 0;
     }
 
     public Task(String name, String description,Priority priority,int points){
+        this.id = Math.abs(UUID.randomUUID().hashCode());
         this.name = name;
         this.description = description;
         this.priority = priority;
@@ -24,10 +25,6 @@ public class Task {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
