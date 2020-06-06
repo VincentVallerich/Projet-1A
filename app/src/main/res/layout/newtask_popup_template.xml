@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/newtask_popup_template_title"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/newtask_popup_template_title"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+        >
+
+        <ImageButton
+            android:id="@+id/newtask_popup_template_taskimg"
+            android:layout_width="75dp"
+            android:layout_height="75dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nom :"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_gravity="bottom"
+            />
+
+        <EditText
+            android:id="@+id/newtask_popup_template_name_txtbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text=""
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+        tools:ignore="ExtraText">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/newtask_popup_template_description_lbl"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_gravity="bottom"
+            />
+
+        <EditText
+            android:id="@+id/newtask_popup_template_description_txtbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+        android:weightSum="1"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/newtask_popup_template_importance_lbl"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.3" />
+
+        <RatingBar
+            android:id="@+id/newtask_popup_template_importance_ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="1"
+            android:layout_gravity="center_vertical"
+            android:minHeight="0dp"
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+        android:weightSum="1"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/newtask_popup_template_score_lbl"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.4" />
+
+        <RatingBar
+            android:id="@+id/newtask_popup_template_score_ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="1"
+            android:minHeight="0dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/newtask_popup_template_frequency_lbl"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_gravity="bottom"
+            />
+
+        <EditText
+            android:id="@+id/newtask_popup_template_frequency_txtbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:text="" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="40dp"
+        android:gravity="right"
+        >
+
+        <Button
+            android:id="@+id/newtask_popup_template_cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Annuler"
+            />
+
+        <Button
+            android:id="@+id/newtask_popup_template_addtask_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ajouter la tâche"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -4,26 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.mongodb.lang.NonNull;
 import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.StitchAppClient;
-import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
-import com.mongodb.stitch.core.auth.providers.anonymous.AnonymousCredential;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateOptions;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
-
-import org.bson.Document;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
 
 import ensisa.group5.confined.R;
 
@@ -51,26 +33,6 @@ public class LoginValidation {
 
         usernameKey = context.getResources().getString(R.string.PREF_KEY_USERNAME);
         mailKey = context.getResources().getString(R.string.PREF_KEY_MAIL);
-
-
-
-
-
-
-    }
-
-
-
-
-    /**
-     * @param username
-     * @return true if user exist false otherwise
-     * */
-    public boolean isUsernameExist(String username) {
-        if (isEmailValid(username))
-            return preferences.getString(mailKey,null) != null;
-        else
-            return preferences.getString(usernameKey, null) != null;
     }
 
     /**
@@ -95,77 +57,30 @@ public class LoginValidation {
      * @return true if password and confirm same false otherwise
      */
     public boolean isPasswordConfirmMatch(String password, String confirm) {
-        return password.equals(confirm);
+        return password == confirm;
     }
 
     /**
-     * method is used for checking valid email id format.
+     * method is used for checking if user exist.
      *
      * @param email
      * @return boolean true for valid false for invalid
      */
-    public boolean isEmailValid(String email) {
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
+    public  boolean isUserAuthenticated(String email, String password) throws InterruptedException {
+        UserPasswordCredential credential = new UserPasswordCredential(email, password );
+        Stitch.initializeDefaultAppClient("apptest-vzuxl");
+        Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
+        Boolean res = false;
+        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
+            Log.d("stitch","successful login");
+            res =true;
+        }
+        else {
+            Log.d("stitch","non successful login");
+            res =false;
+        }
+
+        Log.d("stitch",String.valueOf(res));
+        return res;
     }
 }
-
-/*
-
-final StitchAppClient client =
-                            Stitch.initializeDefaultAppClient("apptest-vzuxl");
-
-                    final RemoteMongoClient mongoClient =
-                            client.getServiceClient(RemoteMongoClient.factory, "mongodb-atlas");
-
-                    final RemoteMongoCollection<Document> coll =
-                            mongoClient.getDatabase("<DATABASE>").getCollection("<COLLECTION>");
-
-                    client.getAuth().loginWithCredential(new AnonymousCredential()).continueWithTask(
-                            new Continuation<StitchUser, Task<RemoteUpdateResult>>() {
-
-                                @Override
-                                public Task<RemoteUpdateResult> then(@NonNull Task<StitchUser> task) throws Exception {
-                                    if (!task.isSuccessful()) {
-                                        Log.e("STITCH", "Login failed!");
-                                        throw task.getException();
-                                    }
-
-                                    final Document updateDoc = new Document(
-                                            "owner_id",
-                                            task.getResult().getId()
-                                    );
-
-                                    updateDoc.put("number", 42);
-                                    return coll.updateOne(
-                                            null, updateDoc, new RemoteUpdateOptions().upsert(true)
-                                    );
-                                }
-                            }
-                    ).continueWithTask(new Continuation<RemoteUpdateResult, Task<List<Document>>>() {
-                        @Override
-                        public Task<List<Document>> then(@NonNull Task<RemoteUpdateResult> task) throws Exception {
-                            if (!task.isSuccessful()) {
-                                Log.e("STITCH", "Update failed!");
-                                throw task.getException();
-                            }
-                            List<Document> docs = new ArrayList<>();
-                            return coll
-                                    .find(new Document("owner_id", client.getAuth().getUser().getId()))
-                                    .limit(100)
-                                    .into(docs);
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<List<Document>>() {
-                        @Override
-                        public void onComplete(@NonNull Task<List<Document>> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("STITCH", "Found docs: " + task.getResult().toString());
-                                return;
-                            }
-                            Log.e("STITCH", "Error: " + task.getException().toString());
-                            task.getException().printStackTrace();
-                        }
-                    });
- */

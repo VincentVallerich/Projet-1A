@@ -2,7 +2,11 @@ package ensisa.group5.confined.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+<<<<<<< HEAD
 import android.content.Context;
+=======
+import android.content.Intent;
+>>>>>>> 3a6a8cf233ff0632a54d94d2336003832ca7881a
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,6 +18,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 import android.util.Log;
@@ -41,9 +46,14 @@ import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+=======
+
+>>>>>>> 3a6a8cf233ff0632a54d94d2336003832ca7881a
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.exceptions.DataBaseException;
+import ensisa.group5.confined.controller.AsyncTask.LoginAsyncTask;
+import ensisa.group5.confined.game.ScoreBordActivity;
+import ensisa.group5.confined.ui.TaskActivity;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -51,6 +61,8 @@ public class MainActivity extends AppCompatActivity  {
     private EditText passwordEdit;
     private EditText confirmEdit;
     private Button signinBtn;
+    private Button gameBtn;
+    private Button uiBtn;
 
     private SharedPreferences preferences;
     private LoginValidation loginValidation;
@@ -68,14 +80,10 @@ public class MainActivity extends AppCompatActivity  {
         passwordEdit = (EditText) findViewById(R.id.login_password_edit);
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
+        gameBtn = (Button) findViewById(R.id.game_btn);
+        uiBtn = (Button) findViewById(R.id.ui_btn);
 
         signinBtn.setEnabled(true);
-
-
-        /* partie tests */
-
-
-
 
         usernameEdit.addTextChangedListener(new TextWatcher() {
             @Override
@@ -134,63 +142,41 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
+
         signinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
-                //DataBase db = new DataBase();
-                MongoDatabase db = new MongoDatabase();
-                Thread thread = new Thread(db);
-                thread.start();
                 String pswd = passwordEdit.getText().toString();
-                //String status = getResources().getString(R.string.STATUS_SUCCESS);
-                String finalUsername = username;
-                new Thread(new Runnable() {
-                    public void run() {
-                        UserPasswordCredential credential = new UserPasswordCredential(finalUsername,  pswd );
-                        Stitch.initializeDefaultAppClient("apptest-vzuxl");
-                        Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential)
-                                .addOnCompleteListener(new OnCompleteListener<StitchUser>() {
-                                       @Override
-                                       public void onComplete(@NonNull final Task<StitchUser> task) {
-                                           if (task.isSuccessful()) {
-                                               Log.d("stitch", "Successfully logged in as user " + task.getResult().getId());
-                                               Log.d("stitch", finalUsername);
-                                               Log.d("stitch", pswd);
-                                           } else {
-                                               Log.e("stitch", "Error logging in with email/password auth:", task.getException());
+                new LoginAsyncTask();
+                /*try {
+                    if (loginValidation.isUserAuthenticated(username,pswd)) {
+                        // enregistrer les preferences
 
-                                           }
-                                       }
-                                   }
-                                );
+                        // redirect sur une autre page
+                        Intent taskactivity = new Intent(MainActivity.this, TaskActivity.class);
+                        startActivity(taskactivity);
 
-
-                    }
-                }).start();
-                if (loginValidation.isUsernameExist(username)) {
-                    if (loginValidation.isEmailValid(username)) {
-                        username = preferences.getString(getResources()
-                                        .getString(R.string.PREF_KEY_MAIL),
-                                null);
                     }
                     else {
-                        username = preferences.getString(getResources()
-                                        .getString(R.string.PREF_KEY_USERNAME),
-                                null);
+                        confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
+                        confirmEdit.setVisibility(View.VISIBLE);
                     }
-                } else {
-                    confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
-                    confirmEdit.setVisibility(View.VISIBLE);
-                    /*try {
-                        System.out.println(db.execute("select * from panier"));
-                    } catch (DataBaseException e) {
-                        e.printStackTrace();
-                    }*/
-                }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }*/
             }
         });
+
+        gameBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, ScoreBordActivity.class));
+        });
+
+        uiBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, TaskActivity.class));
+        });
     }
+<<<<<<< HEAD
 
     @Override
     protected void onResume(){
@@ -253,3 +239,6 @@ final StitchAppClient client =
 
 
  */
+=======
+}
+>>>>>>> 3a6a8cf233ff0632a54d94d2336003832ca7881a
