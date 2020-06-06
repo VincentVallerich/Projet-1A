@@ -15,9 +15,6 @@ import android.widget.EditText;
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.TaskActivity;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.lt;
-
 public class MainActivity extends AppCompatActivity {
 
     private EditText usernameEdit;

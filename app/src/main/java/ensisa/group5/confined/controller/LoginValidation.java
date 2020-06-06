@@ -4,21 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.mongodb.lang.NonNull;
 import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
 import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
-
-import org.bson.Document;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import ensisa.group5.confined.R;
 
@@ -46,26 +33,6 @@ public class LoginValidation {
 
         usernameKey = context.getResources().getString(R.string.PREF_KEY_USERNAME);
         mailKey = context.getResources().getString(R.string.PREF_KEY_MAIL);
-
-
-
-
-
-
-    }
-
-
-
-
-    /**
-     * @param username
-     * @return true if user exist false otherwise
-     * */
-    public boolean isUsernameExist(String username) {
-        if (isEmailValid(username))
-            return preferences.getString(mailKey,null) != null;
-        else
-            return preferences.getString(usernameKey, null) != null;
     }
 
     /**
@@ -94,19 +61,11 @@ public class LoginValidation {
     }
 
     /**
-     * method is used for checking valid email id format.
+     * method is used for checking if user exist.
      *
      * @param email
      * @return boolean true for valid false for invalid
      */
-    public boolean isEmailValid(String email) {
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-
     public  boolean isUserAuthenticated(String email, String password) throws InterruptedException {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
         Stitch.initializeDefaultAppClient("apptest-vzuxl");
