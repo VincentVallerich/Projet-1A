@@ -1,4 +1,4 @@
-package utilisat;
+package ensisa.group5.confined.game;
 
 public class Utilisateur implements Comparable<Utilisateur>{
 	private String id; 

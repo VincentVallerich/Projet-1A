@@ -1,4 +1,4 @@
-package utilisat;
+package ensisa.group5.confined.game;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
