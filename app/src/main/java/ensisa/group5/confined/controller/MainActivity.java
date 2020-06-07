@@ -7,10 +7,25 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.mongodb.lang.NonNull;
+import com.mongodb.stitch.android.core.Stitch;
+import com.mongodb.stitch.android.core.StitchAppClient;
+import com.mongodb.stitch.android.core.auth.StitchUser;
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.TaskActivity;
@@ -52,9 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isUsernameFormatCorrect(s.toString()) &&
-                         loginValidation.isPasswordFormatCorrect(
-                                 passwordEdit.getText().toString()));
+
             }
 
             @Override
@@ -71,9 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isPasswordFormatCorrect(s.toString()) &&
-                        loginValidation.isUsernameFormatCorrect(
-                                usernameEdit.getText().toString()));
+
             }
 
             @Override
@@ -90,9 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(loginValidation.isPasswordConfirmMatch(
-                        passwordEdit.getText().toString(),
-                        s.toString()));
+
             }
 
             @Override
@@ -100,8 +109,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
         signinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,11 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     if (loginValidation.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
-
                         // redirect sur une autre page
                         Intent taskactivity = new Intent(MainActivity.this, TaskActivity.class);
                         startActivity(taskactivity);
-
                     }
                     else {
                         confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);

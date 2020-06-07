@@ -4,29 +4,36 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.mongodb.lang.NonNull;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.auth.StitchUser;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
 import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.Executor;
 
 import ensisa.group5.confined.R;
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Author VALLERICH Vincent on 04-06-2020
  */
 
-public class LoginValidation {
+public class LoginValidation implements Executor {
 
     private Context context;
     private static SharedPreferences preferences;
@@ -48,63 +55,78 @@ public class LoginValidation {
         mailKey = context.getResources().getString(R.string.PREF_KEY_MAIL);
 
 
+    }
+    public Task<List<Document>>  getTasksByUser() throws JSONException {
+        try {
+            final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
+            Log.d("stitch", "Récupération des tâches d'un utilisateur");
+            StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+            Log.d("stitch", user.toString());
+            return collection.findOne(eq("_id", new ObjectId(user.getId()))).continueWithTask(new Continuation<Document, Task<Document>>() {
+                @Override
+                public Task<Document> then(@NonNull Task<Document> task) throws Exception {
+                    return task;
+                }
+            }).continueWithTask(new Continuation<Document, Task<List<Document>>>() {
+                @Override
+                public Task<List<Document>> then(@NonNull Task<Document> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        Log.e("STITCH", "Update failed!");
+                        throw task.getException();
+                    }
+                    List<Document> docs = new ArrayList<>();
+                    RemoteMongoCollection<Document> collection2 = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+                    return collection2
+                            .find(new Document("user_id", user.getId()))
+                            .limit(100)
+                            .into(docs);
+                }
+            }).addOnCompleteListener(new OnCompleteListener<List<Document>>() {
+                @Override
+                public void onComplete(@NonNull Task<List<Document>> task) {
+                    if (task.isSuccessful()) {
+                        Log.d("STITCH", "Found docs: " + task.getResult().toString());
+                        return;
+                    }
+                    Log.e("STITCH", "Error: " + task.getException().toString());
+                    task.getException().printStackTrace();
+                }
+            });
 
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
+        return null;
+    }
 
+    public JSONObject geNotDoneTasks() {
+
+        return null;
+    }
+    public JSONObject getLeaderBoard() {
+
+        return null;
+    }
+
+    public void assignTaskToUser(){
+
+    }
+    public void createTask(){
+
+    }
+
+    public void deleteTask() {
+
+    }
+    public void removeTaskFromUser(){
 
     }
 
 
 
-
-    /**
-     * @param username
-     * @return true if user exist false otherwise
-     * */
-    public boolean isUsernameExist(String username) {
-        if (isEmailValid(username))
-            return preferences.getString(mailKey,null) != null;
-        else
-            return preferences.getString(usernameKey, null) != null;
-    }
-
-    /**
-     * @param username
-     * @return true if the username pattern is correct false otherwise
-     * */
-    public boolean isUsernameFormatCorrect(String username) {
-        return username.length() >= MIN_LEN_INPUT_USERNAME;
-    }
-
-    /**
-     * @param password
-     * @return true if the password pattern is correct false otherwise
-     * */
-    public boolean isPasswordFormatCorrect(String password) {
-        return password.length() >= MIN_LEN_INPUT_PASSWORD;
-    }
-
-    /**
-     * @param password
-     * @param confirm
-     * @return true if password and confirm same false otherwise
-     */
-    public boolean isPasswordConfirmMatch(String password, String confirm) {
-        return password == confirm;
-    }
-
-    /**
-     * method is used for checking valid email id format.
-     *
-     * @param email
-     * @return boolean true for valid false for invalid
-     */
-    public boolean isEmailValid(String email) {
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
 
 
     public  boolean isUserAuthenticated(String email, String password) throws InterruptedException {
@@ -115,6 +137,7 @@ public class LoginValidation {
         if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
             Log.d("stitch","successful login");
             res =true;
+
         }
         else {
             Log.d("stitch","non successful login");
@@ -123,5 +146,10 @@ public class LoginValidation {
 
         Log.d("stitch",String.valueOf(res));
         return res;
+    }
+
+    @Override
+    public void execute(Runnable command) {
+
     }
 }

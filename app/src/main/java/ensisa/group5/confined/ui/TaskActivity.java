@@ -2,7 +2,9 @@ package ensisa.group5.confined.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -10,13 +12,35 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.mongodb.lang.NonNull;
+import com.mongodb.stitch.android.core.Stitch;
+import com.mongodb.stitch.android.core.StitchAppClient;
+import com.mongodb.stitch.android.core.auth.StitchUser;
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.controller.LoginValidation;
 import ensisa.group5.confined.controller.MainActivity;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class TaskActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -24,6 +48,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private NewTaskPopup newTaskPopup;
     private List<TaskListItem> taskListItem;
     private ListView taskListView;
+    private SharedPreferences preferences;
+    private LoginValidation loginValidation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,6 +58,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.task_activity);
 
         activity = this;
+
 
         ImageButton taskButton = findViewById(R.id.task_button);
         taskButton.setOnClickListener(this);
@@ -52,6 +79,23 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         // list view
         taskListView = findViewById(R.id.task_list_view);
         taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
+        preferences = getPreferences(MODE_PRIVATE);
+        // On récupère les tâches de l'utilisateur.
+        // Il faudra afficher la liste de Json de tâches dans un ListeView peut etre
+        loginValidation = new LoginValidation(this, preferences);
+        try {
+            Log.d("stitch", "début du bail");
+            Task<List<Document>> res = loginValidation.getTasksByUser();
+            if( res.isComplete()){
+                for (Document d : res.getResult()) {
+                    JSONObject obj = new JSONObject(d.toJson());
+                    String score = obj.getString("TaskList");
+                    Log.d("stitch", score);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
