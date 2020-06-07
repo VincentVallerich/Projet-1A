@@ -9,38 +9,33 @@
         android:id="@+id/task_list_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/task_activity_bottom_docker"
+        android:layout_above="@+id/navigation_container"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginBottom="0dp" />
+        />
 
     <ImageButton
         android:id="@+id/add_task"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
+        android:layout_width="@dimen/task_activity_edition_btn_width"
+        android:layout_height="@dimen/task_activity_edition_btn_height"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:padding="12dp"
+        android:layout_marginTop="@dimen/task_activity_add_btn_y_margin"
+        android:layout_marginEnd="@dimen/task_activity_add_btn_x_margin"
+        android:padding="@dimen/task_activity_add_btn_padding"
         android:scaleType="fitCenter"
         android:src="@drawable/add_ico"
         />
 
     <ImageButton
         android:id="@+id/del_task"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
+        android:layout_width="@dimen/task_activity_edition_btn_width"
+        android:layout_height="@dimen/task_activity_edition_btn_height"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:padding="5dp"
+        android:layout_marginTop="@dimen/task_activity_del_btn_y_margin"
+        android:layout_marginEnd="@dimen/task_activity_del_btn_x_margin"
+        android:padding="@dimen/task_activity_del_btn_padding"
         android:scaleType="fitCenter"
         android:visibility="gone"
         android:src="@drawable/del_ico"
@@ -48,33 +43,33 @@
 
     <ImageButton
         android:id="@+id/back_task"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
+        android:layout_width="@dimen/task_activity_edition_btn_width"
+        android:layout_height="@dimen/task_activity_edition_btn_height"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="55dp"
-        android:padding="8dp"
+        android:layout_marginTop="@dimen/task_activity_back_btn_y_margin"
+        android:layout_marginEnd="@dimen/task_activity_back_btn_x_margin"
+        android:padding="@dimen/task_activity_back_btn_padding"
         android:scaleType="fitCenter"
         android:visibility="gone"
         android:src="@drawable/back_ico"
         />
 
     <LinearLayout
-        android:id="@+id/task_activity_bottom_docker"
+        android:id="@+id/navigation_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center"
-        android:background="#555555"
+        android:background="@color/navigation_container_bg"
         android:orientation="horizontal"
-        android:weightSum="4">
+        android:weightSum="@dimen/navigation_container_weightSum">
 
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="5dp"
+            android:layout_weight="@dimen/navigation_container_layout_weight"
+            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
             >
             <FrameLayout
                 android:layout_height="wrap_content"
@@ -82,7 +77,7 @@
                 android:layout_gravity="center"
                 >
                 <ImageButton
-                    android:id="@+id/market_button"
+                    android:id="@+id/board_button"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:background="@null"
@@ -97,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
                     android:clickable="false"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/navigation_container_text_color"
                     android:text="@string/board" >
                 </TextView>
             </FrameLayout>
@@ -106,8 +101,8 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="5dp"
+            android:layout_weight="@dimen/navigation_container_layout_weight"
+            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
             >
             <FrameLayout
                 android:layout_height="wrap_content"
@@ -130,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
                     android:clickable="false"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/navigation_container_text_color"
                     android:text="@string/mytasks" >
                 </TextView>
             </FrameLayout>
@@ -139,8 +134,8 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="5dp"
+            android:layout_weight="@dimen/navigation_container_layout_weight"
+            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
             >
             <FrameLayout
                 android:layout_height="wrap_content"
@@ -162,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
                     android:clickable="false"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/navigation_container_text_color"
                     android:text="@string/leaderboard"
                     >
                 </TextView>
@@ -172,8 +167,8 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="5dp"
+            android:layout_weight="@dimen/navigation_container_layout_weight"
+            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
             >
             <FrameLayout
                 android:layout_height="wrap_content"
@@ -195,7 +190,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center"
                     android:clickable="false"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/navigation_container_text_color"
                     android:text="@string/profile" >
                 </TextView>
             </FrameLayout>

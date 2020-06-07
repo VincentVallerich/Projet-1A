@@ -30,4 +30,7 @@
     <string name="newtask_popup_template_cancel_btn">Annuler</string>
     <string name="newtask_popup_template_addtask_btn">Ajouter la tâche</string>
     <string name="newtask_popup_template_name_lbl">Nom :</string>
+    <string name="picktaskimg_popup_template_title">Choisir une image</string>
+    <string name="picktaskimg_popup_template_cancel_btn">Annuler</string>
+    <string name="picktaskimg_popup_template_choose_btn">Choisir</string>
 </resources>

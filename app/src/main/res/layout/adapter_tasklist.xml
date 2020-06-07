@@ -19,15 +19,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:maxHeight="75dp"
-        android:maxWidth="75dp"
-        android:minHeight="75dp"
-        android:minWidth="75dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:src="@drawable/leader_ico_leave"
+        android:maxHeight="@dimen/adapter_tasklist_icon_size"
+        android:maxWidth="@dimen/adapter_tasklist_icon_size"
+        android:minHeight="@dimen/adapter_tasklist_icon_size"
+        android:minWidth="@dimen/adapter_tasklist_icon_size"
+        android:layout_marginLeft="@dimen/adapter_tasklist_icon_margin"
+        android:layout_marginRight="@dimen/adapter_tasklist_icon_margin"
+        android:layout_marginTop="@dimen/adapter_tasklist_icon_margin"
+        android:layout_marginBottom="@dimen/adapter_tasklist_icon_margin"
+        android:src="@drawable/taskicon_cleaner"
         />
 
     <LinearLayout
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/adapter_tasklist_default_name"
-            android:textSize="14dp"
+            android:textSize="@dimen/adapter_tasklist_text_size"
             android:textStyle="bold"
             />
         <LinearLayout

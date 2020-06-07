@@ -54,6 +54,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         ImageButton profileButton = findViewById(R.id.profile_button);
         profileButton.setOnClickListener(this);
 
+        ImageButton boardButton = findViewById(R.id.board_button);
+        boardButton.setOnClickListener(this);
+
         ImageButton addTaskButton = findViewById(R.id.add_task);
         addTaskButton.setOnClickListener(this);
 
@@ -146,14 +149,16 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         {
             case R.id.task_button:
                 //Toast.makeText(activity, "Task!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);*/
                 break;
             case R.id.leaderboard_button:
                 //Toast.makeText(activity, "Leaderboard!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.profile_button:
                 //Toast.makeText(activity, "Profile!", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.board_button:
                 break;
             case R.id.add_task:
                 //Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
