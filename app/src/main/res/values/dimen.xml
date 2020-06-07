@@ -6,4 +6,32 @@
     <dimen name="login_padding_sides">30dp</dimen>
     <dimen name="login_padding_top_bottom">10dp</dimen>
     <dimen name="login_edit_marginTop">20dp</dimen>
+    <dimen name="task_activity_edition_btn_width">50sp</dimen>
+    <dimen name="task_activity_edition_btn_height">50sp</dimen>
+    <dimen name="task_activity_add_btn_x_margin">5sp</dimen>
+    <dimen name="task_activity_add_btn_y_margin">5sp</dimen>
+    <dimen name="task_activity_del_btn_x_margin">5sp</dimen>
+    <dimen name="task_activity_del_btn_y_margin">5sp</dimen>
+    <dimen name="task_activity_back_btn_x_margin">55sp</dimen>
+    <dimen name="task_activity_back_btn_y_margin">5sp</dimen>
+    <dimen name="task_activity_add_btn_padding">12dp</dimen>
+    <dimen name="task_activity_del_btn_padding">5dp</dimen>
+    <dimen name="task_activity_back_btn_padding">8dp</dimen>
+    <dimen name="navigation_container_weightSum">4</dimen>
+    <dimen name="navigation_container_layout_weight">1</dimen>
+    <dimen name="navigation_container_btn_marignTop">5dp</dimen>
+    <dimen name="popup_title_text_size">20sp</dimen>
+    <dimen name="popup_title_height">40dp</dimen>
+    <dimen name="adapter_tasklist_icon_margin">5dp</dimen>
+    <dimen name="adapter_tasklist_icon_size">75dp</dimen>
+    <dimen name="adapter_tasklist_text_size">14sp</dimen>
+    <dimen name="adapter_taskimg_icon_margin">5dp</dimen>
+    <dimen name="adapter_taskimg_icon_size">100dp</dimen>
+    <dimen name="newtask_popup_template_btn_container_marginTop">40dp</dimen>
+    <dimen name="newtask_popup_template_linearlayout_marginBottom">5dp</dimen>
+    <dimen name="newtask_popup_template_taskimg_size">75dp</dimen>
+    <dimen name="popup_text_size">20sp</dimen>
+    <item name="newtask_popup_template_importance_ratingBar_gap" type="dimen" format="float">0.3
+    </item>
+    <item name="newtask_popup_template_score_ratingBar_gap" type="dimen" format="float">0.4</item>
 </resources>

@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="red">#DF013A</color>
+    <color name="navigation_container_bg">#555555</color>
+    <color name="navigation_container_text_color">#ffffff</color>
+    <color name="popup_title_color">#000000</color>
+    <color name="popup_text_color">#000000</color>
 </resources>
