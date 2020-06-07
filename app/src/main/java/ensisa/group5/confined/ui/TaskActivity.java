@@ -78,28 +78,29 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         // → interrogation base de données
         taskListItem = new ArrayList<>();
         context = this;
-
         // list view
         taskListView = findViewById(R.id.task_list_view);
         //taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
         preferences = getPreferences(MODE_PRIVATE);
-
         loginValidation = new LoginValidation(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
-         Thread t1 = new Thread(new Runnable() { @Override public void run() { createTaskDisplay(); }  });
+         Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
+            t1.start();
          Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
-         Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createFreeTaskDisplay();  } });
-         t1.start();
-         t2.start();
-         t3.start();
+           // t2.start();
+         Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+            //t3.start();
+
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     public void createLeaderboard( ){
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getLeaderBoard().limit(100)
+        loginValidation.getLeaderBoard()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -108,9 +109,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         JSONObject obj = new JSONObject(d.toJson());
                         Log.d("stitch", obj.toString());
                     }
-
                 }
-
                 catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -118,36 +117,10 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         });
 
     }
-    public void createTaskDisplay() {
-        List<Document> docs = new ArrayList<Document>();
-        loginValidation.getTasksByUser().limit(100)
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        JSONObject obj = new JSONObject(d.toJson());
-                        String name = obj.getString("task_name").toString();
-                        String img = obj.getString("task_name").toString();
-                        String description = obj.getString("task_desc").toString();
-                        int importance = (int) Integer.parseInt(obj.getString("task_status"));
-                        int score = (int)Integer.parseInt( obj.getString("task_priority"));
-                        String frequency ="0";
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
-                        taskListItem.add(t);
 
-                    }
-                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-    public void createFreeTaskDisplay() {
+    public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getNonAssignedTasks().limit(100)
+        loginValidation.getNonAssignedTasks()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -157,6 +130,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         // ici je récupère directement les infos du JSON,
                         // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
                         // Ensuite ajouter la tâche en tant que ListItem;
+
                         JSONObject obj = new JSONObject(d.toJson());
                         String name = obj.getString("task_name").toString();
                         String img = obj.getString("task_name").toString();
@@ -166,9 +140,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         String frequency = obj.getString("task_name").toString();
                         TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
                         taskListItem.add(t);
-
                     }
-                //    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -177,16 +150,19 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
     public void createUserTasksDisplay() {
+
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getNonAssignedTasks().limit(100)
+        loginValidation.getTasksByUser()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
+
                 try {
                     for (Document d : docs) {
                         JSONObject obj = new JSONObject(d.toJson());
+
                         String name = obj.getString("task_name").toString();
-                        String img = obj.getString("img_random.png").toString();
+                        String img = "img_random";
                         String description = obj.getString("task_desc").toString();
                         int importance = (int) Integer.parseInt(obj.getString("task_priority"));
                         int score = (int)Integer.parseInt( obj.getString("task_score"));
