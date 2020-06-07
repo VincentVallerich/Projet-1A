@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.mongodb.lang.NonNull;
 import com.mongodb.stitch.android.core.Stitch;
@@ -80,24 +81,72 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         taskListView = findViewById(R.id.task_list_view);
         taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
         preferences = getPreferences(MODE_PRIVATE);
-        // On récupère les tâches de l'utilisateur.
-        // Il faudra afficher la liste de Json de tâches dans un ListeView peut etre
+
         loginValidation = new LoginValidation(this, preferences);
+        // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
-            Log.d("stitch", "début du bail");
+         Thread t1 = new Thread(new Runnable() { @Override public void run() { createTaskDisplay(); }  });
+         Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
+         Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createFreeTaskDisplay();  } });
+         t1.start();
+         t2.start();
+         t3.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void createLeaderboard( ){
+        List<Document> docs = new ArrayList<Document>();
+        loginValidation.getLeaderBoard().limit(100)
+                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+            @Override
+            public void onSuccess(List<Document> documents) {
+                try {
+                    for (Document d : docs) {
+                        JSONObject obj = new JSONObject(d.toJson());
+                        Log.d("stitch", obj.toString());
+                    }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
+    public void createTaskDisplay() {
+        try {
             Task<List<Document>> res = loginValidation.getTasksByUser();
-            if( res.isComplete()){
+            if (res.isSuccessful()) {
                 for (Document d : res.getResult()) {
                     JSONObject obj = new JSONObject(d.toJson());
                     String score = obj.getString("TaskList");
                     Log.d("stitch", score);
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
+    public void createFreeTaskDisplay() {
+        List<Document> docs = new ArrayList<Document>();
+        loginValidation.getNonAssignedTasks().limit(100)
+                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+            @Override
+            public void onSuccess(List<Document> documents) {
+                try {
+                    for (Document d : docs) {
+                        JSONObject obj = new JSONObject(d.toJson());
+                        Log.d("stitch", obj.toString());
+                    }
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
     @Override
     public void onClick(View view)
     {

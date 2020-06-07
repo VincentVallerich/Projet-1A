@@ -11,10 +11,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.auth.StitchUser;
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteFindIterable;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
 import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -62,7 +62,6 @@ public class LoginValidation implements Executor {
             RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
             Log.d("stitch", "Récupération des tâches d'un utilisateur");
             StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
-            Log.d("stitch", user.toString());
             return collection.findOne(eq("_id", new ObjectId(user.getId()))).continueWithTask(new Continuation<Document, Task<Document>>() {
                 @Override
                 public Task<Document> then(@NonNull Task<Document> task) throws Exception {
@@ -71,10 +70,6 @@ public class LoginValidation implements Executor {
             }).continueWithTask(new Continuation<Document, Task<List<Document>>>() {
                 @Override
                 public Task<List<Document>> then(@NonNull Task<Document> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        Log.e("STITCH", "Update failed!");
-                        throw task.getException();
-                    }
                     List<Document> docs = new ArrayList<>();
                     RemoteMongoCollection<Document> collection2 = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
                     return collection2
@@ -102,11 +97,31 @@ public class LoginValidation implements Executor {
         return null;
     }
 
-    public JSONObject geNotDoneTasks() {
-
+    public RemoteFindIterable<Document>  getNonAssignedTasks() {
+        try {
+            final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+            Log.d("stitch", "Récupération des tâches non assignées");
+            return collection.find(eq("task_status", 0 ));
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return null;
     }
-    public JSONObject getLeaderBoard() {
+
+    public RemoteFindIterable<Document> getLeaderBoard() {
+        try {
+            final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
+            Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
+            StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+            List<Document> docs = new ArrayList<>();
+            return collection.find();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         return null;
     }
@@ -124,10 +139,6 @@ public class LoginValidation implements Executor {
     public void removeTaskFromUser(){
 
     }
-
-
-
-
 
     public  boolean isUserAuthenticated(String email, String password) throws InterruptedException {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
