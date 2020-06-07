@@ -51,6 +51,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private ListView taskListView;
     private SharedPreferences preferences;
     private LoginValidation loginValidation;
+    private TaskActivity context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -76,10 +77,11 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         // item list
         // → interrogation base de données
         taskListItem = new ArrayList<>();
+        context = this;
 
         // list view
         taskListView = findViewById(R.id.task_list_view);
-        taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
+        //taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
         preferences = getPreferences(MODE_PRIVATE);
 
         loginValidation = new LoginValidation(this, preferences);
@@ -106,7 +108,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         JSONObject obj = new JSONObject(d.toJson());
                         Log.d("stitch", obj.toString());
                     }
+
                 }
+
                 catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -115,19 +119,31 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     }
     public void createTaskDisplay() {
-        try {
-            Task<List<Document>> res = loginValidation.getTasksByUser();
-            if (res.isSuccessful()) {
-                for (Document d : res.getResult()) {
-                    JSONObject obj = new JSONObject(d.toJson());
-                    String score = obj.getString("TaskList");
-                    Log.d("stitch", score);
+        List<Document> docs = new ArrayList<Document>();
+        loginValidation.getTasksByUser().limit(100)
+                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+            @Override
+            public void onSuccess(List<Document> documents) {
+                try {
+                    for (Document d : docs) {
+                        JSONObject obj = new JSONObject(d.toJson());
+                        String name = obj.getString("task_name").toString();
+                        String img = obj.getString("task_name").toString();
+                        String description = obj.getString("task_desc").toString();
+                        int importance = (int) Integer.parseInt(obj.getString("task_status"));
+                        int score = (int)Integer.parseInt( obj.getString("task_priority"));
+                        String frequency ="0";
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
+                        taskListItem.add(t);
+
+                    }
+                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
+        });
     }
     public void createFreeTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
@@ -137,9 +153,22 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             public void onSuccess(List<Document> documents) {
                 try {
                     for (Document d : docs) {
+
+                        // ici je récupère directement les infos du JSON,
+                        // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
+                        // Ensuite ajouter la tâche en tant que ListItem;
                         JSONObject obj = new JSONObject(d.toJson());
-                        Log.d("stitch", obj.toString());
+                        String name = obj.getString("task_name").toString();
+                        String img = obj.getString("task_name").toString();
+                        String description = obj.getString("task_desc").toString();
+                        int importance = (int) Integer.parseInt(obj.getString("task_status"));
+                        int score = (int)Integer.parseInt( obj.getString("task_priority"));
+                        String frequency = obj.getString("task_name").toString();
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
+                        taskListItem.add(t);
+
                     }
+                //    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -147,6 +176,34 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
+    public void createUserTasksDisplay() {
+        List<Document> docs = new ArrayList<Document>();
+        loginValidation.getNonAssignedTasks().limit(100)
+                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+            @Override
+            public void onSuccess(List<Document> documents) {
+                try {
+                    for (Document d : docs) {
+                        JSONObject obj = new JSONObject(d.toJson());
+                        String name = obj.getString("task_name").toString();
+                        String img = obj.getString("img_random.png").toString();
+                        String description = obj.getString("task_desc").toString();
+                        int importance = (int) Integer.parseInt(obj.getString("task_priority"));
+                        int score = (int)Integer.parseInt( obj.getString("task_score"));
+                        String frequency = " 0";
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
+                        taskListItem.add(t);
+
+                    }
+                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     @Override
     public void onClick(View view)
     {

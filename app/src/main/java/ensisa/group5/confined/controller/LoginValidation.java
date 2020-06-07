@@ -56,47 +56,28 @@ public class LoginValidation implements Executor {
 
 
     }
-    public Task<List<Document>>  getTasksByUser() throws JSONException {
+    /*
+     *Retourne un task qui contient une liste de documents
+     * Les Documents contiennent les JSON des informations des tâches assignées à l'utilisateur connecté. Utile pour l'onglet " Mes tâches "
+     * Les tâches peuvent être celles en cours ou celles déjà terminées.
+     */
+    public RemoteFindIterable<Document> getTasksByUser() {
         try {
             final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
             Log.d("stitch", "Récupération des tâches d'un utilisateur");
             StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
-            return collection.findOne(eq("_id", new ObjectId(user.getId()))).continueWithTask(new Continuation<Document, Task<Document>>() {
-                @Override
-                public Task<Document> then(@NonNull Task<Document> task) throws Exception {
-                    return task;
-                }
-            }).continueWithTask(new Continuation<Document, Task<List<Document>>>() {
-                @Override
-                public Task<List<Document>> then(@NonNull Task<Document> task) throws Exception {
-                    List<Document> docs = new ArrayList<>();
-                    RemoteMongoCollection<Document> collection2 = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
-                    return collection2
-                            .find(new Document("user_id", user.getId()))
-                            .limit(100)
-                            .into(docs);
-                }
-            }).addOnCompleteListener(new OnCompleteListener<List<Document>>() {
-                @Override
-                public void onComplete(@NonNull Task<List<Document>> task) {
-                    if (task.isSuccessful()) {
-                        Log.d("STITCH", "Found docs: " + task.getResult().toString());
-                        return;
-                    }
-                    Log.e("STITCH", "Error: " + task.getException().toString());
-                    task.getException().printStackTrace();
-                }
-            });
-
+            RemoteMongoCollection<Document> collection2 = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+                    return collection2.find(new Document("user_id", user.getId()));
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
-
         return null;
     }
-
+    /*
+     *Retourne un task qui contient une liste de documents
+     * Les Documents contiennent les JSON des informations des tâches non assignées. Utile pour que les utilisateurs puissent les choisir
+     */
     public RemoteFindIterable<Document>  getNonAssignedTasks() {
         try {
             final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
@@ -109,7 +90,10 @@ public class LoginValidation implements Executor {
         }
         return null;
     }
-
+    /*
+     *Retourne un task qui contient une liste de documents
+     * Les Documents contiennent les JSON des informations des utilisateurs. Utile pour récupérer tous les scores
+     */
     public RemoteFindIterable<Document> getLeaderBoard() {
         try {
             final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
@@ -126,6 +110,26 @@ public class LoginValidation implements Executor {
         return null;
     }
 
+
+    /*
+    *Retourne un task qui contient un document
+    * Le Document contient je JSON des informations de l'utilisateur connecté à l'application
+     */
+    public Task<Document> getUserInfo() {
+        try {
+            final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
+            Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
+            StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+            List<Document> docs = new ArrayList<>();
+            return collection.findOne(new Document("user_id", user.getId()));
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
     public void assignTaskToUser(){
 
     }
@@ -139,6 +143,10 @@ public class LoginValidation implements Executor {
     public void removeTaskFromUser(){
 
     }
+    /*
+     *Retourne un un booléen
+     * Le boolean indique si les credentials peuvent connecter l'utilisateur
+     */
 
     public  boolean isUserAuthenticated(String email, String password) throws InterruptedException {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
@@ -157,6 +165,13 @@ public class LoginValidation implements Executor {
 
         Log.d("stitch",String.valueOf(res));
         return res;
+    }
+    /*
+     *Retourne un un booléen
+     * Le boolean indique si l'utilisateur a bien été crée
+     */
+    public boolean createUser() {
+        return true;
     }
 
     @Override
