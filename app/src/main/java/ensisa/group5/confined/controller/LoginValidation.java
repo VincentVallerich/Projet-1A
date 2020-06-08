@@ -4,11 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.auth.StitchUser;
@@ -16,17 +11,13 @@ import com.mongodb.stitch.android.services.mongodb.remote.RemoteFindIterable;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
 import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.concurrent.Executor;
 
 import ensisa.group5.confined.R;
@@ -82,7 +73,7 @@ public class LoginValidation implements Executor {
     }
     /*
      *Retourne un task qui contient une liste de documents
-     * Les Documents contiennent les JSON des informations des tâches non assignées. Utile pour que les utilisateurs puissent les choisir
+     * Les Documents contiennent les JSON des informations des tâches non assignées ( task_status = 0 ). Utile pour que les utilisateurs puissent les choisir
      */
     public RemoteFindIterable<Document>  getNonAssignedTasks() {
         try {
@@ -105,9 +96,8 @@ public class LoginValidation implements Executor {
 
             Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
             RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-            Log.d("stitch", "okokokok");
             RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
-            Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
+
 
             return collection.find();
 
@@ -136,12 +126,23 @@ public class LoginValidation implements Executor {
 
     */
 
-    public void assignTaskToUser(){
+    public void startTask(String taskid, String userid){
 
     }
     public void createTask(){
 
     }
+    public Task<RemoteUpdateResult> finishTask(String taskid){
+        String taskid2 =" 5edb9d925f4b418aee1abdf7";
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+        final Document filterDoc = new Document( "_id", new ObjectId(taskid2));
+        Document updateDoc = new Document().append("$set",new Document().append("task_status", "2"));
+        updateDoc.put("number", 42);
+        return collection.updateOne(filterDoc, updateDoc);
+
+    }
+
 
     public void deleteTask() {
 

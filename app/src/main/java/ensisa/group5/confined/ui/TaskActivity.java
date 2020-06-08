@@ -91,6 +91,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
            // t2.start();
          Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
             //t3.start();
+          Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
+          t4.start();
 
 
 
@@ -126,11 +128,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             public void onSuccess(List<Document> documents) {
                 try {
                     for (Document d : docs) {
-
                         // ici je récupère directement les infos du JSON,
                         // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
                         // Ensuite ajouter la tâche en tant que ListItem;
-
                         JSONObject obj = new JSONObject(d.toJson());
                         String name = obj.getString("task_name").toString();
                         String img = obj.getString("task_name").toString();
