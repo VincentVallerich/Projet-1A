@@ -13,12 +13,14 @@ import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
 import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteDeleteResult;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -104,8 +106,6 @@ public class LoginValidation implements Executor {
             return collection.find();
 
     }
-
-
     /*
     *Retourne un task qui contient un document
     * Le Document contient je JSON des informations de l'utilisateur connecté à l'application
@@ -138,7 +138,16 @@ public class LoginValidation implements Executor {
         return collection.updateOne(filterDoc, updateDoc);
 
     }
-    public void createTask(){
+    public Task <RemoteInsertOneResult> createTask(Task task){
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+        Document newItem = new Document()
+                .append("task_name", "tâche test")
+                .append("task_status",0 )
+                .append("task_priority", 5)
+                .append("task_desc", "blablablalzla test wsh")
+                .append("task_score",5);
+        return collection.insertOne(newItem);
 
     }
     public Task<RemoteUpdateResult> finishTask(String taskid){
@@ -171,7 +180,6 @@ public class LoginValidation implements Executor {
      *Retourne un un booléen
      * Le boolean indique si les credentials peuvent connecter l'utilisateur
      */
-
     public  boolean isUserAuthenticated(String email, String password) throws InterruptedException {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
         Stitch.initializeDefaultAppClient("apptest-vzuxl");
@@ -180,13 +188,11 @@ public class LoginValidation implements Executor {
         if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
             Log.d("stitch","successful login");
             res =true;
-
         }
         else {
             Log.d("stitch","non successful login");
             res =false;
         }
-
         Log.d("stitch",String.valueOf(res));
         return res;
     }
