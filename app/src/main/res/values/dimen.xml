@@ -34,4 +34,9 @@
     <item name="newtask_popup_template_importance_ratingBar_gap" type="dimen" format="float">0.3
     </item>
     <item name="newtask_popup_template_score_ratingBar_gap" type="dimen" format="float">0.4</item>
+    <dimen name="task_activity_edit_btn_padding">10dp</dimen>
+    <dimen name="task_activity_edit_btn_x_margin">5sp</dimen>
+    <dimen name="task_activity_edit_btn_y_margin">5sp</dimen>
+    <dimen name="task_activity_ok_btn_x_margin">5sp</dimen>
+    <dimen name="task_activity_ok_btn_y_margin">5sp</dimen>
 </resources>

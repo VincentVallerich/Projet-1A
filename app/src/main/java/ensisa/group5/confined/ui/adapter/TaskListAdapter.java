@@ -21,18 +21,25 @@ public class TaskListAdapter extends BaseAdapter
     private List<TaskListItem> taskListItem;
     //private LayoutInflater inflater;
     private boolean longClick;
+    private boolean showCheckBoxOnClick;
 
     public TaskListAdapter(Context context, List<TaskListItem> taskListItem)
     {
-        this(context, taskListItem, false);
+        this(context, taskListItem, false, false);
     }
 
     public TaskListAdapter(Context context, List<TaskListItem> taskListItem, boolean longClick)
+    {
+        this(context, taskListItem, longClick, false);
+    }
+
+    public TaskListAdapter(Context context, List<TaskListItem> taskListItem, boolean longClick, boolean showCheckBoxOnClick)
     {
         this.context = context;
         this.taskListItem = taskListItem;
         //this.inflater = LayoutInflater.from(context);
         this.longClick = longClick;
+        this.showCheckBoxOnClick = showCheckBoxOnClick;
     }
 
     @Override
@@ -98,6 +105,12 @@ public class TaskListAdapter extends BaseAdapter
             selected.setVisibility(View.VISIBLE);
         else
             selected.setVisibility(View.GONE);
+
+        if ( showCheckBoxOnClick )
+            if (currentItem.isSelected())
+                selected.setVisibility(View.VISIBLE);
+            else
+                selected.setVisibility(View.GONE);
 
         return convertView;
     }
