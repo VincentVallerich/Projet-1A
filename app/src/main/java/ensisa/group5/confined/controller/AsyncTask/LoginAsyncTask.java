@@ -13,7 +13,8 @@ public class LoginAsyncTask extends AsyncTask<Void,Void,Boolean> {
     @Override
     protected Boolean doInBackground(Void... voids) {
         DataBase db = new DataBase();
-
+        Thread thread = new Thread(db);
+        thread.start();
         return false;
     }
 }
