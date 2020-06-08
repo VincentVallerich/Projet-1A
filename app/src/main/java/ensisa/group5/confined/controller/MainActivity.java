@@ -13,7 +13,6 @@ import android.widget.EditText;
 
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.controller.AsyncTask.LoginAsyncTask;
 import ensisa.group5.confined.game.ScoreBordActivity;
 import ensisa.group5.confined.ui.TaskActivity;
 
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity  {
     private Button uiBtn;
 
     private SharedPreferences preferences;
-    private LoginValidation loginValidation;
+    private DataBase dataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity  {
         preferences = getPreferences(MODE_PRIVATE);
         /* just for tests */
         //preferences.edit().clear().apply();
-        loginValidation = new LoginValidation(this, preferences);
+        dataBase = new DataBase(this, preferences);
         usernameEdit = (EditText) findViewById(R.id.login_username_edit);
         passwordEdit = (EditText) findViewById(R.id.login_password_edit);
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
@@ -102,7 +101,6 @@ public class MainActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
                 String pswd = passwordEdit.getText().toString();
-                new LoginAsyncTask();
                 /*try {
                     if (loginValidation.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences

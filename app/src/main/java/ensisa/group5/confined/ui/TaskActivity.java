@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.controller.LoginValidation;
+import ensisa.group5.confined.controller.DataBase;
 import ensisa.group5.confined.controller.MainActivity;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
@@ -33,7 +33,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private List<TaskListItem> taskListItem;
     private ListView taskListView;
     private SharedPreferences preferences;
-    private LoginValidation loginValidation;
+    private DataBase dataBase;
     private TaskActivity context;
 
     @Override
@@ -65,18 +65,18 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         taskListView = findViewById(R.id.task_list_view);
         //taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
         preferences = getPreferences(MODE_PRIVATE);
-        loginValidation = new LoginValidation(this, preferences);
+        dataBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
-            Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
+            Thread t1 = new Thread(new Runnable() {  @Override public void run() { createUserTasksDisplay(); }  });
             t1.start();
             Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
             // t2.start();
             Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
             //t3.start();
-            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
+            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  dataBase.finishTask("5edb9d925f4b418aee1abdf7");  } });
             t4.start();
-            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
+            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  dataBase.startTask("5edb9d925f4b418aee1abdf7");  } });
             t5.start();
 
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void createLeaderboard( ){
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getLeaderBoard()
+        dataBase.getLeaderBoard()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -105,7 +105,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getNonAssignedTasks()
+        dataBase.getNonAssignedTasks()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -135,7 +135,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     public void createUserTasksDisplay() {
 
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getTasksByUser()
+        dataBase.getTasksByUser()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {

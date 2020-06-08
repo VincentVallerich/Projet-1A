@@ -1,4 +1,4 @@
-package ensisa.group5.confined.game;
+/*package ensisa.group5.confined.game;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -30,7 +30,7 @@ public class ScoreBoard {
 			
 			while (line !=null) {
 				String[] attributes = line.split(","); 
-				Utilisateur u = createPlayer(attributes); 
+				Utilisateur u = createPlayer(attributes);
 				listPlayer.add(u);
 				
 				line = br.readLine();
@@ -57,3 +57,4 @@ public class ScoreBoard {
 	}
 	
 }
+*/

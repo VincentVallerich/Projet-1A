@@ -1,36 +1,19 @@
 package ensisa.group5.confined.model;
 
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.widget.TextView;
-
 /**
  * Author VALLERICH Vincent on 05-06-2020
  */
 import java.util.UUID;
 
-public class CTask implements SensorEventListener {
+public class CTask{
     private int id;
     private String name;
     private String description;
-
-    TextView tv_steps;
-    SensorManager sensorManager;
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-    private enum Priority {MINOR, IMPORTANT, URGENT};
+    public enum Priority {MINOR, IMPORTANT, URGENT};
+    public enum State {NON_ATTRIBUATE, ATTRIBUATE, IN_PROGRESS, ACCOMPLISHED, NON_ACCOMPLISHED};
     private Priority priority;
+    private State state;
+
     private int points;
 
     public CTask(){
@@ -66,10 +49,6 @@ public class CTask implements SensorEventListener {
         this.description = description;
     }
 
-    public int getPoints() {
-        return points;
-    }
-
     public Priority getPriority() {
         return priority;
     }
@@ -81,4 +60,13 @@ public class CTask implements SensorEventListener {
     public void setPoints(int points) {
         this.points = points;
     }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public State getState() { return state; }
+
+    public void setState(State state) { this.state = state; }
+
 }
