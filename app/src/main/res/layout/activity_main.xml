@@ -67,6 +67,5 @@
         android:paddingLeft="@dimen/login_padding_sides"
         android:paddingRight="@dimen/login_padding_sides"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/login_btn_marginTop"
         android:text="@string/action_register" />
 </LinearLayout>

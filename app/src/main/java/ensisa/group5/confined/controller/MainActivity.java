@@ -8,20 +8,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.mongodb.lang.NonNull;
-import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.auth.providers.userpassword.UserPasswordAuthProviderClient;
+import android.widget.Toast;
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.ui.TaskActivity;
+import ensisa.group5.confined.ui.BoardActivity;
+import ensisa.group5.confined.ui.ProfileActivity;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -46,6 +40,10 @@ public class MainActivity extends AppCompatActivity  {
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
         registerBtn = (Button) findViewById(R.id.register_btn);
+
+        preferences.edit().clear().apply();
+        if (preferences.contains(getString(R.string.PREF_KEY_MAIL)))
+            startBoardActivity(this);
 
         signinBtn.setEnabled(true);
 
@@ -108,11 +106,13 @@ public class MainActivity extends AppCompatActivity  {
             String pswd = passwordEdit.getText().toString();
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
-                    startTaskActivity(this);
-                } else if (dataBase.isUserAuthenticated(username,pswd)) {
-                    // enregistrer les preferences
-                    preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                    startTaskActivity(this);
+                    startBoardActivity(this);
+                } else {
+                    if (dataBase.isUserAuthenticated(username,pswd)) {
+                        // enregistrer les preferences
+                        preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
+                        startBoardActivity(this);
+                    }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -127,11 +127,13 @@ public class MainActivity extends AppCompatActivity  {
             confirmEdit.setVisibility(View.VISIBLE);
 
             if (dataBase.isUsernameFormatCorrect(username)) {
-                if (dataBase.registerUser(username,pswd))
+                if (dataBase.registerUser(username, pswd)) {
                     preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username);
+                    startBoardActivity(this);
+                }
             }
         });
     }
 
-    public void startTaskActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
+    public void startBoardActivity(Context context) { startActivity(new Intent(context, ProfileActivity.class)); }
 }

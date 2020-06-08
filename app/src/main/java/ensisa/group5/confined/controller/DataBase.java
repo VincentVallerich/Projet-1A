@@ -172,11 +172,11 @@ public class DataBase implements Executor {
      * Le boolean indique si les credentials peuvent connecter l'utilisateur
      */
     public boolean isUserAuthenticated(String email, String password) throws InterruptedException {
-        UserPasswordCredential credential = new UserPasswordCredential(email, password);
+        UserPasswordCredential credential = new UserPasswordCredential(email, password );
         Stitch.initializeDefaultAppClient("apptest-vzuxl");
         Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
         Boolean res = false;
-        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn()) {
+        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
             Log.d("stitch","successful login");
             res =true;
         }
@@ -199,11 +199,9 @@ public class DataBase implements Executor {
                         res.set(true);
                         Log.d("stitch", "Successfully sent account confirmation email");
                     } else {
-                        Log.e("stitch", "Error registering new user:", task.getException());
-
+                        Log.e("stitch", "Error registering new user:");
                     }
                 });
-
         return res.get();
     }
 
