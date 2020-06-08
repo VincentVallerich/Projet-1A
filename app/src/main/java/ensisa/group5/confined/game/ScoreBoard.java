@@ -1,4 +1,4 @@
-package ensisa.group5.confined.game;
+/*package ensisa.group5.confined.game;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -57,3 +57,4 @@ public class ScoreBoard {
 	}
 	
 }
+*/

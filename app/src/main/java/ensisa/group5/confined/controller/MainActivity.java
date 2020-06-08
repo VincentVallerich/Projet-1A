@@ -13,8 +13,7 @@ import android.widget.EditText;
 
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.controller.AsyncTask.LoginAsyncTask;
-import ensisa.group5.confined.game.ScoreBordActivity;
+import ensisa.group5.confined.ui.BoardActivity;
 import ensisa.group5.confined.ui.TaskActivity;
 
 public class MainActivity extends AppCompatActivity  {
@@ -23,11 +22,9 @@ public class MainActivity extends AppCompatActivity  {
     private EditText passwordEdit;
     private EditText confirmEdit;
     private Button signinBtn;
-    private Button gameBtn;
-    private Button uiBtn;
 
     private SharedPreferences preferences;
-    private LoginValidation loginValidation;
+    private DataBase dataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +34,11 @@ public class MainActivity extends AppCompatActivity  {
         preferences = getPreferences(MODE_PRIVATE);
         /* just for tests */
         //preferences.edit().clear().apply();
-        loginValidation = new LoginValidation(this, preferences);
+        dataBase = new DataBase(this, preferences);
         usernameEdit = (EditText) findViewById(R.id.login_username_edit);
         passwordEdit = (EditText) findViewById(R.id.login_password_edit);
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
-        gameBtn = (Button) findViewById(R.id.game_btn);
-        uiBtn = (Button) findViewById(R.id.ui_btn);
 
         signinBtn.setEnabled(true);
 
@@ -102,12 +97,11 @@ public class MainActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
                 String pswd = passwordEdit.getText().toString();
-                new LoginAsyncTask();
-                /*try {
-                    if (loginValidation.isUserAuthenticated(username,pswd)) {
+                try {
+                    if (dataBase.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
                         // redirect sur une autre page
-                        Intent taskactivity = new Intent(MainActivity.this, TaskActivity.class);
+                        Intent taskactivity = new Intent(MainActivity.this, BoardActivity.class);
                         startActivity(taskactivity);
                     }
                     else {
@@ -116,16 +110,8 @@ public class MainActivity extends AppCompatActivity  {
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }*/
+                }
             }
-        });
-
-        gameBtn.setOnClickListener(v -> {
-            startActivity(new Intent(this, ScoreBordActivity.class));
-        });
-
-        uiBtn.setOnClickListener(v -> {
-            startActivity(new Intent(this, TaskActivity.class));
         });
     }
 }
