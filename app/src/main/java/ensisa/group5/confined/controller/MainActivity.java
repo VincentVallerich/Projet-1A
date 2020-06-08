@@ -7,31 +7,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.mongodb.lang.NonNull;
-import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.StitchAppClient;
-import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
-
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.controller.AsyncTask.LoginAsyncTask;
 import ensisa.group5.confined.game.ScoreBordActivity;
 import ensisa.group5.confined.ui.TaskActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     private EditText usernameEdit;
     private EditText passwordEdit;
@@ -115,8 +101,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String username = usernameEdit.getText().toString();
-                 String pswd = passwordEdit.getText().toString();
-                try {
+                String pswd = passwordEdit.getText().toString();
+                new LoginAsyncTask();
+                /*try {
                     if (loginValidation.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
                         // redirect sur une autre page
@@ -129,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         });
 

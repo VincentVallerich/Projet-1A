@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import ensisa.group5.confined.R;
@@ -29,6 +30,7 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
     private EditText frequency;
 
     private PickTaskImgPopup pickTaskImgPopup;
+    private TextView title;
 
     // constructeur
     public NewTaskPopup(Activity activity)
@@ -40,6 +42,8 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
         this.activity = activity;
 
         //
+        title = findViewById(R.id.newtask_popup_template_title);
+
         imgBtn = findViewById(R.id.newtask_popup_template_taskimg);
         name = findViewById(R.id.newtask_popup_template_name_txtbox);
         description = findViewById(R.id.newtask_popup_template_description_txtbox);
@@ -57,9 +61,21 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
         return img;
     }
 
+    public void setImg(String img)
+    {
+        this.img = img;
+        int imgId = context.getResources().getIdentifier(img, "drawable", context.getPackageName());
+        imgBtn.setBackgroundResource(imgId);
+    }
+
     public String getName()
     {
         return name.getText().toString();
+    }
+
+    public void setName(String txt)
+    {
+        this.name.setText(txt);
     }
 
     public String getDescription()
@@ -67,9 +83,19 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
         return description.getText().toString();
     }
 
+    public void setDescription(String txt)
+    {
+        this.description.setText(txt);
+    }
+
     public int getImportance()
     {
         return (int) importance.getRating();
+    }
+
+    public void setImportance(int rating)
+    {
+        this.importance.setRating(rating);
     }
 
     public int getScore()
@@ -77,9 +103,19 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
         return (int) score.getRating();
     }
 
+    public void setScore(int rating)
+    {
+        this.score.setRating(rating);
+    }
+
     public String getFrequency()
     {
         return frequency.getText().toString();
+    }
+
+    public void setFrequency(String txt)
+    {
+        this.frequency.setText(txt);
     }
 
     public Button getCancelButton()
@@ -90,6 +126,16 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
     public Button getAddButton()
     {
         return addButton;
+    }
+
+    public void setAddButtonName(String name)
+    {
+        addButton.setText(name);
+    }
+
+    public void setTitle(String t)
+    {
+        title.setText(t);
     }
 
     public void build()
@@ -112,8 +158,7 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
                     @Override
                     public void onClick(View view) {
                         img = pickTaskImgPopup.getImg();
-                        int imgId = context.getResources().getIdentifier(img, "drawable", context.getPackageName());
-                        imgBtn.setBackgroundResource(imgId);
+                        setImg(img);
                         pickTaskImgPopup.dismiss();
                     }
                 });

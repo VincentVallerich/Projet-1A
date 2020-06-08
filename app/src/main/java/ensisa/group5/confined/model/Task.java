@@ -1,21 +1,45 @@
 package ensisa.group5.confined.model;
 
-public class Task {
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.widget.TextView;
+
+/**
+ * Author VALLERICH Vincent on 05-06-2020
+ */
+import java.util.UUID;
+
+public class Task implements SensorEventListener {
     private int id;
     private String name;
     private String description;
+
+    TextView tv_steps;
+    SensorManager sensorManager;
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
     private enum Priority {MINOR, IMPORTANT, URGENT};
     private Priority priority;
     private int points;
 
     public Task(){
-        this.name = "EmptyTask";
-        this.description = "UndefinedTask";
         this.priority = Priority.MINOR;
         this.points = 0;
     }
 
     public Task(String name, String description,Priority priority,int points){
+        this.id = Math.abs(UUID.randomUUID().hashCode());
         this.name = name;
         this.description = description;
         this.priority = priority;
@@ -24,10 +48,6 @@ public class Task {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {

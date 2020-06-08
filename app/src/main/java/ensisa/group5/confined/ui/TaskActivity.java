@@ -1,6 +1,5 @@
 package ensisa.group5.confined.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,36 +11,20 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.mongodb.lang.NonNull;
-import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.StitchAppClient;
-import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
 
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.LoginValidation;
 import ensisa.group5.confined.controller.MainActivity;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
-
-import static com.mongodb.client.model.Filters.eq;
 
 public class TaskActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -85,18 +68,16 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         loginValidation = new LoginValidation(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
-         Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
+            Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
             t1.start();
-         Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
-           // t2.start();
-         Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+            Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
+            // t2.start();
+            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
             //t3.start();
-          Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
-          t4.start();
-          Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
-          t5.start();
-
-
+            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
+            t4.start();
+            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
+            t5.start();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,11 +139,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
-
                 try {
                     for (Document d : docs) {
                         JSONObject obj = new JSONObject(d.toJson());
-
                         String name = obj.getString("task_name").toString();
                         String img = "img_random";
                         String description = obj.getString("task_desc").toString();
@@ -171,7 +150,6 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         String frequency = " 0";
                         TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
                         taskListItem.add(t);
-
                     }
                     taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                 }
@@ -228,4 +206,3 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 }
-

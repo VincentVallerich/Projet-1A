@@ -1,10 +1,21 @@
 package ensisa.group5.confined.model;
 
+import java.util.UUID;
+
 public class User {
+    private int id;
     private String mail;
     private String name;
-    private int score;
-    private boolean isMaster=false;
+    private int points;
+    private boolean isMaster;
+
+    public User() {
+        this.id = Math.abs(UUID.randomUUID().hashCode());
+        this.name = "EmptyName";
+        this.mail = "UndefinedMail";
+        this.points = 0;
+        this.isMaster = false;
+    }
 
     public String getMail() {
         return mail;
@@ -22,19 +33,11 @@ public class User {
         isMaster = master;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public int getScore() {
-        return score;
-    }
+    public int getScore() { return points; }
 }
