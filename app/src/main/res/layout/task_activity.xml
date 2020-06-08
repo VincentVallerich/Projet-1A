@@ -5,54 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/task_activity_day_container"
+        >
+        <TextView
+            android:id="@+id/task_activity_day"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Jour"
+            android:textColor="@color/popup_title_color"
+            android:textSize="@dimen/popup_title_text_size"
+            android:textStyle="bold"
+            android:gravity="center"
+            />
+    </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/show_calendar_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/taskicon_lawn_mower"
+        />
+
     <ListView
         android:id="@+id/task_list_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/task_activity_day_container"
         android:layout_above="@+id/navigation_container"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        />
-
-    <ImageButton
-        android:id="@+id/add_task"
-        android:layout_width="@dimen/task_activity_edition_btn_width"
-        android:layout_height="@dimen/task_activity_edition_btn_height"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/task_activity_add_btn_y_margin"
-        android:layout_marginEnd="@dimen/task_activity_add_btn_x_margin"
-        android:padding="@dimen/task_activity_add_btn_padding"
-        android:scaleType="fitCenter"
-        android:src="@drawable/add_ico"
-        />
-
-    <ImageButton
-        android:id="@+id/del_task"
-        android:layout_width="@dimen/task_activity_edition_btn_width"
-        android:layout_height="@dimen/task_activity_edition_btn_height"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/task_activity_del_btn_y_margin"
-        android:layout_marginEnd="@dimen/task_activity_del_btn_x_margin"
-        android:padding="@dimen/task_activity_del_btn_padding"
-        android:scaleType="fitCenter"
-        android:visibility="gone"
-        android:src="@drawable/del_ico"
-        />
-
-    <ImageButton
-        android:id="@+id/back_task"
-        android:layout_width="@dimen/task_activity_edition_btn_width"
-        android:layout_height="@dimen/task_activity_edition_btn_height"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/task_activity_back_btn_y_margin"
-        android:layout_marginEnd="@dimen/task_activity_back_btn_x_margin"
-        android:padding="@dimen/task_activity_back_btn_padding"
-        android:scaleType="fitCenter"
-        android:visibility="gone"
-        android:src="@drawable/back_ico"
         />
 
     <LinearLayout
