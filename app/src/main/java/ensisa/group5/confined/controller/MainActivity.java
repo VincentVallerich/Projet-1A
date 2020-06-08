@@ -2,6 +2,7 @@ package ensisa.group5.confined.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity  {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                signinBtn.setEnabled(dataBase.isUsernameFormatCorrect((String) s) &&
+                signinBtn.setEnabled(dataBase.isUsernameFormatCorrect(s.toString()) &&
                         dataBase.isPasswordFormatCorrect(passwordEdit.getText().toString()));
             }
 
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 signinBtn.setEnabled(dataBase.isUsernameFormatCorrect(usernameEdit.getText().toString()) &&
-                        dataBase.isPasswordFormatCorrect((String) s));
+                        dataBase.isPasswordFormatCorrect(s.toString()));
             }
 
             @Override
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity  {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                registerBtn.setEnabled(dataBase.isPassordConfirmEquals(passwordEdit.getText().toString(),(String) s) ||
+                registerBtn.setEnabled(dataBase.isPasswordConfirmEquals(passwordEdit.getText().toString(), s.toString()) ||
                         confirmEdit.getVisibility() != View.VISIBLE);
             }
 
@@ -101,16 +102,17 @@ public class MainActivity extends AppCompatActivity  {
 
             }
         });
+
         signinBtn.setOnClickListener(v -> {
             String username = usernameEdit.getText().toString();
             String pswd = passwordEdit.getText().toString();
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
-                    startTaskActivity();
+                    startTaskActivity(this);
                 } else if (dataBase.isUserAuthenticated(username,pswd)) {
                     // enregistrer les preferences
                     preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                    startTaskActivity();
+                    startTaskActivity(this);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -125,20 +127,11 @@ public class MainActivity extends AppCompatActivity  {
             confirmEdit.setVisibility(View.VISIBLE);
 
             if (dataBase.isUsernameFormatCorrect(username)) {
-                UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
-                        .getProviderClient(UserPasswordAuthProviderClient.factory);
-
-                emailPassClient.registerWithEmail(username, pswd)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Log.d("stitch", "Successfully sent account confirmation email");
-                            } else {
-                                Log.e("stitch", "Error registering new user:", task.getException());
-                            }
-                        });
+                if (dataBase.registerUser(username,pswd))
+                    preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username);
             }
         });
     }
 
-    public void startTaskActivity() { startActivity(new Intent(MainActivity.this, TaskActivity.class)); }
+    public void startTaskActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
 }
