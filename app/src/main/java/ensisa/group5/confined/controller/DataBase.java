@@ -34,7 +34,6 @@ public class DataBase implements Executor {
 
     private Context context;
     private static SharedPreferences preferences;
-    StitchAppClient client = Stitch.initializeDefaultAppClient("apptest-vzuxl");
 
     public static final int MIN_LEN_INPUT_USERNAME = 2;
     public static final int MIN_LEN_INPUT_PASSWORD = 6;
@@ -173,10 +172,11 @@ public class DataBase implements Executor {
      * Le boolean indique si les credentials peuvent connecter l'utilisateur
      */
     public boolean isUserAuthenticated(String email, String password) throws InterruptedException {
-        UserPasswordCredential credential = new UserPasswordCredential(email, password );
-        client.getAuth().loginWithCredential(credential);
+        UserPasswordCredential credential = new UserPasswordCredential(email, password);
+        Stitch.initializeDefaultAppClient("apptest-vzuxl");
+        Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
         Boolean res = false;
-        if (client.getAuth().isLoggedIn() ) {
+        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn()) {
             Log.d("stitch","successful login");
             res =true;
         }
