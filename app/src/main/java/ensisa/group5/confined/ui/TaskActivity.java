@@ -93,6 +93,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             //t3.start();
           Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
           t4.start();
+          Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
+          t5.start();
 
 
 

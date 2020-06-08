@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.android.gms.common.util.Hex;
 import com.google.android.gms.tasks.Task;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.auth.StitchUser;
@@ -126,21 +127,25 @@ public class LoginValidation implements Executor {
 
     */
 
-    public void startTask(String taskid, String userid){
+    public  Task<RemoteUpdateResult> startTask(String taskid){
+
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+        final Document filterDoc = new Document( "_id", new ObjectId(taskid));
+        StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+        Document updateDoc = new Document().append("$set",new Document().append("task_status", 1)).append("user_id",user.getId());
+        return collection.updateOne(filterDoc, updateDoc);
 
     }
     public void createTask(){
 
     }
     public Task<RemoteUpdateResult> finishTask(String taskid){
-        String taskid2 =" 5edb9d925f4b418aee1abdf7";
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
-        final Document filterDoc = new Document( "_id", new ObjectId(taskid2));
-        Document updateDoc = new Document().append("$set",new Document().append("task_status", "2"));
-        updateDoc.put("number", 42);
+        final Document filterDoc = new Document( "_id", new ObjectId(taskid));
+        Document updateDoc = new Document().append("$set",new Document().append("task_status", 2));
         return collection.updateOne(filterDoc, updateDoc);
-
     }
 
 
