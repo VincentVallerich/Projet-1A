@@ -2,74 +2,18 @@ package ensisa.group5.confined.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-<<<<<<< HEAD
-import android.content.Context;
-=======
 import android.content.Intent;
->>>>>>> 3a6a8cf233ff0632a54d94d2336003832ca7881a
 import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
-
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.mongodb.lang.NonNull;
-import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.StitchAppClient;
-import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteFindIterable;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
-import com.mongodb.stitch.core.auth.providers.anonymous.AnonymousCredential;
-import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteFindOptions;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateOptions;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
-
-import org.bson.Document;
-
-import java.util.ArrayList;
-import java.util.List;
-=======
-
->>>>>>> 3a6a8cf233ff0632a54d94d2336003832ca7881a
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.mongodb.lang.NonNull;
-import com.mongodb.stitch.android.core.Stitch;
-import com.mongodb.stitch.android.core.StitchAppClient;
-import com.mongodb.stitch.android.core.auth.StitchUser;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
-import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
-
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import ensisa.group5.confined.R;
-<<<<<<< HEAD
-=======
 import ensisa.group5.confined.controller.AsyncTask.LoginAsyncTask;
->>>>>>> taches
 import ensisa.group5.confined.game.ScoreBordActivity;
 import ensisa.group5.confined.ui.TaskActivity;
 
@@ -183,73 +127,5 @@ public class MainActivity extends AppCompatActivity  {
         uiBtn.setOnClickListener(v -> {
             startActivity(new Intent(this, TaskActivity.class));
         });
-<<<<<<< HEAD
-=======
-    }
-<<<<<<< HEAD
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        running = true;
-        Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if(countSensor!=null){
-            sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_UI);
-        } else {
-            Toast.makeText(this, "Sensor not found ! ", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        running = false;
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if(running){
-            tv_steps.setText(String.valueOf(event.values[0]));
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
->>>>>>> taches
     }
 }
-
-/*
-final StitchAppClient client =
-                                Stitch.initializeDefaultAppClient("apptest-vzuxl");
-                        final RemoteMongoClient mongoClient =
-                                client.getServiceClient(RemoteMongoClient.factory, "mongodb-atlas");
-                        final RemoteMongoCollection<Document> coll =
-                                mongoClient.getDatabase("sample_airbnb").getCollection("listingsAndReviews");
-
-                        Document filterDoc = new Document();
-
-                        RemoteFindIterable findResults = coll
-                                .find(filterDoc);
-                        Task <List<Document>> itemsTask = findResults.into(new ArrayList<Document>());
-                        itemsTask.addOnCompleteListener(new OnCompleteListener <List<Document>> () {
-                            @Override
-                            public void onComplete(@NonNull Task<List<Document>> task) {
-                                if (task.isSuccessful()) {
-                                    List<Document> items = task.getResult();
-                                    Log.d("app", String.format("successfully found %d documents", items.size()));
-                                    for (Document item: items) {
-                                        Log.d("app", String.format("successfully found:  %s", item.toString()));
-                                    }
-                                } else {
-                                    Log.e("app", "failed to find documents with: ", task.getException());
-                                }
-                            }
-                        });
-
-
- */
-=======
-}
->>>>>>> 3a6a8cf233ff0632a54d94d2336003832ca7881a

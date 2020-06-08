@@ -1,6 +1,5 @@
 package ensisa.group5.confined.model;
 
-<<<<<<< HEAD
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,9 +9,7 @@ import android.widget.TextView;
 /**
  * Author VALLERICH Vincent on 05-06-2020
  */
-=======
 import java.util.UUID;
->>>>>>> 3a6a8cf233ff0632a54d94d2336003832ca7881a
 
 public class Task implements SensorEventListener {
     private int id;
