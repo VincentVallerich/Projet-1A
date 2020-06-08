@@ -11,7 +11,7 @@ import android.widget.TextView;
  */
 import java.util.UUID;
 
-public class Task implements SensorEventListener {
+public class CTask implements SensorEventListener {
     private int id;
     private String name;
     private String description;
@@ -33,12 +33,12 @@ public class Task implements SensorEventListener {
     private Priority priority;
     private int points;
 
-    public Task(){
+    public CTask(){
         this.priority = Priority.MINOR;
         this.points = 0;
     }
 
-    public Task(String name, String description,Priority priority,int points){
+    public CTask(String name, String description, Priority priority, int points){
         this.id = Math.abs(UUID.randomUUID().hashCode());
         this.name = name;
         this.description = description;
