@@ -12,6 +12,7 @@ import com.mongodb.stitch.android.services.mongodb.remote.RemoteFindIterable;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
 import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteDeleteResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
@@ -148,11 +149,22 @@ public class LoginValidation implements Executor {
         return collection.updateOne(filterDoc, updateDoc);
     }
 
-
-    public void deleteTask() {
+    /*
+    * SEULEUMENT SI LA TACHE ETAIT EN COURS ! ( si le status de la tache est de 1 ) on peut pas abandonner une tâche terminée
+     */
+    public Task<RemoteUpdateResult> abandonTask(String taskid) {
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+        final Document filterDoc = new Document( "_id", new ObjectId(taskid));
+        Document updateDoc = new Document().append("$set",new Document().append("task_status", 0)).append("user_id","");;
+        return collection.updateOne(filterDoc, updateDoc);
 
     }
-    public void removeTaskFromUser(){
+    public Task<RemoteDeleteResult> deleteTask(String taskid){
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+        final Document filterDoc = new Document( "_id", new ObjectId(taskid));
+        return collection.deleteOne(filterDoc);
 
     }
     /*
