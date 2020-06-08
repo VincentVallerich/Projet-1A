@@ -68,7 +68,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         dataBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
-            Thread t1 = new Thread(new Runnable() {  @Override public void run() { createUserTasksDisplay(); }  });
+            Thread t1 = new Thread(new Runnable() {  @Override public void run() {  createUserTasksDisplay(); }  });
             t1.start();
             Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
             // t2.start();
@@ -106,58 +106,52 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
         dataBase.getNonAssignedTasks()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        // ici je récupère directement les infos du JSON,
-                        // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
-                        // Ensuite ajouter la tâche en tant que ListItem;
-                        JSONObject obj = new JSONObject(d.toJson());
-                        String name = obj.getString("task_name").toString();
-                        String img = obj.getString("task_name").toString();
-                        String description = obj.getString("task_desc").toString();
-                        int importance = (int) Integer.parseInt(obj.getString("task_status"));
-                        int score = (int)Integer.parseInt( obj.getString("task_priority"));
-                        String frequency = obj.getString("task_name").toString();
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
-                        taskListItem.add(t);
+                .into(docs).addOnSuccessListener((OnSuccessListener<List<Document>>) documents -> {
+                    try {
+                        for (Document d : docs) {
+                            // ici je récupère directement les infos du JSON,
+                            // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
+                            // Ensuite ajouter la tâche en tant que ListItem;
+                            JSONObject obj = new JSONObject(d.toJson());
+                            String name = obj.getString("task_name").toString();
+                            String img = obj.getString("task_name").toString();
+                            String description = obj.getString("task_desc").toString();
+                            int importance = (int) Integer.parseInt(obj.getString("task_status"));
+                            int score = (int)Integer.parseInt( obj.getString("task_priority"));
+                            String frequency = obj.getString("task_name").toString();
+                            TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
+                            taskListItem.add(t);
+                        }
+                        taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                     }
-                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
     public void createUserTasksDisplay() {
 
         List<Document> docs = new ArrayList<Document>();
         dataBase.getTasksByUser()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        JSONObject obj = new JSONObject(d.toJson());
-                        String name = obj.getString("task_name").toString();
-                        String img = "img_random";
-                        String description = obj.getString("task_desc").toString();
-                        int importance = (int) Integer.parseInt(obj.getString("task_priority"));
-                        int score = (int)Integer.parseInt( obj.getString("task_score"));
-                        String frequency = " 0";
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
-                        taskListItem.add(t);
+                .into(docs).addOnSuccessListener((OnSuccessListener<List<Document>>) documents -> {
+                    try {
+                        for (Document d : docs) {
+                            JSONObject obj = new JSONObject(d.toJson());
+                            String name = obj.getString("task_name");
+                            String img = "img_random";
+                            String description = obj.getString("task_desc");
+                            int importance = (int) Integer.parseInt(obj.getString("task_priority"));
+                            int score = (int)Integer.parseInt( obj.getString("task_score"));
+                            String frequency = " 0";
+                            TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
+                            taskListItem.add(t);
+                        }
+                        taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                     }
-                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     @Override
@@ -194,7 +188,6 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 int importance = newTaskPopup.getImportance();
                 int score = newTaskPopup.getScore();
                 String frequency = newTaskPopup.getFrequency();
-                //int frequency = newTaskPopup.getFrequency();
 
                 //store the new task in the bdd
 

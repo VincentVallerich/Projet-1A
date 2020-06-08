@@ -190,16 +190,16 @@ public class DataBase implements Executor {
      * @param usename
      * @return true if usename length is >= 2 false otherwise
      */
-    public boolean isUsernameFormatCorrect(String usename) { return usename.length() >= MIN_LEN_INPUT_USERNAME; }
+    public boolean isUsernameFormatCorrect(String usename) { return usename.trim().length() >= MIN_LEN_INPUT_USERNAME; }
 
     /**
      *
      * @param password
      * @return true if password length is >= 6 false otherwise
      */
-    public boolean isPasswordFormatCorrect(String password) { return password.length() >= MIN_LEN_INPUT_PASSWORD; }
+    public boolean isPasswordFormatCorrect(String password) { return password.trim().length() >= MIN_LEN_INPUT_PASSWORD; }
 
-    public boolean isPassordConfirmEquals(String password, String confirm) { return password.equals(confirm); }
+    public boolean isPassordConfirmEquals(String password, String confirm) { return password.equals(confirm) && password.trim().length() >= MIN_LEN_INPUT_PASSWORD; }
 
     /*
      *Retourne un un booléen

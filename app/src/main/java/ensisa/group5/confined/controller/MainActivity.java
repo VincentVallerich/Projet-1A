@@ -7,13 +7,19 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.mongodb.lang.NonNull;
+import com.mongodb.stitch.android.core.Stitch;
+import com.mongodb.stitch.android.core.auth.providers.userpassword.UserPasswordAuthProviderClient;
+
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.game.ScoreBordActivity;
 import ensisa.group5.confined.ui.TaskActivity;
 
 public class MainActivity extends AppCompatActivity  {
@@ -22,8 +28,7 @@ public class MainActivity extends AppCompatActivity  {
     private EditText passwordEdit;
     private EditText confirmEdit;
     private Button signinBtn;
-    private Button gameBtn;
-    private Button uiBtn;
+    private Button registerBtn;
 
     private SharedPreferences preferences;
     private DataBase dataBase;
@@ -34,15 +39,12 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
 
         preferences = getPreferences(MODE_PRIVATE);
-        /* just for tests */
-        //preferences.edit().clear().apply();
         dataBase = new DataBase(this, preferences);
         usernameEdit = (EditText) findViewById(R.id.login_username_edit);
         passwordEdit = (EditText) findViewById(R.id.login_password_edit);
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
-        gameBtn = (Button) findViewById(R.id.game_btn);
-        uiBtn = (Button) findViewById(R.id.ui_btn);
+        registerBtn = (Button) findViewById(R.id.register_btn);
 
         signinBtn.setEnabled(true);
 
@@ -54,7 +56,8 @@ public class MainActivity extends AppCompatActivity  {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                signinBtn.setEnabled(dataBase.isUsernameFormatCorrect((String) s) &&
+                        dataBase.isPasswordFormatCorrect(passwordEdit.getText().toString()));
             }
 
             @Override
@@ -71,7 +74,8 @@ public class MainActivity extends AppCompatActivity  {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                signinBtn.setEnabled(dataBase.isUsernameFormatCorrect(usernameEdit.getText().toString()) &&
+                        dataBase.isPasswordFormatCorrect((String) s));
             }
 
             @Override
@@ -88,7 +92,8 @@ public class MainActivity extends AppCompatActivity  {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                registerBtn.setEnabled(dataBase.isPassordConfirmEquals(passwordEdit.getText().toString(),(String) s) ||
+                        confirmEdit.getVisibility() != View.VISIBLE);
             }
 
             @Override
@@ -96,34 +101,44 @@ public class MainActivity extends AppCompatActivity  {
 
             }
         });
-        signinBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = usernameEdit.getText().toString();
-                String pswd = passwordEdit.getText().toString();
-                /*try {
-                    if (loginValidation.isUserAuthenticated(username,pswd)) {
-                        // enregistrer les preferences
-                        // redirect sur une autre page
-                        Intent taskactivity = new Intent(MainActivity.this, TaskActivity.class);
-                        startActivity(taskactivity);
-                    }
-                    else {
-                        confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
-                        confirmEdit.setVisibility(View.VISIBLE);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+        signinBtn.setOnClickListener(v -> {
+            String username = usernameEdit.getText().toString();
+            String pswd = passwordEdit.getText().toString();
+            try {
+                if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
+                    startTaskActivity();
+                } else if (dataBase.isUserAuthenticated(username,pswd)) {
+                    // enregistrer les preferences
+                    preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
+                    startTaskActivity();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
 
-        gameBtn.setOnClickListener(v -> {
-            startActivity(new Intent(this, ScoreBordActivity.class));
-        });
+        registerBtn.setOnClickListener( v -> {
+            String username = usernameEdit.getText().toString();
+            String pswd = passwordEdit.getText().toString();
 
-        uiBtn.setOnClickListener(v -> {
-            startActivity(new Intent(this, TaskActivity.class));
+            confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
+            confirmEdit.setVisibility(View.VISIBLE);
+
+            if (dataBase.isUsernameFormatCorrect(username)) {
+                UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
+                        .getProviderClient(UserPasswordAuthProviderClient.factory);
+
+                emailPassClient.registerWithEmail(username, pswd)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("stitch", "Successfully sent account confirmation email");
+                            } else {
+                                Log.e("stitch", "Error registering new user:", task.getException());
+                            }
+                        });
+            }
         });
     }
+
+    public void startTaskActivity() { startActivity(new Intent(MainActivity.this, TaskActivity.class)); }
 }
