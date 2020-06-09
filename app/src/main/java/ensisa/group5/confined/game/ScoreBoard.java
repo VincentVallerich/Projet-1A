@@ -55,6 +55,5 @@ public class ScoreBoard {
 		int score =Integer.parseInt(data[1]);
 		return new Utilisateur(id,score);
 	}
-	
 }
 */
