@@ -35,10 +35,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.bson.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-
 import ensisa.group5.confined.game.ScoreBordActivity;
+import java.util.ArrayList;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
 import ensisa.group5.confined.controller.DataBase;
@@ -54,7 +52,6 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private ListView taskDone;
     private SharedPreferences preferences;
     private Context context;
-    private DataBase db = new DataBase();
 
     private TextView titleTextView;
     private ImageButton finishTask;
@@ -248,8 +245,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent3);
                 break;
             case R.id.action_profile:
-                Intent intent4 = new Intent(this, ProfileActivity.class);
-                startActivity(intent4);
+             //   Intent intent4 = new Intent(this, ProfilActivity.class);
+               // startActivity(intent4);
                 break;
         }
         return false;

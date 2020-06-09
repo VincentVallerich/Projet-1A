@@ -29,6 +29,15 @@
         android:hint="@string/prompt_email"/>
 
     <EditText
+        android:id="@+id/login_pseudo_edit"
+        android:layout_width="@dimen/login_edit_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/login_edit_marginTop"
+        android:visibility="gone"
+        android:hint="@string/prompt_pseudo"/>
+
+    <EditText
         android:id="@+id/login_password_edit"
         android:layout_width="@dimen/login_edit_width"
         android:layout_height="wrap_content"
