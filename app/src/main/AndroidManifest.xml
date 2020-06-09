@@ -12,6 +12,7 @@
         <activity android:name=".ui.ProfileActivity"></activity>
         <activity android:name="ensisa.group5.confined.ui.BoardActivity"/>
         <activity android:name="ensisa.group5.confined.ui.TaskActivity"/>
+        <activity android:name="ensisa.group5.confined.game.ScoreBordActivity"/>
         <activity android:name=".controller.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,4 +21,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

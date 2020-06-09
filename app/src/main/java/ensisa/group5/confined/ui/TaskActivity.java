@@ -30,15 +30,16 @@ import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.bson.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import ensisa.group5.confined.game.ScoreBordActivity;
 import java.util.ArrayList;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
-
+import ensisa.group5.confined.controller.DataBase;
 public class TaskActivity extends AppCompatActivity implements View.OnClickListener
 {
     private TaskActivity activity;
@@ -62,15 +63,23 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     private String deadline;
 
+    private DataBase database;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
+
         super.onCreate(savedInstanceState);
+        database = new DataBase();
         setContentView(R.layout.task_activity);
 
         activity = this;
 
         context = activity.getApplicationContext();
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
+        bottomNavigationView.getMenu().getItem(2).setChecked(true);
 
         taskInProgressTabButton = (Button) findViewById(R.id.task_in_progress_tab);
         taskInProgressTabButton.setOnClickListener(this);
@@ -82,18 +91,6 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         Date todayDate = Calendar.getInstance().getTime();
         deadline = formatDate(todayDate);
         titleTextView.setText("Tâches du " + deadline);
-
-        ImageButton taskButton = findViewById(R.id.task_button);
-        taskButton.setOnClickListener(this);
-
-        ImageButton leaderboardButton = findViewById(R.id.leaderboard_button);
-        leaderboardButton.setOnClickListener(this);
-
-        ImageButton profileButton = findViewById(R.id.profile_button);
-        profileButton.setOnClickListener(this);
-
-        ImageButton boardButton = findViewById(R.id.board_button);
-        boardButton.setOnClickListener(this);
 
         ImageButton calendarButton = findViewById(R.id.show_calendar_button);
         calendarButton.setOnClickListener(this);
@@ -229,28 +226,38 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
-     */
+*/
+    private boolean onClickNavigationBar(Integer integer ){
+        Log.d("stitch","going in onclick" + integer);
+        switch (integer) {
 
+            case R.id.action_board:
+                // go to activity
+                Intent intent = new Intent(this, BoardActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_leaderboard:
+                Intent intent2 = new Intent(this, ScoreBordActivity.class);
+                startActivity(intent2);
+                break;
+            case R.id.action_mytasks:
+                Intent intent3 = new Intent(this, TaskActivity.class);
+                startActivity(intent3);
+                break;
+            case R.id.action_profile:
+             //   Intent intent4 = new Intent(this, ProfilActivity.class);
+               // startActivity(intent4);
+                break;
+        }
+        return false;
+
+    }
     @Override
     public void onClick(View view)
     {
         switch (view.getId())
         {
-            case R.id.task_button:
-                //Toast.makeText(activity, "Task!", Toast.LENGTH_SHORT).show();
-                /*Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);*/
-                break;
-            case R.id.leaderboard_button:
-                //Toast.makeText(activity, "Leaderboard!", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.profile_button:
-                //Toast.makeText(activity, "Profile!", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.board_button:
-                Intent intent = new Intent(this, BoardActivity.class);
-                startActivity(intent);
-                break;
+
             case R.id.show_calendar_button:
                 calendarPopup = new CalendarPopup(activity);
                 calendarPopup.getCalendar().setOnDateChangeListener(new CalendarView.OnDateChangeListener() {

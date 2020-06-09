@@ -7,12 +7,12 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
     android:icon="@drawable/task_ico_clicked"
     android:title="@string/bottom_navigation_menu_board"
     app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_leaderboard"
-        android:enabled="true"
-        android:icon="@drawable/task_ico_clicked"
-        android:title="@string/bottom_navigation_menu_leaderboard"
-        app:showAsAction="ifRoom" />
+<item
+    android:id="@+id/action_leaderboard"
+    android:enabled="true"
+    android:icon="@drawable/task_ico_clicked"
+    android:title="@string/bottom_navigation_menu_leaderboard"
+    app:showAsAction="ifRoom" />
 <item
     android:id="@+id/action_mytasks"
     android:enabled="true"

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="#bdc3c7"
     tools:context=".controller.MainActivity">
@@ -26,6 +27,15 @@
         android:layout_gravity="center"
         android:layout_marginTop="150dp"
         android:hint="@string/prompt_email"/>
+
+    <EditText
+        android:id="@+id/login_pseudo_edit"
+        android:layout_width="@dimen/login_edit_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/login_edit_marginTop"
+        android:visibility="gone"
+        android:hint="@string/prompt_pseudo"/>
 
     <EditText
         android:id="@+id/login_password_edit"
@@ -71,3 +81,4 @@
         android:text="@string/action_register" />
 
 </LinearLayout>
+

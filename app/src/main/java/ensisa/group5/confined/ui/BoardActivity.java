@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,10 +15,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.game.ScoreBordActivity;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
 
@@ -35,46 +39,20 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     private ImageButton taskButton;
 
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.board_activity);
-
         activity = this;
         context = this.getApplicationContext();
-
-        taskButton = findViewById(R.id.task_button);
-        taskButton.setOnClickListener(this);
-        /*taskButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                Toast.makeText(context, "coucou",Toast.LENGTH_SHORT).show();
-                if (!editMode && selectionMode)
-                {
-                    if(motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER);
-                        Toast.makeText(context, "coucou",Toast.LENGTH_SHORT).show();
-                }
-                return false;
-            }
-        });*/
-
-        ImageButton leaderboardButton = findViewById(R.id.leaderboard_button);
-        leaderboardButton.setOnClickListener(this);
-
-        ImageButton profileButton = findViewById(R.id.profile_button);
-        profileButton.setOnClickListener(this);
-
-        ImageButton boardButton = findViewById(R.id.board_button);
-        boardButton.setOnClickListener(this);
-
-        ImageButton addTaskButton = findViewById(R.id.add_task);
-        addTaskButton.setOnClickListener(this);
-
+        BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
+        bottomNavigationView.getMenu().getItem(0).setChecked(true);
         ImageButton delTaskButton = findViewById(R.id.del_task);
         delTaskButton.setOnClickListener(this);
-
         ImageButton backTaskButton = findViewById(R.id.back_task);
         backTaskButton.setOnClickListener(this);
 
@@ -176,23 +154,39 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    private boolean onClickNavigationBar(Integer integer ){
+        Log.d("stitch","going in onclick" + integer);
+        switch (integer) {
+            case R.id.action_board:
+                // go to activity
+                Intent intent = new Intent(this, BoardActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_leaderboard:
+                Intent intent2 = new Intent(this, ScoreBordActivity.class);
+                Log.d("stitch","going in leaderboard");
+                startActivity(intent2);
+                break;
+            case R.id.action_mytasks:
+                Intent intent3 = new Intent(this, TaskActivity.class);
+                Log.d("stitch","going in mytasks");
+                startActivity(intent3);
+                break;
+            case R.id.action_profile:
+                //Intent intent4 = new Intent(this, ProfileActivity.class);
+                Log.d("stitch","going in profile");
+                //startActivity(intent4);
+                break;
+        }
+        return false;
+
+    }
     @Override
     public void onClick(View view)
     {
         switch (view.getId())
         {
-            case R.id.task_button:
-                Intent intent = new Intent(this, TaskActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.leaderboard_button:
-                //Toast.makeText(activity, "Leaderboard!", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.profile_button:
-                //Toast.makeText(activity, "Profile!", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.board_button:
-                break;
+
             case R.id.add_task:
                 //Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
                 newTaskPopup = new NewTaskPopup(activity);
