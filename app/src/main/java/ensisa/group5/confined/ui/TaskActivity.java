@@ -68,15 +68,15 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         dataBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
-            Thread t1 = new Thread(new Runnable() {  @Override public void run() {  createUserTasksDisplay(); }  });
+            Thread t1 = new Thread(() -> createUserTasksDisplay());
             t1.start();
-            Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
+            Thread t2 = new Thread(() -> createLeaderboard());
             // t2.start();
-            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+            Thread t3 = new Thread(() -> createUnassignedTaskDisplay());
             //t3.start();
-            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  dataBase.finishTask("5edb9d925f4b418aee1abdf7");  } });
+            Thread t4 = new Thread(() -> dataBase.finishTask("5edb9d925f4b418aee1abdf7"));
             t4.start();
-            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  dataBase.startTask("5edb9d925f4b418aee1abdf7");  } });
+            Thread t5 = new Thread(() -> dataBase.startTask("5edb9d925f4b418aee1abdf7"));
             t5.start();
 
         } catch (Exception e) {
@@ -86,21 +86,17 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     public void createLeaderboard( ){
         List<Document> docs = new ArrayList<Document>();
         dataBase.getLeaderBoard()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        JSONObject obj = new JSONObject(d.toJson());
-                        Log.d("stitch", obj.toString());
+                .into(docs).addOnSuccessListener(documents -> {
+                    try {
+                        for (Document d : docs) {
+                            JSONObject obj = new JSONObject(d.toJson());
+                            Log.d("stitch", obj.toString());
+                        }
                     }
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     public void createUnassignedTaskDisplay() {
@@ -113,12 +109,12 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                             // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
                             // Ensuite ajouter la tâche en tant que ListItem;
                             JSONObject obj = new JSONObject(d.toJson());
-                            String name = obj.getString("task_name").toString();
-                            String img = obj.getString("task_name").toString();
-                            String description = obj.getString("task_desc").toString();
+                            String name = obj.getString("task_name");
+                            String img = obj.getString("task_name");
+                            String description = obj.getString("task_desc");
                             int importance = (int) Integer.parseInt(obj.getString("task_status"));
                             int score = (int)Integer.parseInt( obj.getString("task_priority"));
-                            String frequency = obj.getString("task_name").toString();
+                            String frequency = obj.getString("task_name");
                             TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency);
                             taskListItem.add(t);
                         }

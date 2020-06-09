@@ -16,6 +16,7 @@ import android.widget.Toast;
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.BoardActivity;
 import ensisa.group5.confined.ui.ProfileActivity;
+import ensisa.group5.confined.ui.TaskActivity;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -41,11 +42,14 @@ public class MainActivity extends AppCompatActivity  {
         signinBtn = (Button) findViewById(R.id.signin_btn);
         registerBtn = (Button) findViewById(R.id.register_btn);
 
+        /* for clear all preferences, to use in the case of disconnect */
         preferences.edit().clear().apply();
+
+        /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL)))
             startBoardActivity(this);
 
-        signinBtn.setEnabled(true);
+        signinBtn.setEnabled(false);
 
         usernameEdit.addTextChangedListener(new TextWatcher() {
             @Override

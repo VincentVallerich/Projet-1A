@@ -20,7 +20,6 @@ import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -34,6 +33,7 @@ public class DataBase implements Executor {
 
     private Context context;
     private static SharedPreferences preferences;
+    private StitchAppClient client = null;
 
     public static final int MIN_LEN_INPUT_USERNAME = 2;
     public static final int MIN_LEN_INPUT_PASSWORD = 6;
@@ -173,7 +173,8 @@ public class DataBase implements Executor {
      */
     public boolean isUserAuthenticated(String email, String password) throws InterruptedException {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
-        Stitch.initializeDefaultAppClient("apptest-vzuxl");
+        if (client == null)
+            client = Stitch.initializeDefaultAppClient("apptest-vzuxl");
         Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
         Boolean res = false;
         if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
@@ -189,7 +190,8 @@ public class DataBase implements Executor {
 
     public boolean registerUser(String username, String password) {
         AtomicReference<Boolean> res = new AtomicReference<>(false);
-
+        if (client == null)
+            client = Stitch.initializeDefaultAppClient("apptest-vzuxl");
         UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
                 .getProviderClient(UserPasswordAuthProviderClient.factory);
 
@@ -226,14 +228,6 @@ public class DataBase implements Executor {
      * @return true if password and confirm password equals and password length >= 6 false otherwise
      */
     public boolean isPasswordConfirmEquals(String password, String confirm) { return password.equals(confirm) && isPasswordFormatCorrect(password); }
-
-    /*
-     *Retourne un un booléen
-     * Le boolean indique si l'utilisateur a bien été crée
-     */
-    public boolean createUser() {
-        return true;
-    }
 
     @Override
     public void execute(Runnable command) {
