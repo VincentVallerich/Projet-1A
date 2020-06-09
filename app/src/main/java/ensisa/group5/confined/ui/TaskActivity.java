@@ -54,6 +54,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private ListView taskDone;
     private SharedPreferences preferences;
     private Context context;
+    private DataBase db = new DataBase();
 
     private TextView titleTextView;
     private ImageButton finishTask;
@@ -74,7 +75,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         database = new DataBase();
         setContentView(R.layout.task_activity);
+
         activity = this;
+
         context = activity.getApplicationContext();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
@@ -145,8 +148,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
             t5.start();
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
          */
@@ -200,12 +202,10 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
-
-     */
     public void createUserTasksDisplay() {
 
         List<Document> docs = new ArrayList<Document>();
-        database.getTasksByUser()
+        loginValidation.getTasksByUser()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -218,12 +218,10 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         int importance = (int) Integer.parseInt(obj.getString("task_priority"));
                         int score = (int)Integer.parseInt( obj.getString("task_score"));
                         String frequency = " 0";
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,"",false);
-                     //   taskListItem.add(t);
-                       // taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
-
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,"");
+                        taskListItem.add(t);
                     }
-
+                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -231,7 +229,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
-
+*/
     private boolean onClickNavigationBar(Integer integer ){
         Log.d("stitch","going in onclick" + integer);
         switch (integer) {
