@@ -26,6 +26,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.model.CTask;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -37,8 +38,20 @@ public class DataBase implements Executor {
 
     public static final int MIN_LEN_INPUT_USERNAME = 2;
     public static final int MIN_LEN_INPUT_PASSWORD = 6;
-    String usernameKey;
-    String mailKey;
+    private String usernameKey;
+    private String mailKey;
+    public static final String serviceName = "Mongo-Confined";
+    public static final String databaseName = "Confined_Project";
+    public static final String collectionNameTasks = "Tasks";
+    public static final String collectionNameUsersData = "Users_data";
+    public static final String clientAppId = "apptest-vzuxl";
+    public static final String field_id = "user_id";
+    public static final String field_task_status = "task_status";
+    public static final String field_task_name = "task_name";
+    public static final String field_task_priority = "task_priority";
+    public static final String field_task_description = "task_description";
+    public static final String field_task_score = "task_score";
+
 
     public DataBase() {}
 
@@ -60,12 +73,12 @@ public class DataBase implements Executor {
      */
     public RemoteFindIterable<Document> getTasksByUser() {
         try {
-            RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+            RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
             Log.d("stitch", "Récupération des tâches d'un utilisateur");
             StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
             if (user != null) {
-                return collection.find(eq("user_id", user.getId()));
+                return collection.find(eq(field_id, user.getId()));
             }
         }
         catch (Exception ex) {
@@ -79,11 +92,11 @@ public class DataBase implements Executor {
      */
     public RemoteFindIterable<Document>  getNonAssignedTasks() {
         try {
-            RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+            RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
             Log.d("stitch", "Récupération des tâches non assignées");
             List<Document> docs = new ArrayList<Document>();
-            return collection.find(eq("task_status", 0 ));
+            return collection.find(eq(field_task_status, CTask.State.NON_ATTRIBUATE.toString()));
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -96,8 +109,8 @@ public class DataBase implements Executor {
      */
     public RemoteFindIterable<Document> getLeaderBoard() {
         Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
-        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
 
         return collection.find();
     }
@@ -108,7 +121,7 @@ public class DataBase implements Executor {
    /* public Task<Document> getUserInfo() {
         try {
             final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection("Users_data");
             Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
             StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
             return collection.findOne(new Document("user_id", user.getId()));
@@ -123,31 +136,44 @@ public class DataBase implements Executor {
     */
 
     public  Task<RemoteUpdateResult> startTask(String taskid){
-
-        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
         StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
-        Document updateDoc = new Document().append("$set",new Document().append("task_status", 1)).append("user_id",user.getId());
+        Document updateDoc = new Document().append("$set",new Document().append(field_task_status, CTask.State.IN_PROGRESS)).append(field_id,user.getId());
+
         return collection.updateOne(filterDoc, updateDoc);
     }
-    public Task <RemoteInsertOneResult> createTask(Task task){
-        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
-        Document newItem = new Document()
-                .append("task_name", "tâche test")
-                .append("task_status",0 )
-                .append("task_priority", 5)
-                .append("task_desc", "blablablalzla test wsh")
-                .append("task_score",5);
-        return collection.insertOne(newItem);
 
+    /**
+     *
+     * @param task
+     * @return the current task into database
+     */
+    public Task <RemoteInsertOneResult> createTask(CTask task){
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
+        Document newTask = new Document()
+                .append(field_task_name, task.getName())
+                .append(field_task_status, task.getState().toString())
+                .append(field_task_priority, task.getPriority().toString())
+                .append(field_task_description, task.getDescription())
+                .append(field_task_score, String.valueOf(task.getPoints()));
+
+        return collection.insertOne(newTask);
     }
+
+    /**
+     *
+     * @param taskid
+     * @return
+     */
     public Task<RemoteUpdateResult> finishTask(String taskid){
-        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
-        Document updateDoc = new Document().append("$set",new Document().append("task_status", 2));
+        Document updateDoc = new Document().append("$set",new Document().append(field_task_status, CTask.State.FINISHED.toString()));
+
         return collection.updateOne(filterDoc, updateDoc);
     }
 
@@ -155,15 +181,15 @@ public class DataBase implements Executor {
      * SEULEUMENT SI LA TACHE ETAIT EN COURS ! ( si le status de la tache est de 1 ) on peut pas abandonner une tâche terminée
      */
     public Task<RemoteUpdateResult> abandonTask(String taskid) {
-        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
-        Document updateDoc = new Document().append("$set",new Document().append("task_status", 0)).append("user_id","");;
+        Document updateDoc = new Document().append("$set",new Document().append(field_task_status, CTask.State.NON_ATTRIBUATE.toString())).append("user_id","");;
         return collection.updateOne(filterDoc, updateDoc);
     }
     public Task<RemoteDeleteResult> deleteTask(String taskid){
-        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Tasks");
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
         return collection.deleteOne(filterDoc);
     }
@@ -174,7 +200,7 @@ public class DataBase implements Executor {
     public boolean isUserAuthenticated(String email, String password) throws InterruptedException {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
         if (client == null)
-            client = Stitch.initializeDefaultAppClient("apptest-vzuxl");
+            client = Stitch.initializeDefaultAppClient(clientAppId);
         Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
         Boolean res = false;
         if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
@@ -191,7 +217,7 @@ public class DataBase implements Executor {
     public boolean registerUser(String username, String password) {
         AtomicReference<Boolean> res = new AtomicReference<>(false);
         if (client == null)
-            client = Stitch.initializeDefaultAppClient("apptest-vzuxl");
+            client = Stitch.initializeDefaultAppClient(clientAppId);
         UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
                 .getProviderClient(UserPasswordAuthProviderClient.factory);
 

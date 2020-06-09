@@ -5,11 +5,7 @@ package ensisa.group5.confined.model;
  */
 import java.util.UUID;
 
-<<<<<<< HEAD:app/src/main/java/ensisa/group5/confined/model/CTask.java
-public class CTask implements SensorEventListener {
-=======
 public class CTask{
->>>>>>> taches:app/src/main/java/ensisa/group5/confined/model/Task.java
     private int id;
     private String name;
     private String description;
@@ -17,7 +13,6 @@ public class CTask{
     public enum State {NON_ATTRIBUATE, IN_PROGRESS, FINISHED};
     private Priority priority;
     private State state;
-
     private int points;
 
     public CTask(){
