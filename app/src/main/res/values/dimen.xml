@@ -39,4 +39,6 @@
     <dimen name="task_activity_edit_btn_y_margin">5sp</dimen>
     <dimen name="task_activity_ok_btn_x_margin">5sp</dimen>
     <dimen name="task_activity_ok_btn_y_margin">5sp</dimen>
+    <dimen name="newtask_popup_template_deadline_calendar_btn_size">45dp</dimen>
+    <dimen name="newtask_popup_template_deadline_calendar_btn_padding">10dp</dimen>
 </resources>

@@ -33,4 +33,5 @@
     <string name="picktaskimg_popup_template_title">Choisir une image</string>
     <string name="picktaskimg_popup_template_cancel_btn">Annuler</string>
     <string name="picktaskimg_popup_template_choose_btn">Choisir</string>
+    <string name="newtask_popup_template_deadline_lbl">Echéance :</string>
 </resources>
