@@ -24,8 +24,8 @@
 
     <ImageButton
         android:id="@+id/show_calendar_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="0dp"
@@ -33,6 +33,20 @@
         android:padding="10dp"
         android:scaleType="fitCenter"
         android:src="@drawable/calendar_ico"
+        />
+
+    <ImageButton
+        android:id="@+id/finish_task"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="0dp"
+        android:padding="@dimen/task_activity_add_btn_padding"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:src="@drawable/check_ico"
         />
 
     <LinearLayout

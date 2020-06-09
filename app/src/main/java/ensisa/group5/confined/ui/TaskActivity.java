@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.ImageButton;
@@ -55,6 +56,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private Context context;
 
     private TextView titleTextView;
+    private ImageButton finishTask;
 
     private Button taskInProgressTabButton;
     private Button taskDoneTabButton;
@@ -99,11 +101,27 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         ImageButton calendarButton = findViewById(R.id.show_calendar_button);
         calendarButton.setOnClickListener(this);
 
-        taskInProgressItem = new ArrayList<>();
-        taskDoneItem = new ArrayList<>();
+        finishTask = findViewById(R.id.finish_task);
+        finishTask.setOnClickListener(this);
+
         taskList = new ArrayList<>();
 
+        taskInProgressItem = new ArrayList<>();
         taskInProgress = findViewById(R.id.task_in_progress_list_view);
+        taskInProgress.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                TaskListItem item = taskInProgressItem.get(i);
+                item.setSelected(!item.isSelected());
+                taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem, false, true));
+                if (isItemSelected())
+                    findViewById(R.id.finish_task).setVisibility(View.VISIBLE);
+                else
+                    findViewById(R.id.finish_task).setVisibility(View.GONE);
+            }
+        });
+
+        taskDoneItem = new ArrayList<>();
         taskDone = findViewById(R.id.task_done_list_view);
 
         taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaner_1", "", 2, 1, "0", "09-06-2020", false));
@@ -266,6 +284,13 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 taskDoneTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button_clicked));
                 findViewById(R.id.task_in_progress_list_view).setVisibility(View.GONE);
                 findViewById(R.id.task_done_list_view).setVisibility(View.VISIBLE);
+                //check if tasks are selected with a bool var before turnOffSelection ?
+                turnOffSelection();
+                break;
+            case R.id.finish_task:
+                findViewById(R.id.finish_task).setVisibility(View.GONE);
+                deleteSelection();
+                taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
                 break;
         }
     }
@@ -287,5 +312,31 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         return formatter.format(date);
+    }
+
+    private void deleteSelection()
+    {
+        for (int i=0; i<taskInProgressItem.size(); i++)
+            if (taskInProgressItem.get(i).isSelected())
+            {
+                taskInProgressItem.remove(i);
+                i--;
+            }
+    }
+
+    private boolean isItemSelected()
+    {
+        for (TaskListItem item : taskInProgressItem)
+            if (item.isSelected())
+                return true;
+        return false;
+    }
+
+    private void turnOffSelection()
+    {
+        findViewById(R.id.finish_task).setVisibility(View.GONE);
+        for (TaskListItem item : taskInProgressItem)
+            item.setSelected(false);
+        taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
     }
 }
