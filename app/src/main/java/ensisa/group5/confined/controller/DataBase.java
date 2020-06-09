@@ -155,7 +155,7 @@ public class DataBase implements Executor {
      * @param task
      * @return the current task into database
      */
-    public Task <RemoteInsertOneResult> createTask(CTask task){
+    public Task <RemoteInsertOneResult> createTask(CTask task) {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         Document newTask = new Document()
@@ -164,8 +164,16 @@ public class DataBase implements Executor {
                 .append(field_task_priority, task.getPriority().toString())
                 .append(field_task_description, task.getDescription())
                 .append(field_task_score, String.valueOf(task.getPoints()));
-
         return collection.insertOne(newTask);
+    }
+
+    public void setPseudo(String id_user, String pseudo) {
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
+        StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+        final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
+        Document updateDoc = new Document().append("$set",new Document().append("pseudo", pseudo));
+        collection.updateOne(filterDoc, updateDoc);
     }
 
     /**
