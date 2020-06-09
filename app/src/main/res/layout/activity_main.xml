@@ -68,4 +68,13 @@
         android:paddingRight="@dimen/login_padding_sides"
         android:layout_gravity="center"
         android:text="@string/action_register" />
+
+    <EditText
+        android:id="@+id/step"
+        android:layout_width="@dimen/login_edit_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/login_edit_marginTop"
+        android:hint=""/>
+
 </LinearLayout>

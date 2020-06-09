@@ -15,7 +15,7 @@ import android.widget.EditText;
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.ProfileActivity;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     private EditText usernameEdit;
     private EditText passwordEdit;
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private SharedPreferences preferences;
     private DataBase dataBase;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
