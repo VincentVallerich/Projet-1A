@@ -33,4 +33,9 @@
     <string name="picktaskimg_popup_template_title">Choisir une image</string>
     <string name="picktaskimg_popup_template_cancel_btn">Annuler</string>
     <string name="picktaskimg_popup_template_choose_btn">Choisir</string>
+
+    <string name="bottom_navigation_menu_board">Board</string>
+    <string name="bottom_navigation_menu_leaderboard">Classement</string>
+    <string name="bottom_navigation_menu_mytasks">Mes taches</string>
+    <string name="bottom_navigation_menu_profile">Profil</string>
 </resources>

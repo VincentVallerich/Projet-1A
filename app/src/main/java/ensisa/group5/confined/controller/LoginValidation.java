@@ -110,23 +110,23 @@ public class LoginValidation implements Executor {
     *Retourne un task qui contient un document
     * Le Document contient je JSON des informations de l'utilisateur connecté à l'application
      */
-   /* public Task<Document> getUserInfo() {
-        try {
-            final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
-            Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
-            StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
-            List<Document> docs = new ArrayList<>();
-            return collection.findOne(new Document("user_id", user.getId()));
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public Task<Document> getUserInfo() {
+        Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
+        StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+         return collection.findOne(new Document("_id",new ObjectId("5eda3134355c4069c9c2ab49")));
 
-        return null;
+    }
+    public Task<Document> UpdateUserInfo() {
+        Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase("Confined_Project").getCollection("Users_data");
+        StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+        return collection.findOne(new Document("user_id", user.getId()));
+
     }
 
-    */
 
     public  Task<RemoteUpdateResult> startTask(String taskid){
 

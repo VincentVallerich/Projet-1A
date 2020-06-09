@@ -55,7 +55,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         profileButton.setOnClickListener(this);
 
         ImageButton addTaskButton = findViewById(R.id.add_task);
-        addTaskButton.setOnClickListener(this);
+//        addTaskButton.setOnClickListener(this);
 
         // item list
         // → interrogation base de données
@@ -70,18 +70,37 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         try {
             Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
             t1.start();
-            Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
+          //  Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
             // t2.start();
-            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+           // Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
             //t3.start();
-            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
-            t4.start();
-            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
-            t5.start();
+          //  Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
+            //t4.start();
+            //Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
+            //t5.start();
+            //Thread t6 = new Thread(new Runnable() {  @Override public void run() {  createUserProfile();  } });
+            //t6.start();
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void createUserProfile( ){
+        loginValidation.getUserInfo().addOnSuccessListener(new OnSuccessListener<Document>() {
+            @Override
+            public void onSuccess(Document document) {
+                try {
+                        JSONObject obj = new JSONObject(document.toJson());
+                        Log.d("stitch", obj.toString());
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
     }
     public void createLeaderboard( ){
         List<Document> docs = new ArrayList<Document>();
@@ -195,9 +214,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 int score = newTaskPopup.getScore();
                 String frequency = newTaskPopup.getFrequency();
                 //int frequency = newTaskPopup.getFrequency();
-
                 //store the new task in the bdd
-
                 //add new tasks in the list
                 taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency));
                 taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
