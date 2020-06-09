@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="#bdc3c7"
-    android:layout_above="@id/activity_main_bottom_navigation"
     tools:context=".controller.MainActivity">
 
     <TextView
@@ -71,24 +70,6 @@
         android:paddingRight="@dimen/login_padding_sides"
         android:layout_gravity="center"
         android:text="@string/action_register" />
-
-    <FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/activity_main_frame_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_above="@id/activity_main_bottom_navigation"/>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/activity_main_bottom_navigation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        app:itemIconTint="@color/navigation_container_text_color"
-        app:itemTextColor="@color/navigation_container_text_color"
-        app:menu="@menu/bottom_navigation_menu" />
-
 
 
 </LinearLayout>

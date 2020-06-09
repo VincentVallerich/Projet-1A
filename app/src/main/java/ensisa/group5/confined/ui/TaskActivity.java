@@ -83,7 +83,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             Thread t5 = new Thread(new Runnable() {  @Override public void run() {  db.startTask("5edb9d925f4b418aee1abdf7");  } });
             t5.start();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
