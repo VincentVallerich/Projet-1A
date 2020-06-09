@@ -33,13 +33,10 @@
     <string name="picktaskimg_popup_template_title">Choisir une image</string>
     <string name="picktaskimg_popup_template_cancel_btn">Annuler</string>
     <string name="picktaskimg_popup_template_choose_btn">Choisir</string>
-<<<<<<< HEAD
 
     <string name="bottom_navigation_menu_board">Board</string>
     <string name="bottom_navigation_menu_leaderboard">Classement</string>
     <string name="bottom_navigation_menu_mytasks">Mes taches</string>
     <string name="bottom_navigation_menu_profile">Profil</string>
-=======
     <string name="newtask_popup_template_deadline_lbl">Echéance :</string>
->>>>>>> ui
 </resources>
