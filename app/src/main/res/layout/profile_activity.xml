@@ -1,83 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context="ensisa.group5.confined.ui.ProfileActivity">
-
-<LinearLayout
-    android:layout_width="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_alignParentRight="true"
-    android:gravity="top"
-    >
+    android:layout_above="@id/activity_main_bottom_navigation"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="ensisa.group5.confined.ui.ProfileActivity">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        >
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:gravity="top"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/text_pseudo"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:clickable="false"
-            android:textSize="60sp"
-            android:text="Pseudo:"
-            android:textColor="#FFFFFF">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/text_score"
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:clickable="false"
-            android:textSize="60sp"
-            android:text="Score:"
-            android:textColor="#FFFFFF">
-        </TextView>
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        >
-
-        <ImageButton
-            android:id="@+id/modify_button"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@null"
-            android:scaleType="fitXY"
             android:layout_gravity="center"
-            android:src="@drawable/profile_ico_leave"
-            >
-        </ImageButton>
+            android:layout_weight="1">
 
-        <TextView
+            <TextView
+                android:id="@+id/text_pseudo"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:clickable="false"
+                android:gravity="center"
+                android:text="Pseudo:"
+                android:textColor="#FFFFFF"
+                android:textSize="60sp">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/text_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:clickable="false"
+                android:text="Score:"
+                android:textColor="#FFFFFF"
+                android:textSize="60sp"></TextView>
+
+        </FrameLayout>
+
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|end"
-            android:clickable="false"
-            android:textColor="#ffffff"
-            android:text="modify profile"
-            >
-        </TextView>
+            android:layout_gravity="center">
 
-    </FrameLayout>
+            <ImageButton
+                android:id="@+id/modify_button"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/profile_ico_leave"></ImageButton>
 
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|end"
+                android:clickable="false"
+                android:text="modify profile"
+                android:textColor="#ffffff"></TextView>
+
+        </FrameLayout>
+
+    </LinearLayout>
 
 <FrameLayout
     android:layout_width="match_parent"
@@ -93,5 +86,28 @@ tools:context="ensisa.group5.confined.ui.ProfileActivity">
     </ImageView>
 
 </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/navigation_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/navigation_container_bg"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/activity_main_bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent"
+            app:itemIconTint="@color/navigation_container_text_color"
+            app:itemTextColor="@color/navigation_container_text_color"
+            app:menu="@menu/bottom_navigation_menu" />
+
+    </LinearLayout>
+
 
 </RelativeLayout>

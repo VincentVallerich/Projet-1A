@@ -13,9 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.ui.BoardActivity;
 import ensisa.group5.confined.ui.ProfileActivity;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     private EditText usernameEdit;
     private EditText passwordEdit;
@@ -26,11 +27,11 @@ public class MainActivity extends AppCompatActivity  {
     private SharedPreferences preferences;
     private DataBase dataBase;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         preferences = getPreferences(MODE_PRIVATE);
         /* just for tests */
         //preferences.edit().clear().apply();
@@ -138,5 +139,5 @@ public class MainActivity extends AppCompatActivity  {
         });
     }
 
-    public void startBoardActivity(Context context) { startActivity(new Intent(context, ProfileActivity.class)); }
+    public void startBoardActivity(Context context) { startActivity(new Intent(context, BoardActivity.class)); }
 }

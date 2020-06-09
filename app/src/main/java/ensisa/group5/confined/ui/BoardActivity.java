@@ -1,20 +1,27 @@
 package ensisa.group5.confined.ui;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.game.ScoreBordActivity;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
 
@@ -30,34 +37,22 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private boolean managerMode;
     private boolean editMode;
 
+    private ImageButton taskButton;
 
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.board_activity);
-
         activity = this;
         context = this.getApplicationContext();
-
-        ImageButton taskButton = findViewById(R.id.task_button);
-        taskButton.setOnClickListener(this);
-
-        ImageButton leaderboardButton = findViewById(R.id.leaderboard_button);
-        leaderboardButton.setOnClickListener(this);
-
-        ImageButton profileButton = findViewById(R.id.profile_button);
-        profileButton.setOnClickListener(this);
-
-        ImageButton boardButton = findViewById(R.id.board_button);
-        boardButton.setOnClickListener(this);
-
-        ImageButton addTaskButton = findViewById(R.id.add_task);
-        addTaskButton.setOnClickListener(this);
-
+        BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
+        bottomNavigationView.getMenu().getItem(0).setChecked(true);
         ImageButton delTaskButton = findViewById(R.id.del_task);
         delTaskButton.setOnClickListener(this);
-
         ImageButton backTaskButton = findViewById(R.id.back_task);
         backTaskButton.setOnClickListener(this);
 
@@ -86,14 +81,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                 if (!editMode)
                 {
-                    /*ClipData.Item item = new ClipData.Item((CharSequence)view.getTag());
-                    String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
-
-                    ClipData dragData = new ClipData(view.getTag().toString(),mimeTypes, item);
-                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(taskListView);*/
-
-                    //view.startDrag(dragData,myShadow,null,0);
-
                     View.DragShadowBuilder dragShadow = new View.DragShadowBuilder(view);
                     ClipData data = ClipData.newPlainText("", "");
                     view.startDrag(data, dragShadow, view, 0);
@@ -124,6 +111,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                     modifyTaskPopup.setImportance(item.getImportance());
                     modifyTaskPopup.setScore(item.getScore());
                     modifyTaskPopup.setFrequency(item.getFrequency());
+                    modifyTaskPopup.setDeadline(item.getDeadline());
                     modifyTaskPopup.setAddButtonName(getString(R.string.modifytask_popup_add_button_name));
                     modifyTaskPopup.getCancelButton().setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -140,6 +128,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                             int importance = modifyTaskPopup.getImportance();
                             int score = modifyTaskPopup.getScore();
                             String frequency = modifyTaskPopup.getFrequency();
+                            String deadline = modifyTaskPopup.getDeadline();
 
                             //check fields
 
@@ -147,7 +136,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                             //add new tasks in the list
                             taskListItem.remove(item);
-                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency));
+                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, false));
                             taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                             modifyTaskPopup.dismiss();
                         }
@@ -165,23 +154,39 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    private boolean onClickNavigationBar(Integer integer ){
+        Log.d("stitch","going in onclick" + integer);
+        switch (integer) {
+            case R.id.action_board:
+                // go to activity
+                Intent intent = new Intent(this, BoardActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_leaderboard:
+                Intent intent2 = new Intent(this, ScoreBordActivity.class);
+                Log.d("stitch","going in leaderboard");
+                startActivity(intent2);
+                break;
+            case R.id.action_mytasks:
+                Intent intent3 = new Intent(this, TaskActivity.class);
+                Log.d("stitch","going in mytasks");
+                startActivity(intent3);
+                break;
+            case R.id.action_profile:
+                Intent intent4 = new Intent(this, ProfileActivity.class);
+                Log.d("stitch","going in profile");
+                startActivity(intent4);
+                break;
+        }
+        return false;
+
+    }
     @Override
     public void onClick(View view)
     {
         switch (view.getId())
         {
-            case R.id.task_button:
-                Intent intent = new Intent(this, TaskActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.leaderboard_button:
-                //Toast.makeText(activity, "Leaderboard!", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.profile_button:
-                //Toast.makeText(activity, "Profile!", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.board_button:
-                break;
+
             case R.id.add_task:
                 //Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
                 newTaskPopup = new NewTaskPopup(activity);
@@ -200,13 +205,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         int importance = newTaskPopup.getImportance();
                         int score = newTaskPopup.getScore();
                         String frequency = newTaskPopup.getFrequency();
+                        String deadline = newTaskPopup.getDeadline();
 
                         //check fields
 
                         //store the new task in the bdd
 
                         //add new tasks in the list
-                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency));
+                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, false));
                         taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                         newTaskPopup.dismiss();
                     }
