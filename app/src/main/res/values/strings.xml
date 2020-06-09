@@ -3,8 +3,8 @@
     <string name="prompt_email">Email or username</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_confirm">Confirm password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_register">Register</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
@@ -33,9 +33,18 @@
     <string name="picktaskimg_popup_template_title">Choisir une image</string>
     <string name="picktaskimg_popup_template_cancel_btn">Annuler</string>
     <string name="picktaskimg_popup_template_choose_btn">Choisir</string>
+
     <string name="modify_popup_template_title">Modifiez votre Profil</string>
     <string name="modify_popup_template_new_pseudo_lbl">Nouveau Pseudo :</string>
     <string name="modify_popup_template_new_icon_lbl">Nouvelle Icone :</string>
     <string name="modify_popup_template_validation_btn">Valider</string>
     <string name="pickicon_popup_template_title">Choisir une icone</string>
+
+
+    <string name="bottom_navigation_menu_board">Board</string>
+    <string name="bottom_navigation_menu_leaderboard">Classement</string>
+    <string name="bottom_navigation_menu_mytasks">Mes taches</string>
+    <string name="bottom_navigation_menu_profile">Profil</string>
+    <string name="newtask_popup_template_deadline_lbl">Echéance :</string>
+
 </resources>

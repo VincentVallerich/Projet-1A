@@ -178,6 +178,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/newtask_popup_template_linearlayout_marginBottom"
+        android:weightSum="1"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/newtask_popup_template_deadline_lbl"
+            android:layout_gravity="center"
+            android:textColor="@color/popup_text_color"
+            android:textSize="@dimen/popup_text_size"
+            />
+
+        <TextView
+            android:id="@+id/newtask_popup_template_deadline_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/popup_text_color"
+            android:textSize="@dimen/popup_text_size"
+            android:text="" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/newtask_popup_template_deadline_calendar_btn"
+            android:layout_width="@dimen/newtask_popup_template_deadline_calendar_btn_size"
+            android:layout_height="@dimen/newtask_popup_template_deadline_calendar_btn_size"
+            android:layout_gravity="center"
+            android:padding="@dimen/newtask_popup_template_deadline_calendar_btn_padding"
+            android:scaleType="fitCenter"
+            android:src="@drawable/calendar_ico"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginTop="@dimen/newtask_popup_template_btn_container_marginTop"
         android:gravity="right"
         >

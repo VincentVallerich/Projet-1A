@@ -6,11 +6,15 @@ import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import ensisa.group5.confined.R;
 
@@ -28,8 +32,11 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
     private RatingBar importance;
     private RatingBar score;
     private EditText frequency;
+    private ImageButton calendar;
+    private TextView deadline;
 
     private PickTaskImgPopup pickTaskImgPopup;
+    private CalendarPopup calendarPopup;
     private TextView title;
 
     // constructeur
@@ -50,6 +57,8 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
         importance = findViewById(R.id.newtask_popup_template_importance_ratingBar);
         score = findViewById(R.id.newtask_popup_template_score_ratingBar);
         frequency = findViewById(R.id.newtask_popup_template_frequency_txtbox);
+        calendar = findViewById(R.id.newtask_popup_template_deadline_calendar_btn);
+        deadline = findViewById(R.id.newtask_popup_template_deadline_lbl);
 
         //
         cancelButton = findViewById(R.id.newtask_popup_template_cancel_btn);
@@ -118,6 +127,16 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
         this.frequency.setText(txt);
     }
 
+    public String getDeadline()
+    {
+        return deadline.getText().toString();
+    }
+
+    public void setDeadline(String deadline)
+    {
+        this.deadline.setText(deadline);
+    }
+
     public Button getCancelButton()
     {
         return cancelButton;
@@ -163,6 +182,27 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
                     }
                 });
                 pickTaskImgPopup.build();
+            }
+        });
+
+        calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendarPopup = new CalendarPopup(activity);
+                calendarPopup.getCalendar().setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                    @Override
+                    public void onSelectedDayChange(CalendarView calendarView, int i, int i1, int i2) {
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                        //deadline = formatter.format(new Date(i-1900, i1, i2));
+                        Calendar c = Calendar.getInstance();
+                        c.set(Calendar.YEAR, i);
+                        c.set(Calendar.MONTH, i1);
+                        c.set(Calendar.DAY_OF_MONTH, i2);
+                        deadline.setText(formatter.format(c.getTime()));
+                        calendarPopup.dismiss();
+                    }
+                });
+                calendarPopup.build();
             }
         });
 

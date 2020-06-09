@@ -14,7 +14,7 @@
             android:id="@+id/task_activity_day"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:text="Jour"
+            android:text="Tâches du mm-dd-yyyy"
             android:textColor="@color/popup_title_color"
             android:textSize="@dimen/popup_title_text_size"
             android:textStyle="bold"
@@ -24,23 +24,75 @@
 
     <ImageButton
         android:id="@+id/show_calendar_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
         android:padding="10dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/taskicon_lawn_mower"
+        android:src="@drawable/calendar_ico"
+        />
+
+    <ImageButton
+        android:id="@+id/finish_task"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="0dp"
+        android:padding="@dimen/task_activity_add_btn_padding"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:src="@drawable/check_ico"
+        />
+
+    <LinearLayout
+        android:id="@+id/tab_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/task_activity_day_container"
+        >
+        <Button style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/task_in_progress_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_button_clicked"
+            android:textAllCaps="false"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Tâches en cours"
+            />
+        <Button style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/task_done_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_button"
+            android:textAllCaps="false"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Tâches terminées"
+            />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/task_in_progress_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="432dp"
+        android:layout_above="@+id/navigation_container"
+        android:layout_below="@+id/tab_container"
+        android:visibility="visible"
         />
 
     <ListView
-        android:id="@+id/task_list_view"
+        android:id="@+id/task_done_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/task_activity_day_container"
+        android:layout_height="432dp"
         android:layout_above="@+id/navigation_container"
+        android:layout_below="@+id/tab_container"
+        android:visibility="gone"
         />
 
     <LinearLayout
