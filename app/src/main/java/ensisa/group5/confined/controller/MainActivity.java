@@ -2,6 +2,8 @@ package ensisa.group5.confined.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.ui.BoardActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -141,5 +144,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //public void startBoardActivity(Context context) { startActivity(new Intent(context, ProfilActivity.class)); }
+    public void startBoardActivity(Context context) { startActivity(new Intent(context, BoardActivity.class)); }
 }
