@@ -1,8 +1,5 @@
 package ensisa.group5.confined.model;
 
-/**
- * Author VALLERICH Vincent on 05-06-2020
- */
 import java.util.UUID;
 
 public class CTask{
