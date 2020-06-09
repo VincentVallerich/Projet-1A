@@ -2,6 +2,8 @@ package ensisa.group5.confined.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.ui.BoardActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL)))
-            //startBoardActivity(this);
+            startBoardActivity(this);
 
         signinBtn.setEnabled(false);
 
@@ -108,12 +111,12 @@ public class MainActivity extends AppCompatActivity {
             String pswd = passwordEdit.getText().toString();
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
-                    //startBoardActivity(this);
+                    startBoardActivity(this);
                 } else {
                     if (dataBase.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                        //startBoardActivity(this);
+                        startBoardActivity(this);
                     }
                 }
             } catch (InterruptedException e) {
@@ -135,11 +138,11 @@ public class MainActivity extends AppCompatActivity {
             if (dataBase.isUsernameFormatCorrect(username)) {
                 if (dataBase.registerUser(username, pseudo, pswd)) {
                     preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username);
-                    //startBoardActivity(this);
+                    startBoardActivity(this);
                 }
             }
         });
     }
 
-    //public void startBoardActivity(Context context) { startActivity(new Intent(context, ProfilActivity.class)); }
+    public void startBoardActivity(Context context) { startActivity(new Intent(context, BoardActivity.class)); }
 }
