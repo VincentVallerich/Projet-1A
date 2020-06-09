@@ -7,9 +7,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List;
+
+import ensisa.group5.confined.R;
+import android.widget.Toast;
+
 
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -18,11 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import ensisa.group5.confined.R;
-import ensisa.group5.confined.controller.LoginValidation;
-import ensisa.group5.confined.controller.MainActivity;
+import ensisa.group5.confined.controller.DataBase;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
 
@@ -30,11 +32,12 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 {
     private TaskActivity activity;
     private NewTaskPopup newTaskPopup;
+    private NewTaskPopup modifyTaskPopup;
     private List<TaskListItem> taskListItem;
     private ListView taskListView;
     private SharedPreferences preferences;
-    private LoginValidation loginValidation;
     private TaskActivity context;
+    DataBase db = new DataBase();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,7 +46,6 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.task_activity);
 
         activity = this;
-
 
         ImageButton taskButton = findViewById(R.id.task_button);
         taskButton.setOnClickListener(this);
@@ -54,8 +56,11 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         ImageButton profileButton = findViewById(R.id.profile_button);
         profileButton.setOnClickListener(this);
 
-        ImageButton addTaskButton = findViewById(R.id.add_task);
-//        addTaskButton.setOnClickListener(this);
+        ImageButton boardButton = findViewById(R.id.board_button);
+        boardButton.setOnClickListener(this);
+
+        ImageButton calendarButton = findViewById(R.id.show_calendar_button);
+        calendarButton.setOnClickListener(this);
 
         // item list
         // → interrogation base de données
@@ -65,46 +70,26 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         taskListView = findViewById(R.id.task_list_view);
         //taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
         preferences = getPreferences(MODE_PRIVATE);
-        loginValidation = new LoginValidation(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
-            Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
+            Thread t1 = new Thread(() -> createUserTasksDisplay());
             t1.start();
-          //  Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
+            Thread t2 = new Thread(() -> createLeaderboard());
             // t2.start();
-           // Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+            Thread t3 = new Thread(() -> createUnassignedTaskDisplay());
             //t3.start();
-          //  Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
-            //t4.start();
-            //Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
-            //t5.start();
-            //Thread t6 = new Thread(new Runnable() {  @Override public void run() {  createUserProfile();  } });
-            //t6.start();
-
+            Thread t4 = new Thread(() -> db.finishTask("5edb9d925f4b418aee1abdf7"));
+            t4.start();
+            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  db.startTask("5edb9d925f4b418aee1abdf7");  } });
+            t5.start();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void createUserProfile( ){
-        loginValidation.getUserInfo().addOnSuccessListener(new OnSuccessListener<Document>() {
-            @Override
-            public void onSuccess(Document document) {
-                try {
-                        JSONObject obj = new JSONObject(document.toJson());
-                        Log.d("stitch", obj.toString());
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
-    }
     public void createLeaderboard( ){
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getLeaderBoard()
+        db.getLeaderBoard()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -124,7 +109,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getNonAssignedTasks()
+        db.getNonAssignedTasks()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -154,7 +139,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     public void createUserTasksDisplay() {
 
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getTasksByUser()
+        db.getTasksByUser()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -185,16 +170,19 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId())
         {
             case R.id.task_button:
-                Toast.makeText(activity, "Task!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                //Toast.makeText(activity, "Task!", Toast.LENGTH_SHORT).show();
+                /*Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);*/
                 break;
             case R.id.leaderboard_button:
-                Toast.makeText(activity, "Leaderboard!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(activity, "Leaderboard!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.profile_button:
-                Toast.makeText(activity, "Profile!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(activity, "Profile!", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.board_button:
+                Intent intent = new Intent(this, BoardActivity.class);
+                startActivity(intent);
             case R.id.add_task:
                 Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
                 newTaskPopup = new NewTaskPopup(activity);
@@ -202,8 +190,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 newTaskPopup.getAddButton().setOnClickListener(this);
                 newTaskPopup.build();
                 break;
-            case R.id.newtask_popup_template_cancel_btn:
-                newTaskPopup.dismiss();
+            case R.id.show_calendar_button:
+                CalendarPopup calendarPopup = new CalendarPopup(activity);
+                calendarPopup.build();
                 break;
             case R.id.newtask_popup_template_addtask_btn:
                 //check empty fields
@@ -214,7 +203,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 int score = newTaskPopup.getScore();
                 String frequency = newTaskPopup.getFrequency();
                 //int frequency = newTaskPopup.getFrequency();
+
                 //store the new task in the bdd
+
                 //add new tasks in the list
                 taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency));
                 taskListView.setAdapter(new TaskListAdapter(this, taskListItem));
