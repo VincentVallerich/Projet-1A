@@ -9,7 +9,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.BoardActivity;
-import ensisa.group5.confined.ui.ProfileActivity;
+
 import ensisa.group5.confined.ui.TaskActivity;
 
 public class ScoreBordActivity extends AppCompatActivity {
@@ -39,8 +39,8 @@ public class ScoreBordActivity extends AppCompatActivity {
                 startActivity(intent3);
                 break;
             case R.id.action_profile:
-                Intent intent4 = new Intent(this, ProfileActivity.class);
-                startActivity(intent4);
+             //   Intent intent4 = new Intent(this, ProfileActivity.class);
+         //       startActivity(intent4);
                 break;
         }
         return false;
