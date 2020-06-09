@@ -51,6 +51,11 @@ public class DataBase implements Executor {
     public static final String field_task_priority = "task_priority";
     public static final String field_task_description = "task_description";
     public static final String field_task_score = "task_score";
+    public static final String field_user_score = "score";
+    public static final String field_user_pseudo = "pseudo";
+    public static final String field_user_master = "master";
+
+    public static final int DEFAULT_SCORE = 0;
 
 
     public DataBase() {}
@@ -214,7 +219,7 @@ public class DataBase implements Executor {
         return res;
     }
 
-    public boolean registerUser(String username, String password) {
+    public boolean registerUser(String username, String pseudo, String password) {
         AtomicReference<Boolean> res = new AtomicReference<>(false);
         if (client == null)
             client = Stitch.initializeDefaultAppClient(clientAppId);
@@ -225,6 +230,21 @@ public class DataBase implements Executor {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         res.set(true);
+                        try {
+                            if (isUserAuthenticated(username, password)) {
+                                RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+                                RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
+                                StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+                                Document registerUser = new Document("_id", new ObjectId(user.getId()))
+                                        .append(field_user_pseudo, pseudo)
+                                        .append(field_user_score, DEFAULT_SCORE)
+                                        .append(field_user_master, false);
+
+                                collection.insertOne(registerUser);
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         Log.d("stitch", "Successfully sent account confirmation email");
                     } else {
                         Log.e("stitch", "Error registering new user:");

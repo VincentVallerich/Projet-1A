@@ -6,7 +6,7 @@ public class CTask{
     private int id;
     private String name;
     private String description;
-    public enum Priority {MINOR, IMPORTANT, URGENT};
+    public enum Priority {MINOR, MEDIUM, IMPORTANT, VERY_IMPORTANT, URGENT};
     public enum State {NON_ATTRIBUATE, IN_PROGRESS, FINISHED};
     private Priority priority;
     private State state;
