@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto">
+<item
+    android:id="@+id/action_board"
+    android:enabled="true"
+    android:icon="@drawable/task_ico_clicked"
+    android:title="@string/bottom_navigation_menu_board"
+    app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_leaderboard"
+        android:enabled="true"
+        android:icon="@drawable/task_ico_clicked"
+        android:title="@string/bottom_navigation_menu_leaderboard"
+        app:showAsAction="ifRoom" />
+<item
+    android:id="@+id/action_mytasks"
+    android:enabled="true"
+    android:icon="@drawable/board_ico_clicked"
+    android:title="@string/bottom_navigation_menu_mytasks"
+    app:showAsAction="ifRoom" />
+<item
+    android:id="@+id/action_profile"
+    android:enabled="true"
+    android:icon="@drawable/profile_ico_clicked"
+    android:title="@string/bottom_navigation_menu_profile"
+    app:showAsAction="ifRoom" />
+</menu>

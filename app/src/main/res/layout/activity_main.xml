@@ -58,6 +58,7 @@
         android:layout_marginTop="@dimen/login_btn_marginTop"
         android:text="@string/action_sign_in" />
 
+
     <Button
         android:id="@+id/register_btn"
         android:layout_width="150dp"
