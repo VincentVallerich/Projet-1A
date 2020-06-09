@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import ensisa.group5.confined.R;
 
-public class StepCounter extends AppCompatActivity implements SensorEventListener {
+public class StepCounterZeineb extends AppCompatActivity implements SensorEventListener {
 
     TextView tv_steps;
     SensorManager sensorManager;
