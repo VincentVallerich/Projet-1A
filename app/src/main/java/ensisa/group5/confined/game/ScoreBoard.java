@@ -30,7 +30,7 @@ public class ScoreBoard {
 			
 			while (line !=null) {
 				String[] attributes = line.split(","); 
-				Utilisateur u = createPlayer(attributes); 
+				Utilisateur u = createPlayer(attributes);
 				listPlayer.add(u);
 				
 				line = br.readLine();
