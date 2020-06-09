@@ -36,6 +36,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import ensisa.group5.confined.controller.DataBase;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
 
@@ -51,6 +53,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private ListView taskDone;
     private SharedPreferences preferences;
     private Context context;
+    private DataBase db = new DataBase();
 
     private TextView titleTextView;
     private ImageButton finishTask;
