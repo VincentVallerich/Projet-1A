@@ -1,13 +1,16 @@
 package ensisa.group5.confined.ui;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,7 +33,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private boolean managerMode;
     private boolean editMode;
 
+    private ImageButton taskButton;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -40,8 +45,20 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         activity = this;
         context = this.getApplicationContext();
 
-        ImageButton taskButton = findViewById(R.id.task_button);
+        taskButton = findViewById(R.id.task_button);
         taskButton.setOnClickListener(this);
+        /*taskButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Toast.makeText(context, "coucou",Toast.LENGTH_SHORT).show();
+                if (!editMode && selectionMode)
+                {
+                    if(motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER);
+                        Toast.makeText(context, "coucou",Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });*/
 
         ImageButton leaderboardButton = findViewById(R.id.leaderboard_button);
         leaderboardButton.setOnClickListener(this);
@@ -86,14 +103,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                 if (!editMode)
                 {
-                    /*ClipData.Item item = new ClipData.Item((CharSequence)view.getTag());
-                    String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
-
-                    ClipData dragData = new ClipData(view.getTag().toString(),mimeTypes, item);
-                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(taskListView);*/
-
-                    //view.startDrag(dragData,myShadow,null,0);
-
                     View.DragShadowBuilder dragShadow = new View.DragShadowBuilder(view);
                     ClipData data = ClipData.newPlainText("", "");
                     view.startDrag(data, dragShadow, view, 0);
@@ -124,6 +133,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                     modifyTaskPopup.setImportance(item.getImportance());
                     modifyTaskPopup.setScore(item.getScore());
                     modifyTaskPopup.setFrequency(item.getFrequency());
+                    modifyTaskPopup.setDeadline(item.getDeadline());
                     modifyTaskPopup.setAddButtonName(getString(R.string.modifytask_popup_add_button_name));
                     modifyTaskPopup.getCancelButton().setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -140,6 +150,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                             int importance = modifyTaskPopup.getImportance();
                             int score = modifyTaskPopup.getScore();
                             String frequency = modifyTaskPopup.getFrequency();
+                            String deadline = modifyTaskPopup.getDeadline();
 
                             //check fields
 
@@ -147,7 +158,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                             //add new tasks in the list
                             taskListItem.remove(item);
-                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency));
+                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, false));
                             taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                             modifyTaskPopup.dismiss();
                         }
@@ -200,13 +211,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         int importance = newTaskPopup.getImportance();
                         int score = newTaskPopup.getScore();
                         String frequency = newTaskPopup.getFrequency();
+                        String deadline = newTaskPopup.getDeadline();
 
                         //check fields
 
                         //store the new task in the bdd
 
                         //add new tasks in the list
-                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency));
+                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, false));
                         taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                         newTaskPopup.dismiss();
                     }

@@ -96,6 +96,11 @@ public class TaskListAdapter extends BaseAdapter
         TextView frequency = convertView.findViewById(R.id.adapter_tasklist_frequency);
         frequency.setText(taskFrequency);
 
+        // deadline
+        String taskDeadline = currentItem.getDeadline();
+        TextView deadline = convertView.findViewById(R.id.adapter_tasklist_deadline);
+        deadline.setText(taskDeadline);
+
         // selected
         boolean taskSelected = currentItem.isSelected();
         CheckBox selected = convertView.findViewById(R.id.adapter_tasklist_selected);
