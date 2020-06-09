@@ -11,14 +11,11 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.ui.BoardActivity;
 import ensisa.group5.confined.ui.ProfileActivity;
-import ensisa.group5.confined.ui.TaskActivity;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     private EditText usernameEdit;
     private EditText passwordEdit;
@@ -28,6 +25,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private SharedPreferences preferences;
     private DataBase dataBase;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
