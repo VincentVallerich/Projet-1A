@@ -44,32 +44,28 @@ public class MainActivity extends AppCompatActivity {
         registerBtn = (Button) findViewById(R.id.register_btn);
 
         /* for clear all preferences, to use in the case of disconnect */
-        //preferences.edit().clear().apply();
+      //  preferences.edit().clear().apply();
 
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL)))
-            //startBoardActivity(this);
+            startBoardActivity(this);
 
         signinBtn.setEnabled(false);
-
         usernameEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 signinBtn.setEnabled(dataBase.isUsernameFormatCorrect(s.toString()) &&
                         dataBase.isPasswordFormatCorrect(passwordEdit.getText().toString()));
             }
-
             @Override
             public void afterTextChanged(Editable s) {
 
             }
         });
-
         passwordEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -111,12 +107,12 @@ public class MainActivity extends AppCompatActivity {
             String pswd = passwordEdit.getText().toString();
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
-                    //startBoardActivity(this);
+                    startBoardActivity(this);
                 } else {
                     if (dataBase.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                        //startBoardActivity(this);
+                        startBoardActivity(this);
                     }
                 }
             } catch (InterruptedException e) {
@@ -138,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             if (dataBase.isUsernameFormatCorrect(username)) {
                 if (dataBase.registerUser(username, pseudo, pswd)) {
                     preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username);
-                    //startBoardActivity(this);
+                    startBoardActivity(this);
                 }
             }
         });
