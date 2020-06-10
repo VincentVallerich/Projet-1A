@@ -167,8 +167,8 @@ public class DataBase implements Executor {
                 .append(field_task_priority, priority)
                 .append(field_task_description, desc)
                 .append(field_task_score, score)
-                .append(field_task_img, img)
-                .append(field_task_limit_date, date.getTime());
+                .append(field_task_img, img);
+                //.append(field_task_limit_date, date.getTime());
         return collection.insertOne(newTask);
     }
 

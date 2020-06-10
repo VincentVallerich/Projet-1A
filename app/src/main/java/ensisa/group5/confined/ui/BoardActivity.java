@@ -281,9 +281,18 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         String frequency = newTaskPopup.getFrequency();
                         String deadline = newTaskPopup.getDeadline();
 
-                        dateBase.createTask(name, img, description, importance, score, formatDate(deadline));
+                        System.out.println("On click");
 
-                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE", ""));
+                        try {
+                            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  dateBase.createTask(name, img, description, importance, score, formatDate(deadline));  } });
+                            t5.start();
+                            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+                            t3.start();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                         newTaskPopup.dismiss();
                     }
