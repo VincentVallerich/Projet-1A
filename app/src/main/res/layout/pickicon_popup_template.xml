@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/picktaskimg_popup_template_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/popup_title_height"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text="@string/pickicon_popup_template_title"
+        android:textColor="@color/popup_title_color"
+        android:textSize="@dimen/popup_title_text_size"
+        android:textStyle="bold" />
+
+    <GridView
+        android:id="@+id/pickicon_popup_template_gridview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/picktaskimg_popup_template_buttons_docker"
+        android:layout_below="@+id/picktaskimg_popup_template_title"
+        android:numColumns="auto_fit" />
+
+    <LinearLayout
+        android:id="@+id/picktaskimg_popup_template_buttons_docker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:gravity="right"
+        >
+        <Button
+            android:id="@+id/pickicon_popup_template_cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/picktaskimg_popup_template_cancel_btn"
+            />
+        <Button
+            android:id="@+id/pickicon_popup_template_choose_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/picktaskimg_popup_template_choose_btn"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

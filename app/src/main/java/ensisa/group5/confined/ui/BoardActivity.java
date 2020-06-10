@@ -249,9 +249,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent3);
                 break;
             case R.id.action_profile:
-             //   Intent intent4 = new Intent(this, ProfileActivity.class);
+                Intent intent4 = new Intent(this, ProfilActivity.class);
                 Log.d("stitch","going in profile");
-               // startActivity(intent4);
+                startActivity(intent4);
                 break;
         }
         return false;

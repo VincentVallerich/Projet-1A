@@ -61,6 +61,7 @@ public class DataBase implements Executor {
     public static final String field_task_limit_date = "task_limit_date";
 
     public static final int DEFAULT_SCORE = 0;
+    public static final String DEFAULT_IMAGE = "profil_icon_1.png";
 
     public DataBase() {}
 
@@ -129,7 +130,9 @@ public class DataBase implements Executor {
      *Retourne un task qui contient un document
      * Le Document contient le JSON des informations de l'utilisateur connecté à l'application
      */
-    /* public Task<Document> getUserInfo() {
+
+
+    public Task<Document> getUserInfo() {
         try {
             final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
             RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection("Users_data");
@@ -143,7 +146,9 @@ public class DataBase implements Executor {
 
         return null;
     }
-    */
+
+
+
 
     public  Task<RemoteUpdateResult> startTask(String taskid){
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
@@ -174,6 +179,7 @@ public class DataBase implements Executor {
     }
 
     public void setPseudo(String pseudo) {
+
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
         StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
@@ -263,6 +269,7 @@ public class DataBase implements Executor {
                                 Document registerUser = new Document("_id", new ObjectId(user.getId()))
                                         .append(field_user_pseudo, pseudo)
                                         .append(field_user_score, DEFAULT_SCORE)
+                                        .append(field_user_image, DEFAULT_IMAGE)
                                         .append(field_user_master, false);
 
                                 collection.insertOne(registerUser);

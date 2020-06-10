@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    tools:context="ensisa.group5.confined.ui.ProfilActivity">
+
+
+    <ImageView
+        android:id="@+id/profile_icon_image"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="100dp"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/taskicon_lawn_mower" />
+
+    <LinearLayout
+        android:id="@+id/text_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dp"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:gravity="top"
+        >
+
+        <TextView
+            android:id="@+id/text_pseudo"
+            android:layout_width="match_parent"
+            android:layout_height="95dp"
+            android:layout_gravity="center"
+            android:clickable="false"
+            android:gravity="center"
+            android:text="bonjour"
+            android:textSize="30sp">
+
+        </TextView>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/text_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:clickable="false"
+                android:text="16"
+                android:textSize="30sp">
+
+            </TextView>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/modify_profile_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="modify Profile" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            >
+
+        </ImageView>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/navigation_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:background="@color/navigation_container_bg"
+        android:orientation="horizontal"
+        android:weightSum="@dimen/navigation_container_weightSum">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="@dimen/navigation_container_layout_weight"
+            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
+            >
+            <FrameLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                >
+                <ImageButton
+                    android:id="@+id/board_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@null"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/board_ico_leaved"
+                    >
+                </ImageButton>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:clickable="false"
+                    android:textColor="@color/navigation_container_text_color"
+                    android:text="@string/board" >
+                </TextView>
+            </FrameLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="@dimen/navigation_container_layout_weight"
+            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
+            >
+            <FrameLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                >
+                <ImageButton
+                    android:id="@+id/task_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@null"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/task_ico_leave"
+                    >
+                </ImageButton>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:clickable="false"
+                    android:textColor="@color/navigation_container_text_color"
+                    android:text="@string/mytasks" >
+                </TextView>
+            </FrameLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="@dimen/navigation_container_layout_weight"
+            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
+            >
+            <FrameLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center">
+                <ImageButton
+                    android:id="@+id/leaderboard_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@null"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:src="@drawable/leader_ico_leave"
+                    >
+                </ImageButton>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:clickable="false"
+                    android:textColor="@color/navigation_container_text_color"
+                    android:text="@string/leaderboard"
+                    >
+                </TextView>
+            </FrameLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="@dimen/navigation_container_layout_weight"
+            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
+            >
+            <FrameLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center">
+
+                <ImageButton
+                    android:id="@+id/profile_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="center"
+                    android:background="@null"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/profile_ico_clicked"></ImageButton>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
+                    android:clickable="false"
+                    android:textColor="@color/navigation_container_text_color"
+                    android:text="@string/profile" >
+                </TextView>
+            </FrameLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

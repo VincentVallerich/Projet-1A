@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="ensisa.group5.confined.ui.BoardActivity"/>
+        <activity android:name="ensisa.group5.confined.ui.ProfilActivity"/>
         <activity android:name="ensisa.group5.confined.ui.TaskActivity"/>
         <activity android:name="ensisa.group5.confined.game.ScoreBordActivity"/>
         <activity android:name="ensisa.group5.confined.controller.MainActivity">
