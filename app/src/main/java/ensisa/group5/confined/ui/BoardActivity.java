@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -15,12 +16,20 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.bson.Document;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.controller.DataBase;
 import ensisa.group5.confined.game.ScoreBordActivity;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
@@ -40,6 +49,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     private ImageButton taskButton;
 
+    private DataBase loginValidation;
+    private SharedPreferences preferences;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -49,6 +60,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.board_activity);
         activity = this;
         context = this.getApplicationContext();
+
+        loginValidation = new DataBase();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -76,7 +89,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             enableManagerMode();
         else
             disableManagerMode();
-
 
         taskListItem = new ArrayList<>();
         taskListView = findViewById(R.id.task_list_view);
@@ -158,6 +170,58 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         showOk();
                     else
                         hideOk();
+                }
+            }
+        });
+
+        preferences = getPreferences(MODE_PRIVATE);
+        loginValidation = new DataBase(this, preferences);
+        // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
+        try {
+            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+            t3.start();
+            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
+            t4.start();
+            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
+            t5.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createUnassignedTaskDisplay() {
+        List<Document> docs = new ArrayList<Document>();
+        loginValidation.getNonAssignedTasks()
+                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+            @Override
+            public void onSuccess(List<Document> documents) {
+                try {
+                    for (Document d : docs) {
+                        // ici je récupère directement les infos du JSON,
+                        // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
+                        // Ensuite ajouter la tâche en tant que ListItem;
+                        JSONObject obj = new JSONObject(d.toJson());
+                        String name = obj.getString("task_name").toString();
+                        String img = obj.getString("task_name").toString();
+                        String description = obj.getString("task_desc").toString();
+                        int importance = (int)Integer.parseInt(obj.getString("task_priority"));
+                        int score = (int)Integer.parseInt( obj.getString("task_score"));
+                        String frequency = obj.getString("task_priority").toString();
+                        String status = obj.getString("task_status").toString();
+
+                        String strDate = obj.getString("task_limit_date").toString();
+                        strDate = strDate.replace("{\"$date\":","").replace("}","");
+                        long date = (long)Long.parseLong(strDate);
+                        String deadline = formatDate(new Date(date));
+
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status);
+                        taskListItem.add(t);
+                    }
+                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -360,5 +424,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             if (item.isSelected())
                 return true;
         return false;
+    }
+
+    public String formatDate(Date date)
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return formatter.format(date);
     }
 }
