@@ -64,7 +64,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private CalendarPopup calendarPopup;
 
     private String deadline;
-    private DataBase loginValidation;
+    private DataBase dataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -75,7 +75,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         activity = this;
         context = activity.getApplicationContext();
 
-        loginValidation = new DataBase();
+        dataBase = new DataBase();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -134,18 +134,14 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         displayTaskForCurrentDay();*/
 
         preferences = getPreferences(MODE_PRIVATE);
-        loginValidation = new DataBase(this, preferences);
+        dataBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
             Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
             t1.start();
-            Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
-            // t2.start();
-            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
-            //t3.start();
-            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
+            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  dataBase.finishTask("5edb9d925f4b418aee1abdf7");  } });
             t4.start();
-            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
+            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  dataBase.startTask("5edb9d925f4b418aee1abdf7");  } });
             t5.start();
 
         } catch (Exception e) {
@@ -153,68 +149,10 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void createLeaderboard( ){
-        List<Document> docs = new ArrayList<Document>();
-        loginValidation.getLeaderBoard()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        JSONObject obj = new JSONObject(d.toJson());
-                        Log.d("stitch", obj.toString());
-                    }
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-    }
-    public void createUnassignedTaskDisplay() {
-        List<Document> docs = new ArrayList<Document>();
-        loginValidation.getNonAssignedTasks()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        // ici je récupère directement les infos du JSON,
-                        // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
-                        // Ensuite ajouter la tâche en tant que ListItem;
-                        JSONObject obj = new JSONObject(d.toJson());
-                        String name = obj.getString("task_name").toString();
-                        String img = obj.getString("task_name").toString();
-                        String description = obj.getString("task_desc").toString();
-                        int importance = (int)Integer.parseInt(obj.getString("task_priority"));
-                        int score = (int)Integer.parseInt( obj.getString("task_score"));
-                        String frequency = obj.getString("task_priority").toString();
-                        String status = obj.getString("task_status").toString();
-
-                        String strDate = obj.getString("task_limit_date").toString();
-                        strDate = strDate.replace("{\"$date\":","").replace("}","");
-                        long date = (long)Long.parseLong(strDate);
-                        String deadline = formatDate(new Date(date));
-
-                        String id = obj.getString("_id").toString();
-
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status,id);
-                        taskList.add(t);
-                    }
-                    createEvents();
-                    displayTaskForCurrentDay();
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
     public void createUserTasksDisplay() {
 
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getTasksByUser()
+        dataBase.getTasksByUser()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {

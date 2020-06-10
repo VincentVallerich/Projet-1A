@@ -14,15 +14,20 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 
 import org.bson.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +36,7 @@ import java.util.List;
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.DataBase;
 import ensisa.group5.confined.game.ScoreBordActivity;
+import ensisa.group5.confined.model.CTask;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
 
@@ -49,7 +55,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     private ImageButton taskButton;
 
-    private DataBase loginValidation;
+    private DataBase dateBase;
     private SharedPreferences preferences;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -61,7 +67,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         activity = this;
         context = this.getApplicationContext();
 
-        loginValidation = new DataBase();
+        dateBase = new DataBase();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -175,14 +181,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         });
 
         preferences = getPreferences(MODE_PRIVATE);
-        loginValidation = new DataBase(this, preferences);
+        dateBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
             Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
             t3.start();
-            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
+            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  dateBase.finishTask("5edb9d925f4b418aee1abdf7");  } });
             t4.start();
-            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
+            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  dateBase.startTask("5edb9d925f4b418aee1abdf7");  } });
             t5.start();
 
         } catch (Exception e) {
@@ -192,7 +198,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getNonAssignedTasks()
+        dateBase.getNonAssignedTasks()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -278,14 +284,26 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         int score = newTaskPopup.getScore();
                         String frequency = newTaskPopup.getFrequency();
                         String deadline = newTaskPopup.getDeadline();
+                        System.out.println("On click");
 
-                        //check fields
+                        try {
+                            Thread t5 = new Thread(new Runnable() {  @Override public void run() {
+                                dateBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener( new OnCompleteListener<RemoteInsertOneResult>()
+                                {
+                                        @Override
+                                        public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
+                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,frequency,deadline,"NON_ATTRIBUATE", ""));
+                                            taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                                        }
+                                    }
 
-                        //store the new task in the bdd
+                            );  } });
+                            t5.start();
 
-                        //add new tasks in the list
-                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE", ""));
-                        taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         newTaskPopup.dismiss();
                     }
                 });
@@ -430,5 +448,16 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         return formatter.format(date);
+    }
+
+    public Date formatDate(String strDate){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = null;
+        try {
+            date = formatter.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 }
