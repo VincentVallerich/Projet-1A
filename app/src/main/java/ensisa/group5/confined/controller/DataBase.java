@@ -163,7 +163,7 @@ public class DataBase implements Executor {
         Document newTask = new Document()
                 .append(field_task_name, task.getName())
                 .append(field_task_status, task.getState().toString())
-                .append(field_task_priority, task.getPriority().toString())
+                .append(field_task_priority, task.getPriority())
                 .append(field_task_description, task.getDescription())
                 .append(field_task_score, String.valueOf(task.getPoints()));
         return collection.insertOne(newTask);
