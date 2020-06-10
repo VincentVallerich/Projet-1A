@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.BoardActivity;
+import ensisa.group5.confined.ui.TaskActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,28 +45,32 @@ public class MainActivity extends AppCompatActivity {
         registerBtn = (Button) findViewById(R.id.register_btn);
 
         /* for clear all preferences, to use in the case of disconnect */
-      //  preferences.edit().clear().apply();
+        preferences.edit().clear().apply();
 
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL)))
             startBoardActivity(this);
 
         signinBtn.setEnabled(false);
+
         usernameEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 signinBtn.setEnabled(dataBase.isUsernameFormatCorrect(s.toString()) &&
                         dataBase.isPasswordFormatCorrect(passwordEdit.getText().toString()));
             }
+
             @Override
             public void afterTextChanged(Editable s) {
 
             }
         });
+
         passwordEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -140,5 +145,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void startBoardActivity(Context context) { startActivity(new Intent(context, BoardActivity.class)); }
+    public void startBoardActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
 }
