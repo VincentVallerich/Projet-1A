@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_weight="1"
     tools:context="ensisa.group5.confined.ui.ProfilActivity">
 
@@ -238,5 +238,29 @@
         </FrameLayout>
 
     </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/navigation_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:background="@color/navigation_container_bg"
+        android:orientation="horizontal"
+        android:weightSum="@dimen/navigation_container_weightSum">
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/activity_main_bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:visibility="visible"
+        app:itemIconTint="@color/navigation_container_text_color"
+        app:itemTextColor="@color/navigation_container_text_color"
+        app:menu="@menu/bottom_navigation_menu" />
+    </LinearLayout>
+
 
 </RelativeLayout>

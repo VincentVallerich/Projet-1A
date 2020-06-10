@@ -2,6 +2,7 @@ package ensisa.group5.confined.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.DataBase;
+import ensisa.group5.confined.game.ScoreBordActivity;
 
 public class ProfilActivity extends AppCompatActivity implements View.OnClickListener{
     private ProfilActivity activity;
@@ -51,8 +53,6 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         textScore.setText("retrieving");
 
         profileIcon = findViewById(R.id.profile_icon_image);
-
-
 
 
         Thread t6 = new Thread(new Runnable() {  @Override public void run() {  createUserProfile();  } });
@@ -113,6 +113,34 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
 
+
+    private boolean onClickNavigationBar(Integer integer ){
+        Log.d("stitch","going in onclick" + integer);
+        switch (integer) {
+            case R.id.action_board:
+                // go to activity
+                Intent intent = new Intent(this, BoardActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_leaderboard:
+                Intent intent2 = new Intent(this, ScoreBordActivity.class);
+                Log.d("stitch","going in leaderboard");
+                startActivity(intent2);
+                break;
+            case R.id.action_mytasks:
+                Intent intent3 = new Intent(this, TaskActivity.class);
+                Log.d("stitch","going in mytasks");
+                startActivity(intent3);
+                break;
+            case R.id.action_profile:
+                Intent intent4 = new Intent(this, ProfilActivity.class);
+                Log.d("stitch","going in profile");
+                startActivity(intent4);
+                break;
+        }
+        return false;
+
+    }
 
     public void setImg(String img)
     {
