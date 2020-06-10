@@ -143,11 +143,6 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         try {
             Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
             t1.start();
-            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  dataBase.finishTask("5edb9d925f4b418aee1abdf7");  } });
-            t4.start();
-            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  dataBase.startTask("5edb9d925f4b418aee1abdf7");  } });
-            t5.start();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
