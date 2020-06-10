@@ -166,10 +166,11 @@ public class DataBase implements Executor {
         return collection.insertOne(newTask);
     }
 
-    public void setPseudo(String id_user, String pseudo) {
+    public void setPseudo( String pseudo) {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
-        final Document filterDoc = new Document( "_id", new ObjectId(id_user));
+        StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+        final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
         Document updateDoc = new Document().append("$set",new Document().append("pseudo", pseudo));
         collection.updateOne(filterDoc, updateDoc);
     }
