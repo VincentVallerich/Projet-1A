@@ -319,8 +319,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                 public void run() {
                                     dateBase.deleteTask(item.getId());
                                     taskListItem.remove(item);
-
-
                                 }
                             });
                             t5.start();
@@ -360,9 +358,25 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.ok_task:
-                // add tasks to user in the db
+                try {
+                    for (int i=0; i<taskListItem.size(); i++) {
+                        if (taskListItem.get(i).isSelected()) {
+                            item = taskListItem.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dateBase.startTask(item.getId());
+                                    taskListItem.remove(item);
+                                }
+                            });
+                            t5.start();
 
-                // del tasks from list of available tasks
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 deleteSelection();
                 hideOk();
                 break;

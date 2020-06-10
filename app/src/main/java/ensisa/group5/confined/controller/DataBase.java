@@ -150,8 +150,8 @@ public class DataBase implements Executor {
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
         StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
-        Document updateDoc = new Document().append("$set",new Document().append(field_task_status, CTask.State.IN_PROGRESS)).append(field_id,user.getId());
-
+        Document updateDoc = new Document().append("$set",new Document().append(field_task_status,"IN_PROGRESS").append(field_id,user.getId()));
+        Log.d("stitch","je suis rentré dans le start, id de la tache : " + taskid);
         return collection.updateOne(filterDoc, updateDoc);
     }
 
@@ -212,7 +212,7 @@ public class DataBase implements Executor {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
-        Document updateDoc = new Document().append("$set",new Document().append(field_task_status, CTask.State.NON_ATTRIBUATE.toString())).append("user_id","");;
+        Document updateDoc = new Document().append("$set",new Document().append(field_task_status, CTask.State.NON_ATTRIBUATE.toString())).append("user_id"," ");
         return collection.updateOne(filterDoc, updateDoc);
     }
     public Task<RemoteDeleteResult> deleteTask(String taskid){
