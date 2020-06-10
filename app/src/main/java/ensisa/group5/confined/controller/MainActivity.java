@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         registerBtn = (Button) findViewById(R.id.register_btn);
 
         /* for clear all preferences, to use in the case of disconnect */
-        //preferences.edit().clear().apply();
+        preferences.edit().clear().apply();
 
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         signinBtn.setOnClickListener(v -> {
             String username = usernameEdit.getText().toString();
             String pswd = passwordEdit.getText().toString();
+
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
                     startBoardActivity(getApplicationContext());

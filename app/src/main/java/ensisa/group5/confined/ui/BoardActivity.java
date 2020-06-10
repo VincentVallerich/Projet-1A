@@ -90,6 +90,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         // need to check if user is manager instead
         managerMode = true;
+        try {
+            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+            t3.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (managerMode)
             enableManagerMode();
@@ -183,17 +190,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         preferences = getPreferences(MODE_PRIVATE);
         dateBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
-        try {
-            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
-            t3.start();
-            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  dateBase.finishTask("5edb9d925f4b418aee1abdf7");  } });
-            t4.start();
-            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  dateBase.startTask("5edb9d925f4b418aee1abdf7");  } });
-            t5.start();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void createUnassignedTaskDisplay() {
@@ -215,12 +212,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         int score = (int)Integer.parseInt( obj.getString("task_score"));
                         String frequency = obj.getString("task_priority").toString();
                         String status = obj.getString("task_status").toString();
-
                         String strDate = obj.getString("task_limit_date").toString();
                         strDate = strDate.replace("{\"$date\":","").replace("}","");
+
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
-
                         TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status, "");
                         taskListItem.add(t);
                     }
@@ -285,25 +281,24 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         String frequency = newTaskPopup.getFrequency();
                         String deadline = newTaskPopup.getDeadline();
                         System.out.println("On click");
-
                         try {
                             Thread t5 = new Thread(new Runnable() {  @Override public void run() {
                                 dateBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener( new OnCompleteListener<RemoteInsertOneResult>()
                                 {
                                         @Override
                                         public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
-                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,frequency,deadline,"NON_ATTRIBUATE", ""));
-                                            taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+
+                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,frequency,deadline,"NON_ATTRIBUATE", task.getResult().getInsertedId().toString()));
+                                            Log.d("stitch ", "new ID : " + task.getResult().getInsertedId().toString() );
+                                            taskListView.deferNotifyDataSetChanged();
                                         }
                                     }
-
                             );  } });
                             t5.start();
 
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                         newTaskPopup.dismiss();
                     }
                 });

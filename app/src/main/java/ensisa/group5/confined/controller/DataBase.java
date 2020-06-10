@@ -50,7 +50,7 @@ public class DataBase implements Executor {
     public static final String field_task_status = "task_status";
     public static final String field_task_name = "task_name";
     public static final String field_task_priority = "task_priority";
-    public static final String field_task_description = "task_description";
+    public static final String field_task_description = "task_desc";
     public static final String field_task_score = "task_score";
     public static final String field_user_score = "score";
     public static final String field_user_pseudo = "pseudo";
@@ -168,7 +168,7 @@ public class DataBase implements Executor {
                 .append(field_task_description, desc)
                 .append(field_task_score, score)
                 .append(field_task_img, img)
-                .append(field_task_limit_date, date.getTime());
+                .append(field_task_limit_date, new Date(date.getTime()));
         return collection.insertOne(newTask);
     }
 
@@ -240,9 +240,7 @@ public class DataBase implements Executor {
     public boolean registerUser(String username, String pseudo, String password) {
         AtomicReference<Boolean> res = new AtomicReference<>(false);
         initClient();
-        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
-                .getProviderClient(UserPasswordAuthProviderClient.factory);
-
+        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth() .getProviderClient(UserPasswordAuthProviderClient.factory);
         emailPassClient.registerWithEmail(username, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
