@@ -278,11 +278,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         int score = newTaskPopup.getScore();
                         String frequency = newTaskPopup.getFrequency();
                         String deadline = newTaskPopup.getDeadline();
-
                         //check fields
-
                         //store the new task in the bdd
-
                         //add new tasks in the list
                         taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE", ""));
                         taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
