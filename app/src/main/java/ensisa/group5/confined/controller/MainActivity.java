@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 signinBtn.setEnabled(dataBase.isUsernameFormatCorrect(s.toString()) &&
                         dataBase.isPasswordFormatCorrect(passwordEdit.getText().toString()) &&
-                                !pseudoEdit.isEnabled());
+                        pseudoEdit.getVisibility() != View.VISIBLE);
             }
 
             @Override
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 signinBtn.setEnabled(dataBase.isUsernameFormatCorrect(usernameEdit.getText().toString()) &&
                         dataBase.isPasswordFormatCorrect(s.toString()) &&
-                        !pseudoEdit.isEnabled());
+                        pseudoEdit.getVisibility() != View.VISIBLE);
             }
 
             @Override
