@@ -114,7 +114,7 @@ public class DataBase implements Executor {
      */
     public RemoteFindIterable<Document> getLeaderBoard() {
         Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
-        if (client == null)
+        if (Stitch.getDefaultAppClient() == null)
             client = Stitch.initializeDefaultAppClient(clientAppId);
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
