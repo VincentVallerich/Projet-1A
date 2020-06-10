@@ -155,7 +155,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                             //add new tasks in the list
                             taskListItem.remove(item);
-                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE"));
+                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE", ""));
                             taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                             modifyTaskPopup.dismiss();
                         }
@@ -215,7 +215,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
 
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status);
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status, "");
                         taskListItem.add(t);
                     }
                     taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
@@ -284,7 +284,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         //store the new task in the bdd
 
                         //add new tasks in the list
-                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE"));
+                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE", ""));
                         taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                         newTaskPopup.dismiss();
                     }
