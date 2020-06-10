@@ -48,7 +48,7 @@ public class IconAdapter extends BaseAdapter
     {
         convertView = inflater.inflate(R.layout.adapter_profilicon, null);
 
-        TaskImgItem currentItem = (TaskImgItem) getItem(position);
+        IconImgItem currentItem = (IconImgItem) getItem(position);
         img = currentItem.getImg();
 
         // img

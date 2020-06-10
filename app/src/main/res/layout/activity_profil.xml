@@ -9,8 +9,8 @@
     tools:context="ensisa.group5.confined.ui.ProfilActivity">
 
 
-    <ImageButton
-        android:id="@+id/show_calendar_button"
+    <ImageView
+        android:id="@+id/profile_icon_image"
         android:layout_width="190dp"
         android:layout_height="190dp"
         android:layout_alignParentTop="true"

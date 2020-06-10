@@ -94,8 +94,9 @@ public class ModifyProfilPopup extends Dialog {
     public void setImg(String img)
     {
         this.img = img;
-        int imgId = context.getResources().getIdentifier(img, "drawable", context.getPackageName());
-        imgBtn.setBackgroundResource(imgId);
+        int drawableId = context.getResources().getIdentifier(img, "drawable", context.getPackageName());
+        imgBtn.setImageResource(drawableId);
+
     }
 
     public String getImg()

@@ -3,12 +3,12 @@ package ensisa.group5.confined.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.DataBase;
-import ensisa.group5.confined.controller.LoginValidation;
 
 public class ProfilActivity extends AppCompatActivity implements View.OnClickListener{
     private ProfilActivity activity;
@@ -30,7 +29,8 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
     private TextView textScore;
     private Button modifyButton;
     private String pseudo;
-    String img;
+    private String img;
+    private ImageView profileIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,11 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         textScore = (TextView) findViewById(R.id.text_score);
         textScore.setText("retrieving");
 
+        profileIcon = findViewById(R.id.profile_icon_image);
+
+
+
+
         Thread t6 = new Thread(new Runnable() {  @Override public void run() {  createUserProfile();  } });
         t6.start();
 
@@ -67,6 +72,8 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                         textPseudo.setText(name);
                         String score = obj.getString("score");
                         textScore.setText("Score :"+score);
+                        String profil_image = obj.getString("image");
+                        setImg(profil_image);
                     }
                     catch (JSONException e) {
                         e.printStackTrace();
@@ -92,12 +99,27 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                     break;
 
                 case  R.id.modify_popup_template_validation_btn:
+                    dataBase.setImage()
                     img = modifyProfilPopup.getImg();
+                    setImg(img);
+
                     pseudo = modifyProfilPopup.getPseudo();
-                    textPseudo.setText(pseudo);
-                    modifyProfilPopup.setBasePseudo();
+                    if(dataBase.isUsernameFormatCorrect(modifyProfilPopup.getPseudo())) {
+                        textPseudo.setText(pseudo);
+                        modifyProfilPopup.setBasePseudo();
+                    }
                     modifyProfilPopup.dismiss();
                     break;
             }
         }
+
+
+    public void setImg(String img)
+    {
+        this.img = img;
+        int drawableId = this.getResources().getIdentifier(img, "drawable", this.getPackageName());
+        profileIcon.setImageResource(drawableId);
+    }
+
+
     }
