@@ -14,10 +14,14 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 
 import org.bson.Document;
 import org.json.JSONException;
@@ -280,20 +284,26 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         int score = newTaskPopup.getScore();
                         String frequency = newTaskPopup.getFrequency();
                         String deadline = newTaskPopup.getDeadline();
-
                         System.out.println("On click");
 
                         try {
-                            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  dateBase.createTask(name, img, description, importance, score, formatDate(deadline));  } });
+                            Thread t5 = new Thread(new Runnable() {  @Override public void run() {
+                                dateBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener( new OnCompleteListener<RemoteInsertOneResult>()
+                                {
+                                        @Override
+                                        public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
+                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,frequency,deadline,"NON_ATTRIBUATE", ""));
+                                            taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                                        }
+                                    }
+
+                            );  } });
                             t5.start();
-                            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
-                            t3.start();
 
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
 
-                        taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                         newTaskPopup.dismiss();
                     }
                 });
