@@ -177,6 +177,7 @@ public class DataBase implements Executor {
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
         StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
         final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
+
         Document updateDoc = new Document().append("$set",new Document().append("pseudo", pseudo));
         collection.updateOne(filterDoc, updateDoc);
     }
@@ -208,6 +209,7 @@ public class DataBase implements Executor {
     public Task<RemoteDeleteResult> deleteTask(String taskid){
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
+        Log.d("stitch","L'id est : " + taskid);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
         return collection.deleteOne(filterDoc);
     }
