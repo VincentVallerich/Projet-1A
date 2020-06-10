@@ -136,8 +136,10 @@ public class MainActivity extends AppCompatActivity {
             pseudoEdit.setVisibility(View.VISIBLE);
 
             String pseudo = pseudoEdit.getText().toString();
-            if (dataBase.isUsernameFormatCorrect(username)) {
+            if (dataBase.isUsernameFormatCorrect(username) && dataBase.isUsernameFormatCorrect(pseudo)) {
+                System.out.println("first pass");
                 if (dataBase.registerUser(username, pseudo, pswd)) {
+                    System.out.println("second pass");
                     preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username);
                     startBoardActivity(this);
                 }
