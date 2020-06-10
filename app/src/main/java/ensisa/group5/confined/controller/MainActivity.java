@@ -108,11 +108,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         signinBtn.setOnClickListener(v -> {
-            /*String username = usernameEdit.getText().toString();
-            String pswd = passwordEdit.getText().toString();*/
-
-            String username = "test@test.com";
-            String pswd = "test666";
+            String username = usernameEdit.getText().toString();
+            String pswd = passwordEdit.getText().toString();
+            //String username = "test@test.com";
+            //String pswd="test666";
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
                     startBoardActivity(this);

@@ -3,17 +3,13 @@ package ensisa.group5.confined.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,8 +24,6 @@ import java.util.List;
 import ensisa.group5.confined.R;
 
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
@@ -51,6 +45,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private TaskActivity activity;
     private List<TaskListItem> taskInProgressItem;
     private List<TaskListItem> taskDoneItem;
+    private List<TaskListItem> allTaskList;
     private List<TaskListItem> taskList;
     private ListView taskInProgress;
     private ListView taskDone;
@@ -125,6 +120,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         taskDone = findViewById(R.id.task_done_list_view);
 
         taskList = new ArrayList<>();
+
+        allTaskList = new ArrayList<>();
         allTask = findViewById(R.id.all_task_list_view);
 
         /*taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaner_1", "", 2, 1, "0", "09-06-2020", "IN_PROGRESS"));
@@ -200,10 +197,11 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
 
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status);
+                        String id = obj.getString("_id").toString();
+
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status,id);
                         taskList.add(t);
                     }
-                    allTask.setAdapter(new TaskListAdapter(context, taskList));
                     createEvents();
                     displayTaskForCurrentDay();
                 }
@@ -236,10 +234,11 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
 
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status);
+                        String id = obj.getString("_id").toString();
+
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status,id);
                         taskList.add(t);
                     }
-                    allTask.setAdapter(new TaskListAdapter(context, taskList));
                     createEvents();
                     displayTaskForCurrentDay();
                 }
@@ -267,8 +266,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent3);
                 break;
             case R.id.action_profile:
-             //   Intent intent4 = new Intent(this, ProfilActivity.class);
-               // startActivity(intent4);
+                //   Intent intent4 = new Intent(this, ProfilActivity.class);
+                // startActivity(intent4);
                 break;
         }
         return false;
@@ -347,13 +346,18 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     {
         taskInProgressItem = new ArrayList<>();
         taskDoneItem = new ArrayList<>();
-        for (TaskListItem item : taskList)
+        allTaskList = new ArrayList<>();
+        for (TaskListItem item : taskList) {
+            if (item.getStatus().equals("IN_PROGRESS"))
+                allTaskList.add(item);
             if (item.getDeadline().equals(deadline) && item.getStatus().equals("IN_PROGRESS"))
                 taskInProgressItem.add(item);
             else if (item.getStatus().equals("FINISHED"))
                 taskDoneItem.add(item);
+        }
         taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
         taskDone.setAdapter(new TaskListAdapter(context, taskDoneItem));
+        allTask.setAdapter(new TaskListAdapter(context, allTaskList));
     }
 
     public String formatDate(Date date)
