@@ -32,7 +32,8 @@ import static com.mongodb.client.model.Filters.eq;
  * Author VALLERICH Vincent on 04-06-2020
  */
 
-public class LoginValidation implements Executor {
+public class
+LoginValidation implements Executor {
 
     private Context context;
     private static SharedPreferences preferences;
@@ -52,8 +53,6 @@ public class LoginValidation implements Executor {
 
         usernameKey = context.getResources().getString(R.string.PREF_KEY_USERNAME);
         mailKey = context.getResources().getString(R.string.PREF_KEY_MAIL);
-
-
     }
     /*
      *Retourne un task qui contient une liste de documents

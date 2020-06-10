@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ensisa.group5.confined">
-
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,13 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.ProfilActivity"></activity>
-        <activity android:name=".ui.BoardActivity" />
-        <activity android:name=".ui.TaskActivity" />
-        <activity android:name=".controller.MainActivity">
+        <activity android:name="ensisa.group5.confined.ui.BoardActivity"/>
+        <activity android:name="ensisa.group5.confined.ui.ProfilActivity"/>
+        <activity android:name="ensisa.group5.confined.ui.TaskActivity"/>
+        <activity android:name="ensisa.group5.confined.game.ScoreBordActivity"/>
+        <activity android:name="ensisa.group5.confined.controller.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

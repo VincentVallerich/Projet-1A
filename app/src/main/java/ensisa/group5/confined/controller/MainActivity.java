@@ -13,11 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.ui.ProfilActivity;
+import ensisa.group5.confined.ui.TaskActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText usernameEdit;
+    private EditText pseudoEdit;
     private EditText passwordEdit;
     private EditText confirmEdit;
     private Button signinBtn;
@@ -33,21 +34,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         preferences = getPreferences(MODE_PRIVATE);
-        /* just for tests */
-        //preferences.edit().clear().apply();
+
         dataBase = new DataBase(this, preferences);
         usernameEdit = (EditText) findViewById(R.id.login_username_edit);
+        pseudoEdit = (EditText) findViewById(R.id.login_pseudo_edit);
         passwordEdit = (EditText) findViewById(R.id.login_password_edit);
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
         registerBtn = (Button) findViewById(R.id.register_btn);
 
         /* for clear all preferences, to use in the case of disconnect */
-        preferences.edit().clear().apply();
+        //preferences.edit().clear().apply();
 
         /* if user connected so redirect instantly */
-        if (preferences.contains(getString(R.string.PREF_KEY_MAIL)))
-            startBoardActivity(this);
+        if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
+            dataBase.initClient();
+            startBoardActivity(getApplicationContext());
+        }
 
         signinBtn.setEnabled(false);
 
@@ -60,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 signinBtn.setEnabled(dataBase.isUsernameFormatCorrect(s.toString()) &&
-                        dataBase.isPasswordFormatCorrect(passwordEdit.getText().toString()));
+                        dataBase.isPasswordFormatCorrect(passwordEdit.getText().toString()) &&
+                        pseudoEdit.getVisibility() != View.VISIBLE);
             }
 
             @Override
@@ -78,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 signinBtn.setEnabled(dataBase.isUsernameFormatCorrect(usernameEdit.getText().toString()) &&
-                        dataBase.isPasswordFormatCorrect(s.toString()));
+                        dataBase.isPasswordFormatCorrect(s.toString()) &&
+                        pseudoEdit.getVisibility() != View.VISIBLE);
             }
 
             @Override
@@ -110,12 +115,12 @@ public class MainActivity extends AppCompatActivity {
             String pswd = passwordEdit.getText().toString();
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
-                    startBoardActivity(this);
+                    startBoardActivity(getApplicationContext());
                 } else {
                     if (dataBase.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                        startBoardActivity(this);
+                        startBoardActivity(getApplicationContext());
                     }
                 }
             } catch (InterruptedException e) {
@@ -124,20 +129,25 @@ public class MainActivity extends AppCompatActivity {
         });
 
         registerBtn.setOnClickListener( v -> {
+            signinBtn.setEnabled(false);
             String username = usernameEdit.getText().toString();
             String pswd = passwordEdit.getText().toString();
 
             confirmEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
             confirmEdit.setVisibility(View.VISIBLE);
 
-            if (dataBase.isUsernameFormatCorrect(username)) {
-                if (dataBase.registerUser(username, pswd)) {
-                    preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username);
-                    startBoardActivity(this);
+            pseudoEdit.getLayoutParams().height = (int) getResources().getDimension(R.dimen.login_edit_height);
+            pseudoEdit.setVisibility(View.VISIBLE);
+
+            String pseudo = pseudoEdit.getText().toString();
+            if (dataBase.isUsernameFormatCorrect(username) && dataBase.isUsernameFormatCorrect(pseudo)) {
+                if (dataBase.registerUser(username, pseudo, pswd)) {
+                    preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
+                    startBoardActivity(getApplicationContext());
                 }
             }
         });
     }
 
-    public void startBoardActivity(Context context) { startActivity(new Intent(context, ProfilActivity.class)); }
+    public void startBoardActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
 }

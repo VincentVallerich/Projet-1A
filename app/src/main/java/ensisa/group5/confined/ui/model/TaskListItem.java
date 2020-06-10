@@ -14,9 +14,10 @@ public class TaskListItem
     private String frequency;
     private String deadline;
     private boolean selected = false;
-    private boolean done;
+    private String status;
+    private String id;
 
-    public TaskListItem(String name, String img, String description, int importance, int score, String frequency, String deadline, boolean done)
+    public TaskListItem(String name, String img, String description, int importance, int score, String frequency, String deadline, String status, String id)
     {
         this.name = name;
         this.img = img;
@@ -25,7 +26,8 @@ public class TaskListItem
         this.score = score;
         this.frequency = frequency;
         this.deadline = deadline;
-        this.done = done;
+        this.status = status;
+        this.id = id;
     }
 
     public String getName()
@@ -63,9 +65,14 @@ public class TaskListItem
         return deadline;
     }
 
-    public boolean isDone()
+    public String getStatus()
     {
-        return done;
+        return status;
+    }
+
+    public String getId()
+    {
+        return id;
     }
 
     public boolean isSelected()

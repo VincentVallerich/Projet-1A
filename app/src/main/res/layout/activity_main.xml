@@ -3,21 +3,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="#bdc3c7"
     tools:context=".controller.MainActivity">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#2c3e50"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:text="@string/app_name"
-        android:textAlignment="center"
-        android:textColor="#ecf0f1"
-        android:textSize="30dp"
-        android:fontFamily="sans-serif-thin"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/app_name"
+            android:textAlignment="center"
+            android:textColor="#ecf0f1"
+            android:textSize="30dp"
+            android:fontFamily="sans-serif-thin">
+        </TextView>
+
+        <ImageView
+            android:id="@+id/adapter_taskimg_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="-320dp"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/ic_launcher_round"
+            />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/login_username_edit"
@@ -26,6 +43,15 @@
         android:layout_gravity="center"
         android:layout_marginTop="150dp"
         android:hint="@string/prompt_email"/>
+
+    <EditText
+        android:id="@+id/login_pseudo_edit"
+        android:layout_width="@dimen/login_edit_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/login_edit_marginTop"
+        android:visibility="gone"
+        android:hint="@string/prompt_pseudo"/>
 
     <EditText
         android:id="@+id/login_password_edit"
@@ -71,3 +97,4 @@
         android:text="@string/action_register" />
 
 </LinearLayout>
+

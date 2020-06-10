@@ -3,21 +3,19 @@ package ensisa.group5.confined.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,44 +24,47 @@ import java.util.List;
 import ensisa.group5.confined.R;
 
 import android.widget.TextView;
-import android.widget.Toast;
 
-
+import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.bson.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import ensisa.group5.confined.game.ScoreBordActivity;
 import java.util.ArrayList;
+import java.util.Locale;
 
-import ensisa.group5.confined.controller.DataBase;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
-
+import ensisa.group5.confined.controller.DataBase;
 public class TaskActivity extends AppCompatActivity implements View.OnClickListener
 {
     private TaskActivity activity;
-    private NewTaskPopup newTaskPopup;
-    private NewTaskPopup modifyTaskPopup;
     private List<TaskListItem> taskInProgressItem;
     private List<TaskListItem> taskDoneItem;
+    private List<TaskListItem> allTaskList;
     private List<TaskListItem> taskList;
     private ListView taskInProgress;
     private ListView taskDone;
+    private ListView allTask;
     private SharedPreferences preferences;
     private Context context;
-    private DataBase db = new DataBase();
 
     private TextView titleTextView;
-    private ImageButton finishTask;
 
     private Button taskInProgressTabButton;
     private Button taskDoneTabButton;
+    private Button allTaskTabButton;
+
+    private List<Event> events = new ArrayList<Event>();
 
     private CalendarPopup calendarPopup;
 
     private String deadline;
+    private DataBase loginValidation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -72,8 +73,13 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.task_activity);
 
         activity = this;
-
         context = activity.getApplicationContext();
+
+        loginValidation = new DataBase();
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
+        bottomNavigationView.getMenu().getItem(2).setChecked(true);
 
         taskInProgressTabButton = (Button) findViewById(R.id.task_in_progress_tab);
         taskInProgressTabButton.setOnClickListener(this);
@@ -81,30 +87,19 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         taskDoneTabButton = (Button) findViewById(R.id.task_done_tab);
         taskDoneTabButton.setOnClickListener(this);
 
+        allTaskTabButton = (Button) findViewById(R.id.all_task_tab);
+        allTaskTabButton.setOnClickListener(this);
+
         titleTextView = findViewById(R.id.task_activity_day);
         Date todayDate = Calendar.getInstance().getTime();
         deadline = formatDate(todayDate);
         titleTextView.setText("Tâches du " + deadline);
 
-        ImageButton taskButton = findViewById(R.id.task_button);
-        taskButton.setOnClickListener(this);
-
-        ImageButton leaderboardButton = findViewById(R.id.leaderboard_button);
-        leaderboardButton.setOnClickListener(this);
-
-        ImageButton profileButton = findViewById(R.id.profile_button);
-        profileButton.setOnClickListener(this);
-
-        ImageButton boardButton = findViewById(R.id.board_button);
-        boardButton.setOnClickListener(this);
-
         ImageButton calendarButton = findViewById(R.id.show_calendar_button);
         calendarButton.setOnClickListener(this);
 
-        finishTask = findViewById(R.id.finish_task);
+        ImageButton finishTask = findViewById(R.id.finish_task);
         finishTask.setOnClickListener(this);
-
-        taskList = new ArrayList<>();
 
         taskInProgressItem = new ArrayList<>();
         taskInProgress = findViewById(R.id.task_in_progress_list_view);
@@ -124,20 +119,22 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         taskDoneItem = new ArrayList<>();
         taskDone = findViewById(R.id.task_done_list_view);
 
-        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaner_1", "", 2, 1, "0", "09-06-2020", false));
-        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaning_14", "", 2, 1, "0", "10-06-2020", false));
-        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaner_2", "", 2, 1, "0", "09-06-2020", true));
-        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaner_1", "", 2, 1, "0", "09-06-2020", false));
-        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaning", "", 2, 1, "0", "09-06-2020", true));
+        taskList = new ArrayList<>();
 
-        /*taskInProgress.setAdapter(new TaskListAdapter(this, taskInProgressItem));
-        taskDone.setAdapter(new TaskListAdapter(this, taskDoneItem));*/
+        allTaskList = new ArrayList<>();
+        allTask = findViewById(R.id.all_task_list_view);
 
-        displayTaskForCurrentDay();
+        /*taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaner_1", "", 2, 1, "0", "09-06-2020", "IN_PROGRESS"));
+        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaning_14", "", 3, 4, "0", "10-06-2020", "IN_PROGRESS"));
+        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaner_2", "", 4, 0, "0", "09-06-2020", "FINISHED"));
+        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaning_10", "", 5, 0, "0", "09-06-2020", "IN_PROGRESS"));
+        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaning", "", 0, 2, "0", "09-06-2020", "FINISHED"));
 
-        /*
+        allTask.setAdapter(new TaskListAdapter(context, taskList));
+        displayTaskForCurrentDay();*/
+
         preferences = getPreferences(MODE_PRIVATE);
-        loginValidation = new LoginValidation(this, preferences);
+        loginValidation = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
             Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
@@ -154,9 +151,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace();
         }
-         */
     }
-    /*
+
     public void createLeaderboard( ){
         List<Document> docs = new ArrayList<Document>();
         loginValidation.getLeaderBoard()
@@ -191,13 +187,23 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         String name = obj.getString("task_name").toString();
                         String img = obj.getString("task_name").toString();
                         String description = obj.getString("task_desc").toString();
-                        int importance = (int) Integer.parseInt(obj.getString("task_status"));
-                        int score = (int)Integer.parseInt( obj.getString("task_priority"));
-                        String frequency = obj.getString("task_name").toString();
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,"");
-                        taskListItem.add(t);
+                        int importance = (int)Integer.parseInt(obj.getString("task_priority"));
+                        int score = (int)Integer.parseInt( obj.getString("task_score"));
+                        String frequency = obj.getString("task_priority").toString();
+                        String status = obj.getString("task_status").toString();
+
+                        String strDate = obj.getString("task_limit_date").toString();
+                        strDate = strDate.replace("{\"$date\":","").replace("}","");
+                        long date = (long)Long.parseLong(strDate);
+                        String deadline = formatDate(new Date(date));
+
+                        String id = obj.getString("_id").toString();
+
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status,id);
+                        taskList.add(t);
                     }
-                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                    createEvents();
+                    displayTaskForCurrentDay();
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -216,15 +222,25 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                     for (Document d : docs) {
                         JSONObject obj = new JSONObject(d.toJson());
                         String name = obj.getString("task_name").toString();
-                        String img = "img_random";
+                        String img = obj.getString("task_name").toString();
                         String description = obj.getString("task_desc").toString();
-                        int importance = (int) Integer.parseInt(obj.getString("task_priority"));
+                        int importance = (int)Integer.parseInt(obj.getString("task_priority"));
                         int score = (int)Integer.parseInt( obj.getString("task_score"));
-                        String frequency = " 0";
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,"");
-                        taskListItem.add(t);
+                        String frequency = obj.getString("task_priority").toString();
+                        String status = obj.getString("task_status").toString();
+
+                        String strDate = obj.getString("task_limit_date").toString();
+                        strDate = strDate.replace("{\"$date\":","").replace("}","");
+                        long date = (long)Long.parseLong(strDate);
+                        String deadline = formatDate(new Date(date));
+
+                        String id = obj.getString("_id").toString();
+
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status,id);
+                        taskList.add(t);
                     }
-                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                    createEvents();
+                    displayTaskForCurrentDay();
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -232,64 +248,95 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
-     */
+    private boolean onClickNavigationBar(Integer integer ){
+        Log.d("stitch","going in onclick" + integer);
+        switch (integer) {
 
+            case R.id.action_board:
+                // go to activity
+                Intent intent = new Intent(this, BoardActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_leaderboard:
+                Intent intent2 = new Intent(this, ScoreBordActivity.class);
+                startActivity(intent2);
+                break;
+            case R.id.action_mytasks:
+                Intent intent3 = new Intent(this, TaskActivity.class);
+                startActivity(intent3);
+                break;
+            case R.id.action_profile:
+                //   Intent intent4 = new Intent(this, ProfilActivity.class);
+                // startActivity(intent4);
+                break;
+        }
+        return false;
+
+    }
     @Override
     public void onClick(View view)
     {
         switch (view.getId())
         {
-            case R.id.task_button:
-                //Toast.makeText(activity, "Task!", Toast.LENGTH_SHORT).show();
-                /*Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);*/
-                break;
-            case R.id.leaderboard_button:
-                //Toast.makeText(activity, "Leaderboard!", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.profile_button:
-                //Toast.makeText(activity, "Profile!", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.board_button:
-                Intent intent = new Intent(this, BoardActivity.class);
-                startActivity(intent);
-                break;
             case R.id.show_calendar_button:
                 calendarPopup = new CalendarPopup(activity);
-                calendarPopup.getCalendar().setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                calendarPopup.getCalendar().addEvents(events);
+                calendarPopup.getMonthLabel().setText(formatDateMonth(calendarPopup.getCalendar().getFirstDayOfCurrentMonth()));
+                calendarPopup.getCalendar().setListener(new CompactCalendarView.CompactCalendarViewListener() {
                     @Override
-                    public void onSelectedDayChange(CalendarView calendarView, int i, int i1, int i2) {
-                        Calendar c = Calendar.getInstance();
-                        c.set(Calendar.YEAR, i);
-                        c.set(Calendar.MONTH, i1);
-                        c.set(Calendar.DAY_OF_MONTH, i2);
-                        deadline = formatDate(c.getTime());
+                    public void onDayClick(Date dateClicked) {
+                        deadline = formatDate(dateClicked);
                         titleTextView.setText("Tâches du " + deadline);
                         displayTaskForCurrentDay();
                         taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
                         taskDone.setAdapter(new TaskListAdapter(context, taskDoneItem));
                         calendarPopup.dismiss();
                     }
+
+                    @Override
+                    public void onMonthScroll(Date firstDayOfNewMonth) {
+                        calendarPopup.getMonthLabel().setText(formatDateMonth(calendarPopup.getCalendar().getFirstDayOfCurrentMonth()));
+                    }
                 });
+
                 calendarPopup.build();
                 break;
             case R.id.task_in_progress_tab:
                 taskDoneTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button));
+                allTaskTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button));
                 taskInProgressTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button_clicked));
                 findViewById(R.id.task_in_progress_list_view).setVisibility(View.VISIBLE);
                 findViewById(R.id.task_done_list_view).setVisibility(View.GONE);
+                findViewById(R.id.all_task_list_view).setVisibility(View.GONE);
                 break;
             case R.id.task_done_tab:
                 taskInProgressTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button));
+                allTaskTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button));
                 taskDoneTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button_clicked));
                 findViewById(R.id.task_in_progress_list_view).setVisibility(View.GONE);
                 findViewById(R.id.task_done_list_view).setVisibility(View.VISIBLE);
+                findViewById(R.id.all_task_list_view).setVisibility(View.GONE);
                 //check if tasks are selected with a bool var before turnOffSelection ?
+                turnOffSelection();
+                break;
+            case R.id.all_task_tab:
+                taskInProgressTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button));
+                taskDoneTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button));
+                allTaskTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button_clicked));
+                findViewById(R.id.task_in_progress_list_view).setVisibility(View.GONE);
+                findViewById(R.id.task_done_list_view).setVisibility(View.GONE);
+                findViewById(R.id.all_task_list_view).setVisibility(View.VISIBLE);
                 turnOffSelection();
                 break;
             case R.id.finish_task:
                 findViewById(R.id.finish_task).setVisibility(View.GONE);
-                deleteSelection();
+                for (int i=0; i<taskInProgressItem.size(); i++)
+                    if (taskInProgressItem.get(i).isSelected())
+                    {
+                        taskDoneItem.add(taskInProgressItem.get(i));
+                        taskInProgressItem.remove(i);
+                        i--;
+                    }
                 taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
                 break;
         }
@@ -299,13 +346,18 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     {
         taskInProgressItem = new ArrayList<>();
         taskDoneItem = new ArrayList<>();
-        for (TaskListItem item : taskList)
-            if (item.getDeadline().equals(deadline) && !item.isDone())
+        allTaskList = new ArrayList<>();
+        for (TaskListItem item : taskList) {
+            if (item.getStatus().equals("IN_PROGRESS"))
+                allTaskList.add(item);
+            if (item.getDeadline().equals(deadline) && item.getStatus().equals("IN_PROGRESS"))
                 taskInProgressItem.add(item);
-            else if (item.getDeadline().equals(deadline) && item.isDone())
+            else if (item.getStatus().equals("FINISHED"))
                 taskDoneItem.add(item);
+        }
         taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
         taskDone.setAdapter(new TaskListAdapter(context, taskDoneItem));
+        allTask.setAdapter(new TaskListAdapter(context, allTaskList));
     }
 
     public String formatDate(Date date)
@@ -314,14 +366,21 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         return formatter.format(date);
     }
 
-    private void deleteSelection()
+    public String formatDateMonth(Date date)
     {
-        for (int i=0; i<taskInProgressItem.size(); i++)
-            if (taskInProgressItem.get(i).isSelected())
-            {
-                taskInProgressItem.remove(i);
-                i--;
-            }
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
+        return formatter.format(date);
+    }
+
+    public Date formatDate(String strDate){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = null;
+        try {
+            date = formatter.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
     private boolean isItemSelected()
@@ -338,5 +397,12 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         for (TaskListItem item : taskInProgressItem)
             item.setSelected(false);
         taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
+    }
+
+    private void createEvents()
+    {
+        for (TaskListItem item : taskList)
+            if (item.getStatus().equals("IN_PROGRESS"))
+                events.add(new Event(Color.YELLOW, formatDate(item.getDeadline()).getTime(), item.getName()));
     }
 }

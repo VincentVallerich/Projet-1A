@@ -3,6 +3,7 @@
     <string name="prompt_email">Email or username</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_confirm">Confirm password</string>
+    <string name="prompt_pseudo">Enter pseudonyme</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register">Register</string>
     <string name="welcome">"Welcome !"</string>
