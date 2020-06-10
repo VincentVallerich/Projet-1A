@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.StitchAppClient;
 import com.mongodb.stitch.android.core.auth.StitchUser;
@@ -53,6 +54,7 @@ public class DataBase implements Executor {
     public static final String field_task_score = "task_score";
     public static final String field_user_score = "score";
     public static final String field_user_pseudo = "pseudo";
+    public static final String field_user_image = "image";
     public static final String field_user_master = "master";
 
     public static final int DEFAULT_SCORE = 0;
@@ -139,7 +141,6 @@ public class DataBase implements Executor {
 
         return null;
     }
-
     */
 
     public  Task<RemoteUpdateResult> startTask(String taskid){
@@ -174,7 +175,16 @@ public class DataBase implements Executor {
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
         StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
         final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
-        Document updateDoc = new Document().append("$set",new Document().append("pseudo", pseudo));
+        Document updateDoc = new Document().append("$set",new Document().append(field_user_pseudo, pseudo));
+        collection.updateOne(filterDoc, updateDoc);
+    }
+
+    public void setImage(String img) {
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
+        StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+        final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
+        Document updateDoc = new Document().append("$set",new Document().append(field_user_image, img));
         collection.updateOne(filterDoc, updateDoc);
     }
 
