@@ -68,7 +68,7 @@
         android:padding="@dimen/task_activity_edit_btn_padding"
         android:scaleType="fitCenter"
         android:visibility="gone"
-        android:src="@drawable/pen_ico"
+        android:src="@drawable/board_edit_task"
         />
 
     <ImageButton
@@ -99,7 +99,7 @@
             android:id="@+id/activity_main_bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
+            android:background="@color/colorPrimary"
             android:visibility="visible"
             app:itemIconTint="@color/navigation_container_text_color"
             app:itemTextColor="@color/navigation_container_text_color"

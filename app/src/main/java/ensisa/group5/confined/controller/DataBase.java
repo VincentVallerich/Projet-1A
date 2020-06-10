@@ -2,6 +2,7 @@ package ensisa.group5.confined.controller;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
@@ -10,14 +11,19 @@ import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.StitchAppClient;
 import com.mongodb.stitch.android.core.auth.StitchUser;
 import com.mongodb.stitch.android.core.auth.providers.userpassword.UserPasswordAuthProviderClient;
+import com.mongodb.stitch.android.services.mongodb.remote.AsyncChangeStream;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteFindIterable;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoClient;
 import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoCollection;
 import com.mongodb.stitch.core.auth.providers.userpassword.UserPasswordCredential;
+import com.mongodb.stitch.core.services.mongodb.remote.ChangeEvent;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteDeleteResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
+import org.bson.BsonBoolean;
+import org.bson.BsonDocument;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -29,6 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.model.CTask;
+import ensisa.group5.confined.ui.BoardActivity;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -131,6 +138,36 @@ public class DataBase implements Executor {
      * Le Document contient le JSON des informations de l'utilisateur connecté à l'application
      */
 
+    public void watchCollections(Context base  ) {
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection_user = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
+        RemoteMongoCollection<Document> collection_task = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
+
+        collection_user.watch()
+                .addOnCompleteListener(task -> {
+                    AsyncChangeStream<Document, ChangeEvent<Document>> changeStream = task.getResult();
+                    changeStream.addChangeEventListener((BsonValue documentId, ChangeEvent<Document> event) -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                            NotificationHelper notificationHelper = new NotificationHelper(base);
+                            notificationHelper.notify(127, "My title", "Changement dans les utilisateurs", R.drawable.taskicon_task_chef_icon );
+                        }
+                    });
+                });
+
+
+        collection_task.watch()
+                .addOnCompleteListener(task -> {
+                    AsyncChangeStream<Document, ChangeEvent<Document>> changeStream = task.getResult();
+                    changeStream.addChangeEventListener((BsonValue documentId, ChangeEvent<Document> event) -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            Log.d("stitch",event.toBsonDocument().toJson().toString());
+                            NotificationHelper notificationHelper = new NotificationHelper(base);
+                            notificationHelper.notify(127, "My title", "Changement dans les utilisateurs", R.drawable.taskicon_task_chef_icon );
+                        }
+                    });
+                });;
+    }
 
     public Task<Document> getUserInfo() {
         try {
@@ -166,6 +203,7 @@ public class DataBase implements Executor {
      */
     public Task <RemoteInsertOneResult> createTask(String name, String img, String desc, int priority, int score, Date date) {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        Log.d("stitch","creation de la tache:  " + name );
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         Document newTask = new Document()
                 .append(field_task_name, name)

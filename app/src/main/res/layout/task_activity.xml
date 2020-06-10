@@ -10,16 +10,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/task_activity_day_container"
         >
+
         <TextView
             android:id="@+id/task_activity_day"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="54dp"
+            android:gravity="center"
             android:text="Tâches du mm-dd-yyyy"
             android:textColor="@color/popup_title_color"
             android:textSize="@dimen/popup_title_text_size"
-            android:textStyle="bold"
-            android:gravity="center"
-            />
+            android:textStyle="bold" />
     </FrameLayout>
 
     <ImageButton
@@ -37,38 +37,36 @@
 
     <LinearLayout
         android:id="@+id/tab_container"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:weightSum="3"
         android:layout_below="@+id/task_activity_day_container"
         >
         <Button style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/task_in_progress_tab"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/tab_button_clicked"
             android:textAllCaps="false"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_weight="1"
             android:text="Tâches du jour"
             />
         <Button style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/all_task_tab"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/tab_button"
             android:textAllCaps="false"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_weight="1"
             android:text="Toutes les tâches"
             />
         <Button style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/task_done_tab"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/tab_button"
             android:textAllCaps="false"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_weight="1"
             android:text="Historique"
             />
     </LinearLayout>
@@ -146,7 +144,7 @@
             android:id="@+id/activity_main_bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
+            android:background="@color/colorPrimary"
             app:itemIconTint="@color/navigation_container_text_color"
             app:itemTextColor="@color/navigation_container_text_color"
             app:menu="@menu/bottom_navigation_menu" />
