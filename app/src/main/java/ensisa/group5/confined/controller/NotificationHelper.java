@@ -70,7 +70,6 @@ public class NotificationHelper extends ContextWrapper {
                 .setContentTitle( title )
                 .setContentText( message )
                 //.setSmallIcon(R.drawable.ic_launcher )
-
                 .setLargeIcon( BitmapFactory.decodeResource(res, largeIcon) )
                 .setAutoCancel( true )
 
