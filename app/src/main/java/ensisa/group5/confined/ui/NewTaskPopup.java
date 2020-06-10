@@ -13,10 +13,15 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 
 public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedListener
 {
@@ -189,19 +194,20 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
             @Override
             public void onClick(View view) {
                 calendarPopup = new CalendarPopup(activity);
-                calendarPopup.getCalendar().setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                calendarPopup.getMonthLabel().setText(formatDateMonth(calendarPopup.getCalendar().getFirstDayOfCurrentMonth()));
+                calendarPopup.getCalendar().setListener(new CompactCalendarView.CompactCalendarViewListener() {
                     @Override
-                    public void onSelectedDayChange(CalendarView calendarView, int i, int i1, int i2) {
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                        //deadline = formatter.format(new Date(i-1900, i1, i2));
-                        Calendar c = Calendar.getInstance();
-                        c.set(Calendar.YEAR, i);
-                        c.set(Calendar.MONTH, i1);
-                        c.set(Calendar.DAY_OF_MONTH, i2);
-                        deadline.setText(formatter.format(c.getTime()));
+                    public void onDayClick(Date dateClicked) {
+                        deadline.setText(formatDate(dateClicked));
                         calendarPopup.dismiss();
                     }
+
+                    @Override
+                    public void onMonthScroll(Date firstDayOfNewMonth) {
+                        calendarPopup.getMonthLabel().setText(formatDateMonth(calendarPopup.getCalendar().getFirstDayOfCurrentMonth()));
+                    }
                 });
+
                 calendarPopup.build();
             }
         });
@@ -219,5 +225,17 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
     public void onNothingSelected(AdapterView<?> parent)
     {
 
+    }
+
+    public String formatDateMonth(Date date)
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
+        return formatter.format(date);
+    }
+
+    public String formatDate(Date date)
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return formatter.format(date);
     }
 }

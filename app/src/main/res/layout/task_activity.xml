@@ -63,7 +63,17 @@
             android:textAllCaps="false"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="Tâches en cours"
+            android:text="Tâches du jour"
+            />
+        <Button style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/all_task_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_button"
+            android:textAllCaps="false"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Toutes les tâches"
             />
         <Button style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/task_done_tab"
@@ -73,7 +83,7 @@
             android:textAllCaps="false"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="Tâches terminées"
+            android:text="Historique"
             />
     </LinearLayout>
 
@@ -88,6 +98,15 @@
 
     <ListView
         android:id="@+id/task_done_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="432dp"
+        android:layout_above="@+id/navigation_container"
+        android:layout_below="@+id/tab_container"
+        android:visibility="gone"
+        />
+
+    <ListView
+        android:id="@+id/all_task_list_view"
         android:layout_width="match_parent"
         android:layout_height="432dp"
         android:layout_above="@+id/navigation_container"

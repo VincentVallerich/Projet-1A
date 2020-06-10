@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.BoardActivity;
+import ensisa.group5.confined.ui.TaskActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         registerBtn = (Button) findViewById(R.id.register_btn);
 
         /* for clear all preferences, to use in the case of disconnect */
-        //preferences.edit().clear().apply();
+        preferences.edit().clear().apply();
 
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL)))
@@ -107,8 +108,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         signinBtn.setOnClickListener(v -> {
-            String username = usernameEdit.getText().toString();
-            String pswd = passwordEdit.getText().toString();
+            /*String username = usernameEdit.getText().toString();
+            String pswd = passwordEdit.getText().toString();*/
+
+            String username = "test@test.com";
+            String pswd = "test666";
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
                     startBoardActivity(this);
@@ -144,5 +148,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void startBoardActivity(Context context) { startActivity(new Intent(context, BoardActivity.class)); }
+    public void startBoardActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
 }

@@ -33,6 +33,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private List<TaskListItem> taskListItem;
     private ListView taskListView;
     private Context context;
+
     private boolean selectionMode;
     private boolean managerMode;
     private boolean editMode;
@@ -48,11 +49,17 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.board_activity);
         activity = this;
         context = this.getApplicationContext();
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
         bottomNavigationView.getMenu().getItem(0).setChecked(true);
+
+        ImageButton addTaskButton = findViewById(R.id.add_task);
+        addTaskButton.setOnClickListener(this);
+
         ImageButton delTaskButton = findViewById(R.id.del_task);
         delTaskButton.setOnClickListener(this);
+
         ImageButton backTaskButton = findViewById(R.id.back_task);
         backTaskButton.setOnClickListener(this);
 
@@ -136,7 +143,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                             //add new tasks in the list
                             taskListItem.remove(item);
-                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, false));
+                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE"));
                             taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                             modifyTaskPopup.dismiss();
                         }
@@ -145,10 +152,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 }
                 else if (!editMode)
                 {
-                    if (!selectionMode)
-                        showOk();
                     item.setSelected(!item.isSelected());
                     taskListView.setAdapter(new TaskListAdapter(context, taskListItem, false, true));
+                    if (!selectionMode && isItemSelected())
+                        showOk();
+                    else
+                        hideOk();
                 }
             }
         });
@@ -186,7 +195,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     {
         switch (view.getId())
         {
-
             case R.id.add_task:
                 //Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
                 newTaskPopup = new NewTaskPopup(activity);
@@ -212,7 +220,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         //store the new task in the bdd
 
                         //add new tasks in the list
-                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, false));
+                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE"));
                         taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                         newTaskPopup.dismiss();
                     }
@@ -344,5 +352,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 taskListItem.remove(i);
                 i--;
             }
+    }
+
+    private boolean isItemSelected()
+    {
+        for (TaskListItem item : taskListItem)
+            if (item.isSelected())
+                return true;
+        return false;
     }
 }
