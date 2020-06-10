@@ -6,18 +6,17 @@ public class CTask{
     private int id;
     private String name;
     private String description;
-    public enum Priority {MINOR, MEDIUM, IMPORTANT, VERY_IMPORTANT, URGENT};
     public enum State {NON_ATTRIBUATE, IN_PROGRESS, FINISHED};
-    private Priority priority;
+    private int priority;
     private State state;
     private int points;
 
     public CTask(){
-        this.priority = Priority.MINOR;
+        this.priority = 0;
         this.points = 0;
     }
 
-    public CTask(String name, String description, Priority priority, int points){
+    public CTask(String name, String description, int priority, int points){
         this.id = Math.abs(UUID.randomUUID().hashCode());
         this.name = name;
         this.description = description;
@@ -45,11 +44,11 @@ public class CTask{
         this.description = description;
     }
 
-    public Priority getPriority() {
+    public int getPriority() {
         return priority;
     }
 
-    public void setPriority(Priority priority) {
+    public void setPriority(int priority) {
         this.priority = priority;
     }
 
