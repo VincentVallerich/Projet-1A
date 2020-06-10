@@ -61,6 +61,7 @@ public class DataBase implements Executor {
     public static final String field_task_limit_date = "task_limit_date";
 
     public static final int DEFAULT_SCORE = 0;
+    public static final String DEFAULT_IMAGE = "profil_icon_1.png";
 
     public DataBase() {}
 
@@ -268,6 +269,7 @@ public class DataBase implements Executor {
                                 Document registerUser = new Document("_id", new ObjectId(user.getId()))
                                         .append(field_user_pseudo, pseudo)
                                         .append(field_user_score, DEFAULT_SCORE)
+                                        .append(field_user_image, DEFAULT_IMAGE)
                                         .append(field_user_master, false);
 
                                 collection.insertOne(registerUser);

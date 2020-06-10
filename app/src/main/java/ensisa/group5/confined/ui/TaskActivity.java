@@ -204,8 +204,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent3);
                 break;
             case R.id.action_profile:
-                //   Intent intent4 = new Intent(this, ProfilActivity.class);
-                // startActivity(intent4);
+                   Intent intent4 = new Intent(this, ProfilActivity.class);
+                   startActivity(intent4);
                 break;
         }
         return false;
