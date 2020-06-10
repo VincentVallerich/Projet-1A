@@ -2,6 +2,7 @@ package ensisa.group5.confined.controller;
 
 
 
+import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -10,7 +11,7 @@ import android.graphics.Color;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.app.Notification;
-import android.app.NotificationChannel;
+//import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
@@ -19,33 +20,20 @@ import androidx.annotation.RequiresApi;
 import ensisa.group5.confined.R;
 
 public class NotificationHelper extends ContextWrapper {
-    private NotificationManager notifManager;
-    private static final String CHANNEL_HIGH_ID = "com.infinisoftware.testnotifs.HIGH_CHANNEL";
-    private static final String CHANNEL_HIGH_NAME = "High Channel";
+
     private static final String CHANNEL_DEFAULT_ID = "com.infinisoftware.testnotifs.DEFAULT_CHANNEL";
-    private static final String CHANNEL_DEFAUL_NAME = "Default Channel";
+    private static final int NOTIF_ID = 123;
+    private Context context;
+    private NotificationManager notifManager;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public NotificationHelper(Context base ) {
         super( base );
-
+        this.context = base;
         notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        long [] swPattern = new long[] { 0, 500, 110, 500, 110, 450, 110, 200, 110,
-                170, 40, 450, 110, 200, 110, 170, 40, 500 };
-
-        NotificationChannel notificationChannelHigh = new NotificationChannel(
-                CHANNEL_HIGH_ID, CHANNEL_HIGH_NAME, notifManager.IMPORTANCE_HIGH );
-        notificationChannelHigh.enableLights( true );
-        notificationChannelHigh.setLightColor( Color.RED );
-        notificationChannelHigh.setShowBadge( true );
-        notificationChannelHigh.enableVibration( true );
-        notificationChannelHigh.setVibrationPattern( swPattern );
-        notificationChannelHigh.setLockscreenVisibility( Notification.VISIBILITY_PUBLIC );
-        notifManager.createNotificationChannel( notificationChannelHigh );
-
         NotificationChannel notificationChannelDefault = new NotificationChannel(
-                CHANNEL_DEFAULT_ID, CHANNEL_DEFAUL_NAME, notifManager.IMPORTANCE_DEFAULT );
+                CHANNEL_DEFAULT_ID, "CHANNEL_DEFAUL_NAME", notifManager.IMPORTANCE_DEFAULT );
         notificationChannelDefault.enableLights( true );
         notificationChannelDefault.setLightColor( Color.WHITE );
         notificationChannelDefault.enableVibration( true );
@@ -54,32 +42,40 @@ public class NotificationHelper extends ContextWrapper {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void notify( int id, boolean prioritary, String title, String message, int largeIcon ) {
-        String channelId = prioritary ? CHANNEL_HIGH_ID : CHANNEL_DEFAULT_ID;
-        Resources res = getApplicationContext().getResources();
-        Context context = getApplicationContext();
 
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void notify(int id, String title, String message, int largeIcon ) {
+        Resources res = context.getResources();
         //  l'activité à ouvrir : ici MainActivity
         Intent notificationIntent = new Intent(context, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context, 456, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        Notification notification = null;     // avant l'API 16
 
-        Notification notification = new Notification.Builder( getApplicationContext(), channelId )
+        NotificationManager mgr=
+                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+
+
+        notification = new Notification.Builder(context,CHANNEL_DEFAULT_ID)
+                .setSmallIcon(R.drawable.taskicon_task_chef_icon)     // drawable for API 26
+                .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.taskicon_maid))
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true)
+                .setContentTitle("A notification title")
+                .setContentText( "Full message" )
                 .setContentIntent( contentIntent )      // On injecte le contentIntent
-                .setContentTitle( title )
-                .setContentText( message )
-                //.setSmallIcon(R.drawable.ic_launcher )
-                .setLargeIcon( BitmapFactory.decodeResource(res, largeIcon) )
-                .setAutoCancel( true )
+                .setVibrate(new long[] { 0, 500, 110, 500, 110, 450, 110, 200, 110,
+                        170, 40, 450, 110, 200, 110, 170, 40, 500 } )
+                .setLights(Color.RED, 3000, 3000)
 
-                .build();
+                .getNotification();
 
-        notifManager.notify( id, notification );
+        // .build();             // à partir de l'API 16
+
+        NotificationManager notifManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notifManager.notify( NOTIF_ID, notification );
     }
-    //Exemple pour instancier
-   /* int largeIcon = R.drawable.ic_launcher;
-    //Initialisation du Notification Helper, et déclenchement via sa méthode .notify()
-    NotificationHelper notificationHelper = new NotificationHelper(MainActivity.this);
-                notificationHelper.notify(1, false, "My title", "My content",largeIcon );*/
+
 }

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,6 +34,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Thread t = new Thread() {
+            public void run(){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationHelper notificationHelper = new NotificationHelper(MainActivity.this);
+                    notificationHelper.notify(127, "My title", "My content", R.drawable.taskicon_task_chef_icon );
+                }
+            }
+        };
+        t.start();
+
         preferences = getPreferences(MODE_PRIVATE);
 
         dataBase = new DataBase(this, preferences);
@@ -44,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         registerBtn = (Button) findViewById(R.id.register_btn);
 
         /* for clear all preferences, to use in the case of disconnect */
-        //preferences.edit().clear().apply();
+        preferences.edit().clear().apply();
 
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
@@ -113,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         signinBtn.setOnClickListener(v -> {
             String username = usernameEdit.getText().toString();
             String pswd = passwordEdit.getText().toString();
+
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
                     startBoardActivity(getApplicationContext());

@@ -99,8 +99,8 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                     break;
 
                 case  R.id.modify_popup_template_validation_btn:
-                    dataBase.setImage()
                     img = modifyProfilPopup.getImg();
+                    dataBase.setImage(img);
                     setImg(img);
 
                     pseudo = modifyProfilPopup.getPseudo();

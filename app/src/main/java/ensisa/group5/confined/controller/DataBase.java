@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.StitchAppClient;
 import com.mongodb.stitch.android.core.auth.StitchUser;
@@ -50,10 +51,11 @@ public class DataBase implements Executor {
     public static final String field_task_status = "task_status";
     public static final String field_task_name = "task_name";
     public static final String field_task_priority = "task_priority";
-    public static final String field_task_description = "task_description";
+    public static final String field_task_description = "task_desc";
     public static final String field_task_score = "task_score";
     public static final String field_user_score = "score";
     public static final String field_user_pseudo = "pseudo";
+    public static final String field_user_image = "image";
     public static final String field_user_master = "master";
     public static final String field_task_img = "task_image";
     public static final String field_task_limit_date = "task_limit_date";
@@ -97,7 +99,7 @@ public class DataBase implements Executor {
      *Retourne un task qui contient une liste de documents
      * Les Documents contiennent les JSON des informations des tâches non assignées ( task_status = 0 ). Utile pour que les utilisateurs puissent les choisir
      */
-    public RemoteFindIterable<Document>  getNonAssignedTasks() {
+    public RemoteFindIterable<Document> getNonAssignedTasks() {
         try {
             RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
             RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
@@ -127,6 +129,8 @@ public class DataBase implements Executor {
      *Retourne un task qui contient un document
      * Le Document contient le JSON des informations de l'utilisateur connecté à l'application
      */
+
+
     public Task<Document> getUserInfo() {
         try {
             final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
@@ -141,6 +145,7 @@ public class DataBase implements Executor {
 
         return null;
     }
+
 
 
 
@@ -168,7 +173,7 @@ public class DataBase implements Executor {
                 .append(field_task_description, desc)
                 .append(field_task_score, score)
                 .append(field_task_img, img)
-                .append(field_task_limit_date, date.getTime());
+                .append(field_task_limit_date, new Date(date.getTime()));
         return collection.insertOne(newTask);
     }
 
@@ -178,7 +183,16 @@ public class DataBase implements Executor {
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
         StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
         final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
-        Document updateDoc = new Document().append("$set",new Document().append("pseudo", pseudo));
+        Document updateDoc = new Document().append("$set",new Document().append(field_user_pseudo, pseudo));
+        collection.updateOne(filterDoc, updateDoc);
+    }
+
+    public void setImage(String img) {
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
+        StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+        final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
+        Document updateDoc = new Document().append("$set",new Document().append(field_user_image, img));
         collection.updateOne(filterDoc, updateDoc);
     }
 
@@ -226,7 +240,7 @@ public class DataBase implements Executor {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
         initClient();
         Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
-        Boolean res = false;
+        Boolean res;
         if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
             Log.d("stitch","successful login");
             res =true;
@@ -241,9 +255,7 @@ public class DataBase implements Executor {
     public boolean registerUser(String username, String pseudo, String password) {
         AtomicReference<Boolean> res = new AtomicReference<>(false);
         initClient();
-        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
-                .getProviderClient(UserPasswordAuthProviderClient.factory);
-
+        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth() .getProviderClient(UserPasswordAuthProviderClient.factory);
         emailPassClient.registerWithEmail(username, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
