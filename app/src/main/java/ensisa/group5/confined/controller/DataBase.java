@@ -22,6 +22,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
@@ -50,15 +51,16 @@ public class DataBase implements Executor {
     public static final String field_task_status = "task_status";
     public static final String field_task_name = "task_name";
     public static final String field_task_priority = "task_priority";
-    public static final String field_task_description = "task_description";
+    public static final String field_task_description = "task_desc";
     public static final String field_task_score = "task_score";
     public static final String field_user_score = "score";
     public static final String field_user_pseudo = "pseudo";
     public static final String field_user_image = "image";
     public static final String field_user_master = "master";
+    public static final String field_task_img = "task_image";
+    public static final String field_task_limit_date = "task_limit_date";
 
     public static final int DEFAULT_SCORE = 0;
-
 
     public DataBase() {}
 
@@ -155,18 +157,19 @@ public class DataBase implements Executor {
 
     /**
      *
-     * @param task
      * @return the current task into database
      */
-    public Task <RemoteInsertOneResult> createTask(CTask task) {
+    public Task <RemoteInsertOneResult> createTask(String name, String img, String desc, int priority, int score, Date date) {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         Document newTask = new Document()
-                .append(field_task_name, task.getName())
-                .append(field_task_status, task.getState().toString())
-                .append(field_task_priority, task.getPriority())
-                .append(field_task_description, task.getDescription())
-                .append(field_task_score, String.valueOf(task.getPoints()));
+                .append(field_task_name, name)
+                .append(field_task_status, "NON_ATTRIBUATE")
+                .append(field_task_priority, priority)
+                .append(field_task_description, desc)
+                .append(field_task_score, score)
+                .append(field_task_img, img)
+                .append(field_task_limit_date, new Date(date.getTime()));
         return collection.insertOne(newTask);
     }
 
@@ -247,9 +250,7 @@ public class DataBase implements Executor {
     public boolean registerUser(String username, String pseudo, String password) {
         AtomicReference<Boolean> res = new AtomicReference<>(false);
         initClient();
-        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
-                .getProviderClient(UserPasswordAuthProviderClient.factory);
-
+        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth() .getProviderClient(UserPasswordAuthProviderClient.factory);
         emailPassClient.registerWithEmail(username, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
