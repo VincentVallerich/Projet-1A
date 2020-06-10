@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        NotificationHelper notificationHelper = new NotificationHelper(MainActivity.this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationHelper.notify(127, "My title", "My content", R.drawable.taskicon_task_chef_icon );
+        }
 
         preferences = getPreferences(MODE_PRIVATE);
 

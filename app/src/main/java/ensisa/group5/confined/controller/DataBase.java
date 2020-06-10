@@ -95,7 +95,7 @@ public class DataBase implements Executor {
      *Retourne un task qui contient une liste de documents
      * Les Documents contiennent les JSON des informations des tâches non assignées ( task_status = 0 ). Utile pour que les utilisateurs puissent les choisir
      */
-    public RemoteFindIterable<Document>  getNonAssignedTasks() {
+    public RemoteFindIterable<Document> getNonAssignedTasks() {
         try {
             RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
             RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
@@ -125,7 +125,7 @@ public class DataBase implements Executor {
      *Retourne un task qui contient un document
      * Le Document contient le JSON des informations de l'utilisateur connecté à l'application
      */
-   /* public Task<Document> getUserInfo() {
+    /* public Task<Document> getUserInfo() {
         try {
             final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
             RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection("Users_data");
@@ -222,7 +222,7 @@ public class DataBase implements Executor {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
         initClient();
         Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
-        Boolean res = false;
+        Boolean res;
         if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
             Log.d("stitch","successful login");
             res =true;
