@@ -212,7 +212,7 @@ public class DataBase implements Executor {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
-        Document updateDoc = new Document().append("$set",new Document().append(field_task_status, CTask.State.NON_ATTRIBUATE.toString())).append("user_id"," ");
+        Document updateDoc = new Document().append("$set",new Document().append(field_task_status, "NON_ATTRIBUATE").append("user_id"," "));
         return collection.updateOne(filterDoc, updateDoc);
     }
     public Task<RemoteDeleteResult> deleteTask(String taskid){
