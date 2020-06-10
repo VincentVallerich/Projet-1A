@@ -185,6 +185,10 @@ public class DataBase implements Executor {
     }
 
 
+    public String getUserEmail() {
+        return Stitch.getDefaultAppClient().getAuth().getUser().getProfile().getEmail();
+    }
+
 
 
     public  Task<RemoteUpdateResult> startTask(String taskid){

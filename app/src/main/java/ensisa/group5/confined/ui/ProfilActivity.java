@@ -2,6 +2,7 @@ package ensisa.group5.confined.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.bson.Document;
 import org.json.JSONException;
@@ -19,6 +21,7 @@ import org.json.JSONObject;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.DataBase;
+import ensisa.group5.confined.game.ScoreBordActivity;
 
 public class ProfilActivity extends AppCompatActivity implements View.OnClickListener{
     private ProfilActivity activity;
@@ -31,11 +34,17 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
     private String pseudo;
     private String img;
     private ImageView profileIcon;
+    private TextView textMail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
+        bottomNavigationView.getMenu().getItem(3).setChecked(true);
+
 
         dataBase = new DataBase(this, preferences);
         preferences = getPreferences(MODE_PRIVATE);
@@ -45,10 +54,11 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         modifyButton.setOnClickListener(this);
 
         textPseudo = (TextView) findViewById(R.id.text_pseudo);
-        textPseudo.setText("retrieving");
 
         textScore = (TextView) findViewById(R.id.text_score);
-        textScore.setText("retrieving");
+
+        textMail = (TextView) findViewById(R.id.text_email);
+        textMail.setText(dataBase.getUserEmail());
 
         profileIcon = findViewById(R.id.profile_icon_image);
 
@@ -71,7 +81,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                         String name = obj.getString("pseudo");
                         textPseudo.setText(name);
                         String score = obj.getString("score");
-                        textScore.setText("Score :"+score);
+                        textScore.setText(score);
                         String profil_image = obj.getString("image");
                         setImg(profil_image);
                     }
@@ -112,6 +122,33 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                     break;
             }
         }
+    private boolean onClickNavigationBar(Integer integer ){
+        Log.d("stitch","going in onclick" + integer);
+        switch (integer) {
+            case R.id.action_board:
+                // go to activity
+                Intent intent = new Intent(this, BoardActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_leaderboard:
+                Intent intent2 = new Intent(this, ScoreBordActivity.class);
+                Log.d("stitch","going in leaderboard");
+                startActivity(intent2);
+                break;
+            case R.id.action_mytasks:
+                Intent intent3 = new Intent(this, TaskActivity.class);
+                Log.d("stitch","going in mytasks");
+                startActivity(intent3);
+                break;
+            case R.id.action_profile:
+                Intent intent4 = new Intent(this, ProfilActivity.class);
+                Log.d("stitch","going in profile");
+                startActivity(intent4);
+                break;
+        }
+        return false;
+
+    }
 
 
     public void setImg(String img)
