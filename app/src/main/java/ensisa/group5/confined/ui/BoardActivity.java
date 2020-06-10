@@ -52,7 +52,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private boolean selectionMode;
     private boolean managerMode;
     private boolean editMode;
-
+    private TaskListItem item;
     private ImageButton taskButton;
 
     private DataBase dateBase;
@@ -205,6 +205,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
                         // Ensuite ajouter la tâche en tant que ListItem;
                         JSONObject obj = new JSONObject(d.toJson());
+                        String id = d.getObjectId("_id").toString();
                         String name = obj.getString("task_name").toString();
                         String img = obj.getString("task_name").toString();
                         String description = obj.getString("task_desc").toString();
@@ -217,7 +218,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status, "");
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status,id);
                         taskListItem.add(t);
                     }
                     taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
@@ -288,9 +289,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                         @Override
                                         public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
 
-                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,frequency,deadline,"NON_ATTRIBUATE", task.getResult().getInsertedId().toString()));
+                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,frequency,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asObjectId().toString()));
                                             Log.d("stitch ", "new ID : " + task.getResult().getInsertedId().toString() );
-                                            taskListView.deferNotifyDataSetChanged();
+
+                                            TaskListAdapter a = new TaskListAdapter(context,taskListItem);
+                                            taskListView.setAdapter(a);
+                                            a.notifyDataSetChanged();
                                         }
                                     }
                             );  } });
@@ -305,10 +309,37 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 newTaskPopup.build();
                 break;
             case R.id.del_task:
-                deleteSelection();
-                disableSelectionMode();
-                // + del on db
-                break;
+                //deleteSelection();
+                try {
+                    for (int i=0; i<taskListItem.size(); i++) {
+                        if (taskListItem.get(i).isSelected()) {
+                            item = taskListItem.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dateBase.deleteTask(item.getId());
+                                    taskListItem.remove(item);
+
+
+                                }
+                            });
+                            t5.start();
+
+                        }
+                    }
+
+                    TaskListAdapter a = new TaskListAdapter(context,taskListItem);
+                    taskListView.setAdapter(a);
+                    a.notifyDataSetChanged();
+                }
+
+                catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        disableSelectionMode();
+        // + del on db
+        break;
             case R.id.back_task:
                 if (selectionMode && editMode)
                 {
