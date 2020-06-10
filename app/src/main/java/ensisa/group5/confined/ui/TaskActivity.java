@@ -116,15 +116,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 TaskListItem item = taskInProgressItem.get(i);
                 item.setSelected(!item.isSelected());
                 taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem, false, true));
-                if (isItemSelected()) {
-                    findViewById(R.id.finish_task).setVisibility(View.VISIBLE);
-                    findViewById(R.id.abort_task).setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    findViewById(R.id.finish_task).setVisibility(View.GONE);
-                    findViewById(R.id.abort_task).setVisibility(View.GONE);
-                }
+                showButtons();
             }
         });
 
@@ -135,6 +127,15 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
         allTaskList = new ArrayList<>();
         allTask = findViewById(R.id.all_task_list_view);
+        allTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                TaskListItem item = allTaskList.get(i);
+                item.setSelected(!item.isSelected());
+                allTask.setAdapter(new TaskListAdapter(context, allTaskList, false, true));
+                showButtons();
+            }
+        });
 
         preferences = getPreferences(MODE_PRIVATE);
         dataBase = new DataBase(this, preferences);
@@ -203,8 +204,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent3);
                 break;
             case R.id.action_profile:
-                   Intent intent4 = new Intent(this, ProfilActivity.class);
-                   startActivity(intent4);
+                Intent intent4 = new Intent(this, ProfilActivity.class);
+                startActivity(intent4);
                 break;
         }
         return false;
@@ -217,6 +218,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         {
             case R.id.show_calendar_button:
                 calendarPopup = new CalendarPopup(activity);
+                calendarPopup.getCalendar().removeAllEvents();
                 calendarPopup.getCalendar().addEvents(events);
                 calendarPopup.getMonthLabel().setText(formatDateMonth(calendarPopup.getCalendar().getFirstDayOfCurrentMonth()));
                 calendarPopup.getCalendar().setListener(new CompactCalendarView.CompactCalendarViewListener() {
@@ -245,6 +247,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 findViewById(R.id.task_in_progress_list_view).setVisibility(View.VISIBLE);
                 findViewById(R.id.task_done_list_view).setVisibility(View.GONE);
                 findViewById(R.id.all_task_list_view).setVisibility(View.GONE);
+                turnOffSelection();
                 break;
             case R.id.task_done_tab:
                 taskInProgressTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button));
@@ -268,40 +271,41 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.finish_task:
                 findViewById(R.id.finish_task).setVisibility(View.GONE);
                 findViewById(R.id.abort_task).setVisibility(View.GONE);
-                for (int i=0; i<taskInProgressItem.size(); i++)
-                    if (taskInProgressItem.get(i).isSelected())
+                for (int i=0; i<taskList.size(); i++)
+                    if (taskList.get(i).isSelected())
                     {
-                        item = taskInProgressItem.get(i);
+                        item = taskList.get(i);
                         try {
                             Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.finishTask(item.getId()); }  });
                             t1.start();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        taskDoneItem.add(taskInProgressItem.get(i));
-                        taskInProgressItem.remove(i);
+                        taskList.remove(i);
                         i--;
                     }
-                taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
+                createEvents();
+                displayTaskForCurrentDay();
                 break;
             case R.id.abort_task:
                 findViewById(R.id.finish_task).setVisibility(View.GONE);
                 findViewById(R.id.abort_task).setVisibility(View.GONE);
 
-                for (int i=0; i<taskInProgressItem.size(); i++)
-                    if (taskInProgressItem.get(i).isSelected())
+                for (int i=0; i<taskList.size(); i++)
+                    if (taskList.get(i).isSelected())
                     {
-                        item = taskInProgressItem.get(i);
+                        item = taskList.get(i);
                         try {
                             Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.abandonTask(item.getId()); }  });
                             t1.start();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        taskInProgressItem.remove(i);
+                        taskList.remove(i);
                         i--;
                     }
-                taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
+                createEvents();
+                displayTaskForCurrentDay();
                 break;
         }
     }
@@ -349,7 +353,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean isItemSelected()
     {
-        for (TaskListItem item : taskInProgressItem)
+        for (TaskListItem item : taskList)
             if (item.isSelected())
                 return true;
         return false;
@@ -358,15 +362,31 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private void turnOffSelection()
     {
         findViewById(R.id.finish_task).setVisibility(View.GONE);
+        findViewById(R.id.abort_task).setVisibility(View.GONE);
         for (TaskListItem item : taskInProgressItem)
             item.setSelected(false);
         taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
+        allTask.setAdapter(new TaskListAdapter(context, allTaskList));
     }
 
     private void createEvents()
     {
+        events = new ArrayList<>();
         for (TaskListItem item : taskList)
             if (item.getStatus().equals("IN_PROGRESS"))
                 events.add(new Event(Color.YELLOW, formatDate(item.getDeadline()).getTime(), item.getName()));
+    }
+
+    private void showButtons()
+    {
+        if (isItemSelected()) {
+            findViewById(R.id.finish_task).setVisibility(View.VISIBLE);
+            findViewById(R.id.abort_task).setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            findViewById(R.id.finish_task).setVisibility(View.GONE);
+            findViewById(R.id.abort_task).setVisibility(View.GONE);
+        }
     }
 }
