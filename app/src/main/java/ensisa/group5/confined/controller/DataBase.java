@@ -163,7 +163,7 @@ public class DataBase implements Executor {
         Document newTask = new Document()
                 .append(field_task_name, task.getName())
                 .append(field_task_status, task.getState().toString())
-                .append(field_task_priority, task.getPriority().toString())
+                .append(field_task_priority, task.getPriority())
                 .append(field_task_description, task.getDescription())
                 .append(field_task_score, String.valueOf(task.getPoints()));
         return collection.insertOne(newTask);
@@ -208,14 +208,19 @@ public class DataBase implements Executor {
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
         return collection.deleteOne(filterDoc);
     }
+
+    public void initClient() {
+        if (client == null)
+            client = Stitch.initializeDefaultAppClient(clientAppId);
+    }
+
     /*
      *Retourne un un booléen
      * Le boolean indique si les credentials peuvent connecter l'utilisateur
      */
     public boolean isUserAuthenticated(String email, String password) throws InterruptedException {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
-        if (client == null)
-            client = Stitch.initializeDefaultAppClient(clientAppId);
+        initClient();
         Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
         Boolean res = false;
         if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
@@ -231,8 +236,7 @@ public class DataBase implements Executor {
 
     public boolean registerUser(String username, String pseudo, String password) {
         AtomicReference<Boolean> res = new AtomicReference<>(false);
-        if (client == null)
-            client = Stitch.initializeDefaultAppClient(clientAppId);
+        initClient();
         UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
                 .getProviderClient(UserPasswordAuthProviderClient.factory);
 
@@ -251,11 +255,11 @@ public class DataBase implements Executor {
                                         .append(field_user_master, false);
 
                                 collection.insertOne(registerUser);
+                                Log.d("stitch", "Successfully sent account confirmation email");
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        Log.d("stitch", "Successfully sent account confirmation email");
                     } else {
                         Log.e("stitch", "Error registering new user:");
                     }
