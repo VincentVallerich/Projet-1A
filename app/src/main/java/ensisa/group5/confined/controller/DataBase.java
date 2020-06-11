@@ -149,28 +149,32 @@ public class DataBase implements Executor {
      * Le Document contient le JSON des informations de l'utilisateur connecté à l'application
      */
 
-    public void watchCollections(Context base) {
+    public void watchCollections(Context base  ) {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection_user = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
         RemoteMongoCollection<Document> collection_task = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
+
         collection_user.watch()
                 .addOnCompleteListener(task -> {
                     AsyncChangeStream<Document, ChangeEvent<Document>> changeStream = task.getResult();
                     changeStream.addChangeEventListener((BsonValue documentId, ChangeEvent<Document> event) -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
                             NotificationHelper notificationHelper = new NotificationHelper(base);
-                            notificationHelper.notify(127, "My title", "Changement dans les utilisateurs", R.drawable.taskicon_task_chef_icon );
+                            notificationHelper.notify(127, "Nouveau balayeur !", "Un bagnard est arrivé !", R.drawable.taskicon_task_chef_icon );
                         }
                     });
                 });
+
+
         collection_task.watch()
                 .addOnCompleteListener(task -> {
                     AsyncChangeStream<Document, ChangeEvent<Document>> changeStream = task.getResult();
                     changeStream.addChangeEventListener((BsonValue documentId, ChangeEvent<Document> event) -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            Log.d("stitch",event.toBsonDocument().toJson().toString());
+                            Log.d("stitch",event.toBsonDocument().toJson());
                             NotificationHelper notificationHelper = new NotificationHelper(base);
-                            notificationHelper.notify(127, "My title", "Changement dans les utilisateurs", R.drawable.taskicon_task_chef_icon);
+                            notificationHelper.notify(127, "Au boulot !", "Une nouvelle tâche !", R.drawable.taskicon_task_chef_icon );
                         }
                     });
                 });;

@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         preferences = getPreferences(MODE_PRIVATE);
 
         dataBase = new DataBase(this, preferences);
@@ -61,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
             dataBase.initClient();
             startTaskActivity(this);
-            finish();
         }
 
         signinBtn.setEnabled(false);
@@ -129,13 +127,13 @@ public class MainActivity extends AppCompatActivity {
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
                     startTaskActivity(this);
-                    finish();
                 } else {
                     if (dataBase.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
                         startTaskActivity(this);
-                        finish();
+                    } else {
+                        Toast.makeText(this,"Mauvais nom d'utilisateur ou mot de passe", Toast.LENGTH_SHORT);
                     }
                 }
             } catch (InterruptedException e) {
@@ -186,6 +184,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void startTaskActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
+    public void startTaskActivity(Context context) {
+        startActivity(new Intent(context, TaskActivity.class));
+        Thread t = new Thread() {
+            public void run(){
+                dataBase.watchCollections(context);
+            }
+        };
+        t.start();
+        finish();
+    }
 }

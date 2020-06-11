@@ -5,30 +5,18 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.text.TextBlock;
-import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteDeleteResult;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
 import org.json.JSONException;
@@ -60,7 +48,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private boolean editMode;
     private TaskListItem item;
 
-    private DataBase dateBase;
+    private DataBase dataBase;
     private SharedPreferences preferences;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -71,13 +59,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.board_activity);
         activity = this;
         context = this.getApplicationContext();
-        dateBase = new DataBase();
-        Thread t = new Thread() {
-            public void run(){
-                dateBase. watchCollections(context);
-            }
-        };
-        t.start();
+
+        dataBase = new DataBase();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -101,7 +84,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         // need to check if user is manager instead
         managerMode = true;
         try {
-            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+            Thread t3 = new Thread(() -> createUnassignedTaskDisplay());
             t3.start();
 
         } catch (Exception e) {
@@ -115,119 +98,101 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         taskListItem = new ArrayList<>();
         taskListView = findViewById(R.id.task_list_view);
-        taskListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (editMode && managerMode)
-                    enableSelectionMode();
-                if (!editMode)
-                {
-                    View.DragShadowBuilder dragShadow = new View.DragShadowBuilder(view);
-                    ClipData data = ClipData.newPlainText("", "");
-                    view.startDrag(data, dragShadow, view, 0);
-                }
+        taskListView.setOnItemLongClickListener((adapterView, view, i, l) -> {
+            if (editMode && managerMode)
+                enableSelectionMode();
 
-                return false;
-            }
-        });
-        taskListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            if (!editMode)
             {
-                TaskListItem item = taskListItem.get(i);
-                //System.out.println(taskListItem.get(i));
-                if (selectionMode && editMode && managerMode)
-                {
-                    //TaskListItem item = taskListItem.get(i);
-                    item.setSelected(!item.isSelected());
-                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem, true));
-                }
-                else if (!selectionMode && editMode && managerMode)
-                {
-                    modifyTaskPopup = new NewTaskPopup(activity);
-                    modifyTaskPopup.setTitle(getString(R.string.modifytask_popup_title));
-                    modifyTaskPopup.setImg(item.getImg());
-                    modifyTaskPopup.setName(item.getName());
-                    modifyTaskPopup.setDescription(item.getDescription());
-                    modifyTaskPopup.setImportance(item.getImportance());
-                    modifyTaskPopup.setScore(item.getScore());
-                    modifyTaskPopup.setDeadline(item.getDeadline());
-                    modifyTaskPopup.setAddButtonName(getString(R.string.modifytask_popup_add_button_name));
-                    modifyTaskPopup.getCancelButton().setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            modifyTaskPopup.dismiss();
-                        }
-                    });
-                    modifyTaskPopup.getAddButton().setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            String name = modifyTaskPopup.getName();
-                            String img = modifyTaskPopup.getImg();
-                            String description = modifyTaskPopup.getDescription();
-                            int importance = modifyTaskPopup.getImportance();
-                            int score = modifyTaskPopup.getScore();
-                            String deadline = modifyTaskPopup.getDeadline();
-                             //update the db
-                            dateBase.modifyTask(item.getId(),name, img, description, importance, score, formatDate(deadline));
-                            //add new tasks in the list
-                            taskListItem.remove(item);
-                            taskListItem.add(new TaskListItem(name, img, description, importance, score, deadline, "NON_ATTRIBUATE", item.getId()));
-                            taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
-                            modifyTaskPopup.dismiss();
-                        }
-                    });
-                    modifyTaskPopup.build();
-                }
-                else if (!editMode)
-                {
-                    item.setSelected(!item.isSelected());
-                    if (selectionMode && !isItemSelected())
-                        hideOk();
-                    else
-                        showOk();
-                }
+                View.DragShadowBuilder dragShadow = new View.DragShadowBuilder(view);
+                ClipData data = ClipData.newPlainText("", "");
+                view.startDrag(data, dragShadow, view, 0);
+            }
+
+            return false;
+        });
+        taskListView.setOnItemClickListener((adapterView, view, i, l) -> {
+            TaskListItem item = taskListItem.get(i);
+            //System.out.println(taskListItem.get(i));
+            if (selectionMode && editMode && managerMode)
+            {
+                //TaskListItem item = taskListItem.get(i);
+                item.setSelected(!item.isSelected());
+                taskListView.setAdapter(new TaskListAdapter(context, taskListItem, true));
+            }
+            else if (!selectionMode && editMode && managerMode)
+            {
+                modifyTaskPopup = new NewTaskPopup(activity);
+                modifyTaskPopup.setTitle(getString(R.string.modifytask_popup_title));
+                modifyTaskPopup.setImg(item.getImg());
+                modifyTaskPopup.setName(item.getName());
+                modifyTaskPopup.setDescription(item.getDescription());
+                modifyTaskPopup.setImportance(item.getImportance());
+                modifyTaskPopup.setScore(item.getScore());
+                modifyTaskPopup.setDeadline(item.getDeadline());
+                modifyTaskPopup.setAddButtonName(getString(R.string.modifytask_popup_add_button_name));
+                modifyTaskPopup.getCancelButton().setOnClickListener(view1 -> modifyTaskPopup.dismiss());
+                modifyTaskPopup.getAddButton().setOnClickListener(view12 -> {
+                    String name = modifyTaskPopup.getName();
+                    String img = modifyTaskPopup.getImg();
+                    String description = modifyTaskPopup.getDescription();
+                    int importance = modifyTaskPopup.getImportance();
+                    int score = modifyTaskPopup.getScore();
+                    String deadline = modifyTaskPopup.getDeadline();
+                     //update the db
+                    dataBase.modifyTask(item.getId(),name, img, description, importance, score, formatDate(deadline));
+                    //add new tasks in the list
+                    taskListItem.remove(item);
+                    taskListItem.add(new TaskListItem(name, img, description, importance, score, deadline, "NON_ATTRIBUATE", item.getId()));
+                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                    modifyTaskPopup.dismiss();
+                });
+                modifyTaskPopup.build();
+            }
+            else if (!editMode)
+            {
+                item.setSelected(!item.isSelected());
+                if (selectionMode && !isItemSelected())
+                    hideOk();
+                else
+                    showOk();
             }
         });
 
         preferences = getPreferences(MODE_PRIVATE);
-        dateBase = new DataBase(this, preferences);
+        dataBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
 
     }
 
     public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
-        dateBase.getNonAssignedTasks().into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        // ici je récupère directement les infos du JSON,
-                        // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
-                        // Ensuite ajouter la tâche en tant que ListItem;
-                        JSONObject obj = new JSONObject(d.toJson());
-                        String id = d.getObjectId("_id").toString();
-                        String name = obj.getString("task_name").toString();
-                        String img = obj.getString("task_image").toString();
-                        String description = obj.getString("task_desc").toString();
-                        int importance = (int)Integer.parseInt(obj.getString("task_priority"));
-                        int score = (int)Integer.parseInt( obj.getString("task_score"));
-                        String frequency = obj.getString("task_priority").toString();
-                        String status = obj.getString("task_status").toString();
-                        String strDate = obj.getString("task_limit_date").toString();
-                        strDate = strDate.replace("{\"$date\":","").replace("}","");
-                        long date = (long)Long.parseLong(strDate);
-                        String deadline = formatDate(new Date(date));
+        dataBase.getNonAssignedTasks().into(docs).addOnSuccessListener((OnSuccessListener<List<Document>>) documents -> {
+            try {
+                for (Document d : docs) {
+                    // ici je récupère directement les infos du JSON,
+                    // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
+                    // Ensuite ajouter la tâche en tant que ListItem;
+                    JSONObject obj = new JSONObject(d.toJson());
+                    String id = d.getObjectId("_id").toString();
+                    String name = obj.getString("task_name");
+                    String img = obj.getString("task_image");
+                    String description = obj.getString("task_desc");
+                    int importance = (int)Integer.parseInt(obj.getString("task_priority"));
+                    int score = (int)Integer.parseInt( obj.getString("task_score"));
+                    String status = obj.getString("task_status");
+                    String strDate = obj.getString("task_limit_date");
+                    strDate = strDate.replace("{\"$date\":","").replace("}","");
+                    long date = (long)Long.parseLong(strDate);
+                    String deadline = formatDate(new Date(date));
 
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
-                        taskListItem.add(t);
-                    }
-                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+                    TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
+                    taskListItem.add(t);
                 }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
             }
         });
     }
@@ -267,47 +232,30 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             case R.id.add_task:
                 //Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
                 newTaskPopup = new NewTaskPopup(activity);
-                newTaskPopup.getCancelButton().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        newTaskPopup.dismiss();
-                    }
+                newTaskPopup.getCancelButton().setOnClickListener(view1 -> newTaskPopup.dismiss());
+                newTaskPopup.getCameraBtn().setOnClickListener(view12 -> {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent,0);
                 });
-                newTaskPopup.getCameraBtn().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent,0);
-                    }
-                });
-                newTaskPopup.getAddButton().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String name = newTaskPopup.getName();
-                        String img = newTaskPopup.getImg();
-                        String description = newTaskPopup.getDescription();
-                        int importance = newTaskPopup.getImportance();
-                        int score = newTaskPopup.getScore();
-                        String deadline = newTaskPopup.getDeadline();
-                            Thread t5 = new Thread(new Runnable() {  @Override public void run() {
-                                dateBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener( new OnCompleteListener<RemoteInsertOneResult>()
-                                {
-                                        @Override
-                                        public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
-                                            Toast.makeText(context, "Tâche créée ! "  , Toast.LENGTH_SHORT).show();
-                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().toString()));
-                                            Toast.makeText(context," Création de tâche réussie !"  , Toast.LENGTH_SHORT).show();
-                                            TaskListAdapter a = new TaskListAdapter(context,taskListItem);
-                                            taskListView.setAdapter(a);
-                                            a.notifyDataSetChanged();
-                                        }
-                                    }
-                            );}});
+                newTaskPopup.getAddButton().setOnClickListener(view13 -> {
+                    String name = newTaskPopup.getName();
+                    String img = newTaskPopup.getImg();
+                    String description = newTaskPopup.getDescription();
+                    int importance = newTaskPopup.getImportance();
+                    int score = newTaskPopup.getScore();
+                    String deadline = newTaskPopup.getDeadline();
+                        Thread t5 = new Thread(() -> dataBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener(task -> {
+                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().toString()));
+                            Toast.makeText(context," Création de tâche réussie !"  , Toast.LENGTH_SHORT).show();
+                            TaskListAdapter a = new TaskListAdapter(context,taskListItem);
+                            taskListView.setAdapter(a);
+                            a.notifyDataSetChanged();
+                        }
+                        ));
 
-                            t5.start();
+                        t5.start();
 
-                        newTaskPopup.dismiss();
-                    }
+                    newTaskPopup.dismiss();
                 });
                 newTaskPopup.build();
                 break;
@@ -317,20 +265,16 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                     for (int i=0; i<taskListItem.size(); i++) {
                         if (taskListItem.get(i).isSelected()) {
                             item = taskListItem.get(i);
-                            Thread t5 = new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dateBase.deleteTask(item.getId()).addOnCompleteListener(new OnCompleteListener<RemoteDeleteResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<RemoteDeleteResult> task) {
-                                            Toast.makeText(context,"Tâche supprimée !"  , Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    taskListItem.remove(item);
-                                }
+                            Thread t5 = new Thread(() -> {
+                                dataBase.deleteTask(item.getId())
+                                        .addOnCompleteListener(task ->
+                                                Toast.makeText(context,"Tâche supprimée !"  , Toast.LENGTH_SHORT).show());
+                                taskListItem.remove(item);
                             });
                             t5.start();
+                            i--;
                         }
+
                     }
                     TaskListAdapter a = new TaskListAdapter(context,taskListItem);
                     taskListView.setAdapter(a);
@@ -366,20 +310,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                     for (int i=0; i<taskListItem.size(); i++) {
                         if (taskListItem.get(i).isSelected()) {
                             item = taskListItem.get(i);
-                            Thread t5 = new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dateBase.startTask(item.getId()).addOnCompleteListener(
-                                            new OnCompleteListener<RemoteUpdateResult>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<RemoteUpdateResult> task) {
-                                                    Toast.makeText(context,"Vous avez une nouvelle tâche !"  , Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
+                            Thread t5 = new Thread(() -> {
+                                dataBase.startTask(item.getId()).addOnCompleteListener(
+                                        task -> Toast.makeText(context,"Vous avez une nouvelle tâche !"  , Toast.LENGTH_SHORT).show()
 
-                                    );
-                                    taskListItem.remove(item);
-                                }
+                                );
+                                taskListItem.remove(item);
                             });
                             t5.start();
                             i--;

@@ -66,23 +66,20 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
     }
 
         public void createUserProfile( ){
-            dataBase.getUserInfo().addOnSuccessListener(new OnSuccessListener<Document>() {
-                @Override
-                public void onSuccess(Document document) {
-                    try {
-                        Log.d("stitch",document.toString());
-                        JSONObject obj = new JSONObject(document.toJson());
-                        Log.d("stitch", obj.toString());
-                        String name = obj.getString("pseudo");
-                        textPseudo.setText(name);
-                        String score = obj.getString("score");
-                        textScore.setText(score);
-                        String profil_image = obj.getString("image");
-                        setImg(profil_image);
-                    }
-                    catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+            dataBase.getUserInfo().addOnSuccessListener(document -> {
+                try {
+                    Log.d("stitch",document.toString());
+                    JSONObject obj = new JSONObject(document.toJson());
+                    Log.d("stitch", obj.toString());
+                    String name = obj.getString("pseudo");
+                    textPseudo.setText(name);
+                    String score = obj.getString("score");
+                    textScore.setText(score);
+                    String profil_image = obj.getString("image");
+                    setImg(profil_image);
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
                 }
             });
         }
@@ -104,8 +101,10 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
 
                 case  R.id.modify_popup_template_validation_btn:
                     img = modifyProfilPopup.getImg();
-                    dataBase.setImage(img);
-                    setImg(img);
+                    if (img != "modify_icon_research") {
+                        dataBase.setImage(img);
+                        setImg(img);
+                    }
 
                     pseudo = modifyProfilPopup.getPseudo();
                     if(dataBase.isUsernameFormatCorrect(modifyProfilPopup.getPseudo())) {
@@ -157,5 +156,4 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         int drawableId = this.getResources().getIdentifier(img, "drawable", this.getPackageName());
         profileIcon.setImageResource(drawableId);
     }
-
-    }
+}
