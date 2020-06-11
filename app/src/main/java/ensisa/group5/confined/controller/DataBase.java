@@ -8,8 +8,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.StitchAppClient;
 import com.mongodb.stitch.android.core.auth.StitchUser;
@@ -24,8 +24,6 @@ import com.mongodb.stitch.core.services.mongodb.remote.RemoteDeleteResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
-import org.bson.BsonBoolean;
-import org.bson.BsonDocument;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -38,7 +36,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.model.CTask;
-import ensisa.group5.confined.ui.BoardActivity;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -323,8 +320,8 @@ public class DataBase implements Executor {
      * Le boolean indique si les credentials peuvent connecter l'utilisateur
      */
     public boolean isUserAuthenticated(String email, String password) throws InterruptedException {
-        UserPasswordCredential credential = new UserPasswordCredential(email, password );
         initClient();
+        UserPasswordCredential credential = new UserPasswordCredential(email, password );
         Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
         Boolean res;
         if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
@@ -339,37 +336,12 @@ public class DataBase implements Executor {
     }
 
     public boolean registerUser(String username, String pseudo, String password) {
-        AtomicReference<Boolean> res = new AtomicReference<>(false);
         initClient();
-        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth() .getProviderClient(UserPasswordAuthProviderClient.factory);
-        emailPassClient.registerWithEmail(username, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        res.set(true);
-                        try {
-                            if (isUserAuthenticated(username, password)) {
-                                RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
-                                RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
-                                StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
-                                Document registerUser = new Document("_id", new ObjectId(user.getId()))
-                                        .append(field_user_pseudo, pseudo)
-                                        .append(field_user_score, DEFAULT_SCORE)
-                                        .append(field_user_image, DEFAULT_IMAGE)
-                                        .append(field_user_master, false);
-
-                                collection.insertOne(registerUser);
-                                Log.d("stitch", "Successfully sent account confirmation email");
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Log.e("stitch", "Error registering new user:");
-                    }
-                });
-        return res.get();
+        AtomicReference<Boolean> res = new AtomicReference<>(false);
+        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth().getProviderClient(UserPasswordAuthProviderClient.factory);
+         emailPassClient.registerWithEmail(username, password);
+         return true;
     }
-
     /**
      *
      * @param usename

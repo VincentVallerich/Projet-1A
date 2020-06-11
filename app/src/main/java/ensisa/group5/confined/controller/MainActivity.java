@@ -1,5 +1,6 @@
 package ensisa.group5.confined.controller;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -12,6 +13,14 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.mongodb.stitch.android.core.Stitch;
+import com.mongodb.stitch.android.core.auth.providers.userpassword.UserPasswordAuthProviderClient;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.TaskActivity;
@@ -144,10 +153,31 @@ public class MainActivity extends AppCompatActivity {
 
             String pseudo = pseudoEdit.getText().toString();
             if (dataBase.isUsernameFormatCorrect(username) && dataBase.isUsernameFormatCorrect(pseudo)) {
-                if (dataBase.registerUser(username, pseudo, pswd)) {
-                    preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                    startBoardActivity(getApplicationContext());
-                }
+                Thread register_thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dataBase.initClient();
+                        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth().getProviderClient(UserPasswordAuthProviderClient.factory);
+                        emailPassClient.registerWithEmail(username, pswd).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
+                                startBoardActivity(getApplicationContext());
+                                finish();
+                                Toast.makeText(getApplicationContext(),"Inscription réussie"   , Toast.LENGTH_SHORT).show();
+                                try {
+                                    if (dataBase.isUserAuthenticated(username,pswd)){
+                                     startBoardActivity(getApplicationContext());
+                                    }
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                        }
+                });
+                register_thread.start();
+
             }
         });
     }
