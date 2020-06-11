@@ -64,7 +64,7 @@ public class ScoreBordActivity extends AppCompatActivity {
                     for (Document d : docs) {
                         JSONObject obj = new JSONObject(d.toJson());
                         Log.d("stitch", obj.toString());
-                       UserListItem t = new UserListItem(obj.getString("pseudo"),obj.getInt("score"));
+                        UserListItem t = new UserListItem(obj.getString("pseudo"),obj.getInt("score"));
                         userList.add(t);
                     }
 

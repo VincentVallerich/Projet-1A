@@ -63,11 +63,11 @@ public class UserListAdapter extends BaseAdapter
         UserListItem currentItem = (UserListItem) getItem(position);
         // main text
         String userPseudo = currentItem.getPseudo();
-        TextView pseudo = convertView.findViewById(R.id.adapter_userlist_pseudo);
+        TextView pseudo = convertView.findViewById(R.id.textView_pseudo);
         pseudo.setText(userPseudo);
         // description
         int userScore = currentItem.getScore();
-        TextView description = convertView.findViewById(R.id.adapter_userlist_score);
+        TextView description = convertView.findViewById(R.id.textView_score);
         description.setText(String.valueOf(userScore));
         return convertView;
     }
