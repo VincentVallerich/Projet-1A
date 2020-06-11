@@ -174,7 +174,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
                         String id = d.getObjectId("_id").toString();
 
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status,id);
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
                         taskList.add(t);
                     }
                     createEvents();

@@ -39,7 +39,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profil);
+        //setContentView(R.layout.activity_profil);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -61,9 +61,6 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         textMail.setText(dataBase.getUserEmail());
 
         profileIcon = findViewById(R.id.profile_icon_image);
-
-
-
 
         Thread t6 = new Thread(new Runnable() {  @Override public void run() {  createUserProfile();  } });
         t6.start();
@@ -102,7 +99,6 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                     modifyProfilPopup.getValidationButton().setOnClickListener(this);
                     modifyProfilPopup.build();
                     break;
-
 
                 case R.id.modify_popup_template_cancel_btn:
                     modifyProfilPopup.dismiss();
@@ -157,6 +153,5 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         int drawableId = this.getResources().getIdentifier(img, "drawable", this.getPackageName());
         profileIcon.setImageResource(drawableId);
     }
-
 
     }
