@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -27,6 +28,8 @@ import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +38,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 
 import ensisa.group5.confined.R;
+import ensisa.group5.confined.game.adapter.UserListAdapter;
+import ensisa.group5.confined.game.model.UserListItem;
 import ensisa.group5.confined.model.CTask;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -70,7 +75,8 @@ public class DataBase implements Executor {
     public static final int DEFAULT_SCORE = 0;
     public static final String DEFAULT_IMAGE = "profil_icon_1";
 
-    public DataBase() {}
+    public DataBase() {
+    }
 
     /**
      * @param context
@@ -83,6 +89,7 @@ public class DataBase implements Executor {
         usernameKey = context.getResources().getString(R.string.PREF_KEY_USERNAME);
         mailKey = context.getResources().getString(R.string.PREF_KEY_MAIL);
     }
+
     /*
      *Retourne un task qui contient une liste de documents
      * Les Documents contiennent les JSON des informations des tâches assignées à l'utilisateur connecté. Utile pour l'onglet " Mes tâches "
@@ -97,12 +104,12 @@ public class DataBase implements Executor {
             if (user != null) {
                 return collection.find(eq(field_id, user.getId()));
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
     }
+
     /*
      *Retourne un task qui contient une liste de documents
      * Les Documents contiennent les JSON des informations des tâches non assignées ( task_status = 0 ). Utile pour que les utilisateurs puissent les choisir
@@ -112,50 +119,50 @@ public class DataBase implements Executor {
             RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
             RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
             Log.d("stitch", "Récupération des tâches non assignées");
-            List<Document> docs = new ArrayList<Document>();
             return collection.find(eq(field_task_status, CTask.State.NON_ATTRIBUATE.toString()));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
     }
+
     /*
      *Retourne un task qui contient une liste de documents
      * Les Documents contiennent les JSON des informations des utilisateurs. Utile pour récupérer tous les scores
      */
     public RemoteFindIterable<Document> getLeaderBoard() {
-        Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
-        if (Stitch.getDefaultAppClient() == null)
-            client = Stitch.initializeDefaultAppClient(clientAppId);
-        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
-        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
-
-        return collection.find();
+        try {
+            RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection("Users_data");
+            Log.d("stitch", "Récupération des utilisateurs");
+            return collection.find();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
+
+
+
     /*
      *Retourne un task qui contient un document
      * Le Document contient le JSON des informations de l'utilisateur connecté à l'application
      */
 
-    public void watchCollections(Context base  ) {
+    public void watchCollections(Context base) {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection_user = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
         RemoteMongoCollection<Document> collection_task = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
-
         collection_user.watch()
                 .addOnCompleteListener(task -> {
                     AsyncChangeStream<Document, ChangeEvent<Document>> changeStream = task.getResult();
                     changeStream.addChangeEventListener((BsonValue documentId, ChangeEvent<Document> event) -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
                             NotificationHelper notificationHelper = new NotificationHelper(base);
                             notificationHelper.notify(127, "My title", "Changement dans les utilisateurs", R.drawable.taskicon_task_chef_icon );
                         }
                     });
                 });
-
-
         collection_task.watch()
                 .addOnCompleteListener(task -> {
                     AsyncChangeStream<Document, ChangeEvent<Document>> changeStream = task.getResult();
@@ -163,7 +170,7 @@ public class DataBase implements Executor {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             Log.d("stitch",event.toBsonDocument().toJson().toString());
                             NotificationHelper notificationHelper = new NotificationHelper(base);
-                            notificationHelper.notify(127, "My title", "Changement dans les utilisateurs", R.drawable.taskicon_task_chef_icon );
+                            notificationHelper.notify(127, "My title", "Changement dans les utilisateurs", R.drawable.taskicon_task_chef_icon);
                         }
                     });
                 });;
@@ -207,7 +214,6 @@ public class DataBase implements Executor {
      */
     public Task <RemoteInsertOneResult> createTask(String name, String img, String desc, int priority, int score, Date date) {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
-        Log.d("stitch","creation de la tache:  " + name );
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         Document newTask = new Document()
                 .append(field_task_name, name)
@@ -246,6 +252,16 @@ public class DataBase implements Executor {
         StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
         final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
         Document updateDoc = new Document().append("$set",new Document().append(field_user_pseudo, pseudo));
+        collection.updateOne(filterDoc, updateDoc);
+    }
+
+    public void setScore(int score) {
+
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
+        StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+        final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
+        Document updateDoc = new Document().append("$set",new Document().append("score", score));
         collection.updateOne(filterDoc, updateDoc);
     }
 
@@ -338,6 +354,7 @@ public class DataBase implements Executor {
         AtomicReference<Boolean> res = new AtomicReference<>(false);
         UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth().getProviderClient(UserPasswordAuthProviderClient.factory);
          emailPassClient.registerWithEmail(username, password);
+
          return true;
     }
     /**

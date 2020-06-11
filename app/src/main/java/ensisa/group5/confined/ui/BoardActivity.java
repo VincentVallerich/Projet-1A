@@ -71,10 +71,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.board_activity);
         activity = this;
         context = this.getApplicationContext();
-
         dateBase = new DataBase();
-
-
         Thread t = new Thread() {
             public void run(){
                 dateBase. watchCollections(context);
@@ -123,7 +120,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (editMode && managerMode)
                     enableSelectionMode();
-
                 if (!editMode)
                 {
                     View.DragShadowBuilder dragShadow = new View.DragShadowBuilder(view);
@@ -298,8 +294,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                 {
                                         @Override
                                         public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
-                                            Toast.makeText(context,task.getResult().getInsertedId().asDocument().getObjectId("_id").toString()  , Toast.LENGTH_SHORT).show();
-                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asDocument().getObjectId("_id").toString()));
+                                            Toast.makeText(context, "Tâche créée ! "  , Toast.LENGTH_SHORT).show();
+                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().toString()));
                                             Toast.makeText(context," Création de tâche réussie !"  , Toast.LENGTH_SHORT).show();
                                             TaskListAdapter a = new TaskListAdapter(context,taskListItem);
                                             taskListView.setAdapter(a);

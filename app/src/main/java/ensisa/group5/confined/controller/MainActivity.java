@@ -170,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),"Inscription réussie"   , Toast.LENGTH_SHORT).show();
                                 try {
                                     if (dataBase.isUserAuthenticated(username,pswd)){
+                                        dataBase.setPseudo(pseudo);
+                                        dataBase.setScore(0);
                                         startTaskActivity(getApplicationContext());
                                     }
                                 } catch (InterruptedException e) {
