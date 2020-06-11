@@ -272,7 +272,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                 taskListItem.remove(item);
                             });
                             t5.start();
+                            i--;
                         }
+
                     }
                     TaskListAdapter a = new TaskListAdapter(context,taskListItem);
                     taskListView.setAdapter(a);

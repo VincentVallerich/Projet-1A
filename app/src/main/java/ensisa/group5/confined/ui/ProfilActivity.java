@@ -94,18 +94,15 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                     modifyProfilPopup.build();
                     break;
 
-
                 case R.id.modify_popup_template_cancel_btn:
                     modifyProfilPopup.dismiss();
                     break;
-
                 case  R.id.modify_popup_template_validation_btn:
                     img = modifyProfilPopup.getImg();
                     if (img != "modify_icon_research") {
                         dataBase.setImage(img);
                         setImg(img);
                     }
-
                     pseudo = modifyProfilPopup.getPseudo();
                     if(dataBase.isUsernameFormatCorrect(modifyProfilPopup.getPseudo())) {
                         textPseudo.setText(pseudo);

@@ -1,5 +1,6 @@
 package ensisa.group5.confined.game;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -11,8 +12,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.bson.Document;
@@ -20,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ensisa.group5.confined.R;
@@ -30,18 +35,15 @@ import ensisa.group5.confined.ui.BoardActivity;
 
 import ensisa.group5.confined.ui.ProfilActivity;
 import ensisa.group5.confined.ui.TaskActivity;
+import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
 
 public class ScoreBordActivity extends AppCompatActivity {
-
-
     private DataBase database;
     private List<UserListItem> userList;
     private ListView scoreboardListView;
     private Context context;
     private ScoreBordActivity activity;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,35 +56,54 @@ public class ScoreBordActivity extends AppCompatActivity {
         bottomNavigationView.getMenu().getItem(1).setChecked(true);
         userList = new ArrayList<>();
         scoreboardListView = findViewById(R.id.scoreboard_listview);
-        Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
+        Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createNewLeaderBoard();  } });
         t2.start();
-
-
     }
     public void createLeaderboard( ){
         List<Document> docs = new ArrayList<Document>();
-        database.getLeaderBoard()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+        Log.d("stitch","je suis rentrée dans leaderboard");
+        database.getLeaderBoard().limit(5).into(docs).addOnCompleteListener(new OnCompleteListener<List<Document>>() {
             @Override
-            public void onSuccess(List<Document> documents) {
+            public void onComplete(@NonNull Task<List<Document>> documents) {
                 try {
+                    Log.d("stitch","SUCCESS");
+                    Log.d("stitch",docs.toString());
                     for (Document d : docs) {
                         JSONObject obj = new JSONObject(d.toJson());
                         Log.d("stitch", obj.toString());
                         UserListItem t = new UserListItem(obj.getString("pseudo"),obj.getInt("score"),obj.getString("image"));
                         userList.add(t);
+                        Toast.makeText(context,obj.getString("pseudo") , Toast.LENGTH_SHORT).show();
                     }
-
+                    Log.d("stitch",userList.toString());
                     scoreboardListView.setAdapter(new UserListAdapter(context, userList));
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         });
     }
-
+    public void createNewLeaderBoard() {
+        List<Document> docs = new ArrayList<Document>();
+        database.getLeaderBoard().into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+            @Override
+            public void onSuccess(List<Document> documents) {
+                try {
+                    for (Document d : docs) {
+                        JSONObject obj = new JSONObject(d.toJson());
+                        Log.d("stitcht",obj.toString());
+                        UserListItem t = new UserListItem(obj.getString("pseudo"),obj.getInt("score"),obj.getString("image"));
+                        userList.add(t);
+                    }
+                    scoreboardListView.setAdapter(new UserListAdapter(context, userList));
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
     private boolean onClickNavigationBar(Integer integer ){
         switch (integer) {

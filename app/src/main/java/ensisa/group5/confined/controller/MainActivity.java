@@ -1,10 +1,12 @@
 package ensisa.group5.confined.controller;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +14,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.mongodb.stitch.android.core.Stitch;
+import com.mongodb.stitch.android.core.auth.providers.userpassword.UserPasswordAuthProviderClient;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.TaskActivity;
@@ -145,18 +154,30 @@ public class MainActivity extends AppCompatActivity {
 
             String pseudo = pseudoEdit.getText().toString();
             if (dataBase.isUsernameFormatCorrect(username) && dataBase.isUsernameFormatCorrect(pseudo)) {
-                if (dataBase.registerUser(username, pseudo, pswd)) {
-                    preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                    startTaskActivity(this);
-                } else {
-                    Toast.makeText(this,"E-mail déjà existant !", Toast.LENGTH_SHORT);
-                }
-            } else {
-                Toast.makeText(this,"Au moins 2 caractères !", Toast.LENGTH_SHORT);
+                Thread register_thread = new Thread(() -> {
+                    dataBase.initClient();
+                    UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
+                            .getProviderClient(UserPasswordAuthProviderClient.factory);
+                    emailPassClient.registerWithEmail(username, pswd).addOnCompleteListener(task -> {
+                        preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
+                        startTaskActivity(getApplicationContext());
+                        finish();
+                        Toast.makeText(getApplicationContext(),"Inscription réussie", Toast.LENGTH_SHORT).show();
+                        try {
+                            if (dataBase.isUserAuthenticated(username,pswd)){
+                                dataBase.setPseudo(pseudo);
+                                dataBase.setScore(0);
+                                startTaskActivity(getApplicationContext());
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                });
+                register_thread.start();
             }
         });
     }
-
     public void startTaskActivity(Context context) {
         startActivity(new Intent(context, TaskActivity.class));
         Thread t = new Thread() {
