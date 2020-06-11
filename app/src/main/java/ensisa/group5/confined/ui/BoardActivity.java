@@ -372,7 +372,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                 }
                             });
                             t5.start();
-
+                            i--;
                         }
                     }
 

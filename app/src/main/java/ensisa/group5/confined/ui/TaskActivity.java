@@ -271,19 +271,27 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.finish_task:
                 findViewById(R.id.finish_task).setVisibility(View.GONE);
                 findViewById(R.id.abort_task).setVisibility(View.GONE);
-                for (int i=0; i<taskList.size(); i++)
-                    if (taskList.get(i).isSelected())
-                    {
-                        item = taskList.get(i);
-                        try {
-                            Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.finishTask(item.getId()); }  });
-                            t1.start();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+
+                try {
+                    for (int i=0; i<taskList.size(); i++) {
+                        if (taskList.get(i).isSelected()) {
+                            item = taskList.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dataBase.finishTask(item.getId());
+                                    taskList.remove(item);
+                                }
+                            });
+                            t5.start();
+                            i--;
                         }
-                        taskList.remove(i);
-                        i--;
                     }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 createEvents();
                 displayTaskForCurrentDay();
                 break;
@@ -291,19 +299,25 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 findViewById(R.id.finish_task).setVisibility(View.GONE);
                 findViewById(R.id.abort_task).setVisibility(View.GONE);
 
-                for (int i=0; i<taskList.size(); i++)
-                    if (taskList.get(i).isSelected())
-                    {
-                        item = taskList.get(i);
-                        try {
-                            Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.abandonTask(item.getId()); }  });
-                            t1.start();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                try {
+                    for (int i=0; i<taskList.size(); i++) {
+                        if (taskList.get(i).isSelected()) {
+                            item = taskList.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dataBase.abandonTask(item.getId());
+                                    taskList.remove(item);
+                                }
+                            });
+                            t5.start();
+                            i--;
                         }
-                        taskList.remove(i);
-                        i--;
                     }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 createEvents();
                 displayTaskForCurrentDay();
                 break;
