@@ -5,10 +5,11 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
-import android.view.MotionEvent;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -21,6 +22,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 
@@ -36,10 +40,7 @@ import java.util.List;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.DataBase;
-import ensisa.group5.confined.controller.MainActivity;
-import ensisa.group5.confined.controller.NotificationHelper;
 import ensisa.group5.confined.game.ScoreBordActivity;
-import ensisa.group5.confined.model.CTask;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
 
@@ -278,6 +279,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         newTaskPopup.dismiss();
                     }
                 });
+                newTaskPopup.getCameraBtn().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent,0);
+                    }
+                });
                 newTaskPopup.getAddButton().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -383,6 +391,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 hideOk();
                 break;
         }
+    }
+
+    //@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        newTaskPopup.onActivityResult(requestCode, resultCode, data);
     }
 
     private void disableSelectionMode()
@@ -493,7 +507,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         return formatter.format(date);
     }
 
-    public Date formatDate(String strDate){
+    public Date formatDate(String strDate)
+    {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         Date date = null;
         try {

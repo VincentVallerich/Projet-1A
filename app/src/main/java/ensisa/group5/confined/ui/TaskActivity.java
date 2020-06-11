@@ -24,6 +24,7 @@ import java.util.List;
 import ensisa.group5.confined.R;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
@@ -287,7 +288,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                             i--;
                         }
                     }
-
+                    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
