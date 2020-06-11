@@ -38,6 +38,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
     private TextView textMail;
     private Button logoutButton;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +49,9 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         dataBase = new DataBase(this, preferences);
         preferences = getPreferences(MODE_PRIVATE);
         activity = this;
+
+        logoutButton =(Button) findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(this);
         modifyButton =(Button) findViewById(R.id.modify_profile_button);
         modifyButton.setOnClickListener(this);
         textPseudo = (TextView) findViewById(R.id.text_pseudo);
@@ -55,8 +59,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         textMail = (TextView) findViewById(R.id.text_email);
         textMail.setText(dataBase.getUserEmail());
         profileIcon = findViewById(R.id.profile_icon_image);
-        logoutButton = (Button) findViewById(R.id.logout_button);
-        logoutButton.setOnClickListener(this);
+
         Thread t6 = new Thread(new Runnable() {  @Override public void run() {  createUserProfile();  } });
         t6.start();
 
@@ -118,7 +121,9 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                     break;
             }
         }
-    private boolean onClickNavigationBar(Integer integer ){
+
+
+    private boolean onClickNavigationBar(Integer integer){
         Log.d("stitch","going in onclick" + integer);
         switch (integer) {
             case R.id.action_board:
@@ -144,6 +149,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         }
         return false;
     }
+
     public void setImg(String img)
     {
         this.img = img;
