@@ -47,30 +47,19 @@ public class ModifyProfilPopup extends Dialog {
 
     public void build() {
 
-        imgBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pickIconPopup = new PickIconPopup(activity);
-                pickIconPopup.getCancelButton().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        pickIconPopup.dismiss();
-                    }
-                });
-                pickIconPopup.getChooseButton().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        img = pickIconPopup.getImg();
-                        setImg(img);
-                        pickIconPopup.dismiss();
-                    }
-                });
-                pickIconPopup.build();
-            }
+        imgBtn.setOnClickListener(v -> {
+            pickIconPopup = new PickIconPopup(activity);
+            pickIconPopup.getCancelButton().setOnClickListener(view -> pickIconPopup.dismiss());
+            pickIconPopup.getChooseButton().setOnClickListener(view -> {
+                img = pickIconPopup.getImg();
+                if (img != null && img != "caps_lock") {
+                    setImg(img);
+                    pickIconPopup.dismiss();
+                }
+            });
+            pickIconPopup.build();
         });
-
         show();
-
     }
 
     public Button getCancelButton()
@@ -79,17 +68,10 @@ public class ModifyProfilPopup extends Dialog {
     }
     public Button getValidationButton(){return validationButton;};
 
-
     public String getPseudo()
     {
         return pseudo.getText().toString();
     }
-
-    public void setPseudo(String txt)
-    {
-        this.pseudo.setText(txt);
-    }
-
 
     public void setImg(String img)
     {

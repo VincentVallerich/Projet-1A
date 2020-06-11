@@ -147,9 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
             String pseudo = pseudoEdit.getText().toString();
             if (dataBase.isUsernameFormatCorrect(username) && dataBase.isUsernameFormatCorrect(pseudo)) {
-                boolean test = dataBase.registerUser(username, pseudo, pswd);
-                System.out.println("test" + test);
-                if (test) {
+                if (dataBase.registerUser(username, pseudo, pswd)) {
                     preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
                     startTaskActivity(this);
                     finish();

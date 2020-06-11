@@ -187,8 +187,10 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
                     @Override
                     public void onClick(View view) {
                         img = pickTaskImgPopup.getImg();
-                        setImg(img);
-                        pickTaskImgPopup.dismiss();
+                        if (img != null) {
+                            setImg(img);
+                            pickTaskImgPopup.dismiss();
+                        }
                     }
                 });
                 pickTaskImgPopup.build();

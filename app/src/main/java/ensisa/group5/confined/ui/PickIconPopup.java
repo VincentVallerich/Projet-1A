@@ -35,14 +35,10 @@ import ensisa.group5.confined.ui.model.IconImgItem;
         private Button cancelButton;
         private Button chooseButton;
         private DataBase dataBase=new DataBase();
-        private int userScore;
-
-
-
+        private int userScore = -1;
 
         // constructeur
-        public PickIconPopup(Activity activity)
-        {
+        public PickIconPopup(Activity activity) {
             super(activity, R.style.Theme_AppCompat_Light_Dialog);
             setContentView(R.layout.pickicon_popup_template);
             context = activity.getApplicationContext();
@@ -50,36 +46,42 @@ import ensisa.group5.confined.ui.model.IconImgItem;
             cancelButton = findViewById(R.id.pickicon_popup_template_cancel_btn);
             chooseButton = findViewById(R.id.pickicon_popup_template_choose_btn);
 
-            iconImgItem= new ArrayList<>();
-            gridView = (GridView)findViewById(R.id.pickicon_popup_template_gridview);
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-                {
-                    IconImgItem item = (IconImgItem) gridView.getItemAtPosition(i);
-                    img = item.getImg();
-                }
+            iconImgItem = new ArrayList<>();
+            gridView = (GridView) findViewById(R.id.pickicon_popup_template_gridview);
+            gridView.setOnItemClickListener((adapterView, view, i, l) -> {
+                IconImgItem item = (IconImgItem) gridView.getItemAtPosition(i);
+                img = item.getImg();
             });
 
-            Field[] fields = R.drawable.class.getFields();
-            int iconRank=0;
-            for (int count = 0; count < fields.length; count++)
-            {
-                String name = fields[count].getName();
-                if ( name.contains("profil_icon_") ) {
-                    if (name.contains("profil_icon_reward_")){
-                        iconRank++;
-                        if (iconRank < getRewardRank()){
-                            iconImgItem.add(new IconImgItem("le cadenas"));}
-                        else{
-                            iconImgItem.add(new IconImgItem(name));
+            getScore();
+            Thread thread = new Thread() {
+                public void run() {
+                    while (userScore < 0) {
+                        Field[] fields = R.drawable.class.getFields();
+                        int iconRank = 0;
+                        for (int count = 0; count < fields.length; count++) {
+                            String name = fields[count].getName();
+                            if (name.contains("profil_icon")) {
+                                iconImgItem.add(new IconImgItem(name));
+                            } else if (name.contains("profil_reward")) {
+                                iconRank += 1;
+                                if (iconRank > getRewardRank()) {
+                                    iconImgItem.add(new IconImgItem("caps_lock"));
+                                } else {
+                                    iconImgItem.add(new IconImgItem(name));
+                                }
+                            }
+                        }
+                        gridView.setAdapter(new IconAdapter(context, iconImgItem));
+                        try {
+                            sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
-                    else{
-                        iconImgItem.add(new IconImgItem(name));}
                 }
-            }
-            gridView.setAdapter(new IconAdapter(context, iconImgItem));
+            };
+            thread.start();
         }
 
         // méthodes
@@ -106,18 +108,14 @@ import ensisa.group5.confined.ui.model.IconImgItem;
 
         public void getScore(){
             Document doc = new Document();
-            dataBase.getUserInfo().addOnSuccessListener(new OnSuccessListener<Document>()
-            {
-                @Override
-                public void onSuccess(Document document) {
-                    JSONObject obj = null;
-                    try {
-                        obj = new JSONObject(document.toJson());
-                        String score = obj.getString("score");
-                        userScore = Integer.parseInt(score);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+            dataBase.getUserInfo().addOnSuccessListener(document -> {
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject(document.toJson());
+                    String score = obj.getString("score");
+                    userScore = Integer.parseInt(score);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             });
         }

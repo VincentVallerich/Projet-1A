@@ -115,9 +115,10 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                     modifyProfilPopup.dismiss();
                     break;
                 case R.id.logout_button:
+                    preferences.edit().clear().apply();
                     Intent intent5 = new Intent(this, MainActivity.class);
                     startActivity(intent5);
-                    Log.d("stitch","going in main");
+                    finish();
                     break;
             }
         }
