@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -24,11 +25,15 @@ import java.util.List;
 import ensisa.group5.confined.R;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
 import org.json.JSONException;
@@ -276,9 +281,18 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         item = taskList.get(i);
                         try {
-                            Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.finishTask(item.getId()); }  });
+                            Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.finishTask(item.getId(),item.getScore()).addOnCompleteListener(
+                                    new OnCompleteListener<RemoteUpdateResult>() {
+                              @Override
+                              public void onComplete(@NonNull Task<RemoteUpdateResult> task) {
+                                  Toast.makeText(context,"Bravo ! Vous avez terminé une tâche !"  , Toast.LENGTH_SHORT).show();
+                              }
+                          }
+
+                            ); }  });
                             t1.start();
                         } catch (Exception e) {
+
                             e.printStackTrace();
                         }
                         taskList.remove(i);
@@ -296,7 +310,15 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         item = taskList.get(i);
                         try {
-                            Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.abandonTask(item.getId()); }  });
+                            Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.abandonTask(item.getId(),item.getScore()).addOnCompleteListener(
+                                    new OnCompleteListener<RemoteUpdateResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<RemoteUpdateResult> task) {
+                                            Toast.makeText(context,"Mince...  Vous avez abandonné une tâche !"  , Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                            ); }  });
                             t1.start();
                         } catch (Exception e) {
                             e.printStackTrace();

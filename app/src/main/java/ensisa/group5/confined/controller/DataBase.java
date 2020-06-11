@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.stitch.android.core.Stitch;
@@ -219,6 +222,25 @@ public class DataBase implements Executor {
                 .append(field_task_limit_date, new Date(date.getTime()));
         return collection.insertOne(newTask);
     }
+    /**
+     *
+     * @return the current task into database
+     */
+    public Task <RemoteUpdateResult> modifyTask(String id_task,String name, String img, String desc, int priority, int score, Date date) {
+        RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+        Log.d("stitch","creation de la tache:  " + name );
+        RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
+        Document newTask = new Document()
+                .append(field_task_name, name)
+                .append(field_task_status, "NON_ATTRIBUATE")
+                .append(field_task_priority, priority)
+                .append(field_task_description, desc)
+                .append(field_task_score, score)
+                .append(field_task_img, img)
+                .append(field_task_limit_date, new Date(date.getTime()));
+        final Document filterDoc = new Document( "_id", new ObjectId(id_task));
+        return collection.updateOne(filterDoc,newTask);
+    }
 
     public void setPseudo(String pseudo) {
 
@@ -244,24 +266,45 @@ public class DataBase implements Executor {
      * @param taskid
      * @return
      */
-    public Task<RemoteUpdateResult> finishTask(String taskid){
+    public Task<RemoteUpdateResult> finishTask(String taskid,int score){
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
         Document updateDoc = new Document().append("$set",new Document().append(field_task_status, CTask.State.FINISHED.toString()));
 
-        return collection.updateOne(filterDoc, updateDoc);
+        return collection.updateOne(filterDoc, updateDoc).continueWithTask(new Continuation<RemoteUpdateResult, Task<RemoteUpdateResult>>() {
+            @Override
+            public Task<RemoteUpdateResult> then(@NonNull Task<RemoteUpdateResult> task) throws Exception {
+                RemoteMongoCollection<Document> collection2 = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
+                StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+                final Document filterDoc2 = new Document( "_id", new ObjectId(user.getId()));
+                Document updateDoc2 = new Document().append("$inc",new Document().append(field_user_score, score));
+                return collection2.updateOne(filterDoc2, updateDoc2);
+
+            }
+        });
     }
 
     /*
      * SEULEUMENT SI LA TACHE ETAIT EN COURS ! ( si le status de la tache est de 1 ) on peut pas abandonner une tâche terminée
      */
-    public Task<RemoteUpdateResult> abandonTask(String taskid) {
+    public Task<RemoteUpdateResult> abandonTask(String taskid,int score) {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
         final Document filterDoc = new Document( "_id", new ObjectId(taskid));
         Document updateDoc = new Document().append("$set",new Document().append(field_task_status, "NON_ATTRIBUATE").append("user_id"," "));
-        return collection.updateOne(filterDoc, updateDoc);
+        return collection.updateOne(filterDoc, updateDoc).continueWithTask(new Continuation<RemoteUpdateResult, Task<RemoteUpdateResult>>() {
+            @Override
+            public Task<RemoteUpdateResult> then(@NonNull Task<RemoteUpdateResult> task) throws Exception {
+                RemoteMongoCollection<Document> collection2 = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
+                StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
+                final Document filterDoc2 = new Document( "_id", new ObjectId(user.getId()));
+                int negativescore = 0 - score;
+                Document updateDoc2 = new Document().append("$inc",new Document().append(field_user_score, negativescore));
+                return collection2.updateOne(filterDoc2, updateDoc2);
+
+            }
+        });
     }
     public Task<RemoteDeleteResult> deleteTask(String taskid){
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
