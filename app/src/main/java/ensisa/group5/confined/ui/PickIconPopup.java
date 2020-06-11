@@ -56,28 +56,37 @@ import ensisa.group5.confined.ui.model.IconImgItem;
             getScore();
             Thread thread = new Thread() {
                 public void run() {
-                    while (userScore < 0) {
-                        Field[] fields = R.drawable.class.getFields();
-                        int iconRank = 0;
-                        for (int count = 0; count < fields.length; count++) {
-                            String name = fields[count].getName();
-                            if (name.contains("profil_icon")) {
-                                iconImgItem.add(new IconImgItem(name));
-                            } else if (name.contains("profil_reward")) {
-                                iconRank += 1;
-                                if (iconRank > getRewardRank()) {
-                                    iconImgItem.add(new IconImgItem("caps_lock"));
-                                } else {
-                                    iconImgItem.add(new IconImgItem(name));
+                    try {
+                        synchronized (this){
+                            wait(500);
+                            activity.runOnUiThread(() -> {
+                                while (userScore < 0) {
+                                    try {
+                                        sleep(50);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            }
+                                Field[] fields = R.drawable.class.getFields();
+                                int iconRank = 0;
+                                for (int count = 0; count < fields.length; count++) {
+                                    String name = fields[count].getName();
+                                    if (name.contains("profil_icon")) {
+                                        iconImgItem.add(new IconImgItem(name));
+                                    } else if (name.contains("profil_reward")) {
+                                        iconRank += 1;
+                                        if (iconRank > getRewardRank()) {
+                                            iconImgItem.add(new IconImgItem("caps_lock"));
+                                        } else {
+                                            iconImgItem.add(new IconImgItem(name));
+                                        }
+                                    }
+                                }
+                                gridView.setAdapter(new IconAdapter(context, iconImgItem));
+                            });
                         }
-                        gridView.setAdapter(new IconAdapter(context, iconImgItem));
-                        try {
-                            sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             };
@@ -121,9 +130,9 @@ import ensisa.group5.confined.ui.model.IconImgItem;
         }
 
         public int getRewardRank(){
-            int i=10;
+            int i=5;
             int step=0;
-            while(userScore> i)
+            while(userScore > i)
             {
                 step+=1;
                 i+=5;

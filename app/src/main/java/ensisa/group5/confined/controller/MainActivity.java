@@ -154,33 +154,27 @@ public class MainActivity extends AppCompatActivity {
 
             String pseudo = pseudoEdit.getText().toString();
             if (dataBase.isUsernameFormatCorrect(username) && dataBase.isUsernameFormatCorrect(pseudo)) {
-                Thread register_thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dataBase.initClient();
-                        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth().getProviderClient(UserPasswordAuthProviderClient.factory);
-                        emailPassClient.registerWithEmail(username, pswd).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
+                Thread register_thread = new Thread(() -> {
+                    dataBase.initClient();
+                    UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth()
+                            .getProviderClient(UserPasswordAuthProviderClient.factory);
+                    emailPassClient.registerWithEmail(username, pswd).addOnCompleteListener(task -> {
+                        preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
+                        startTaskActivity(getApplicationContext());
+                        finish();
+                        Toast.makeText(getApplicationContext(),"Inscription réussie", Toast.LENGTH_SHORT).show();
+                        try {
+                            if (dataBase.isUserAuthenticated(username,pswd)){
+                                dataBase.setPseudo(pseudo);
+                                dataBase.setScore(0);
                                 startTaskActivity(getApplicationContext());
-                                finish();
-                                Toast.makeText(getApplicationContext(),"Inscription réussie"   , Toast.LENGTH_SHORT).show();
-                                try {
-                                    if (dataBase.isUserAuthenticated(username,pswd)){
-                                        dataBase.setPseudo(pseudo);
-                                        dataBase.setScore(0);
-                                        startTaskActivity(getApplicationContext());
-                                    }
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
                             }
-                        });
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
+                    });
                 });
                 register_thread.start();
-
             }
         });
     }

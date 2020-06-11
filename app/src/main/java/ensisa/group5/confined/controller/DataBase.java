@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.StitchAppClient;
@@ -28,18 +26,11 @@ import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.game.adapter.UserListAdapter;
-import ensisa.group5.confined.game.model.UserListItem;
 import ensisa.group5.confined.model.CTask;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -141,8 +132,6 @@ public class DataBase implements Executor {
         }
         return null;
     }
-
-
 
     /*
      *Retourne un task qui contient un document
