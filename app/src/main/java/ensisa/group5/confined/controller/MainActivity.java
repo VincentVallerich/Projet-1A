@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(context, TaskActivity.class));
         Thread t = new Thread() {
             public void run(){
-                dataBase. watchCollections(context);
+                dataBase.watchCollections(context);
             }
         };
         t.start();

@@ -153,7 +153,7 @@ public class DataBase implements Executor {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
                             NotificationHelper notificationHelper = new NotificationHelper(base);
-                            notificationHelper.notify(127, "My title", "Changement dans les utilisateurs", R.drawable.taskicon_task_chef_icon );
+                            notificationHelper.notify(127, "Nouveau balayeur !", "Un bagnard est arrivé !", R.drawable.taskicon_task_chef_icon );
                         }
                     });
                 });
@@ -164,9 +164,9 @@ public class DataBase implements Executor {
                     AsyncChangeStream<Document, ChangeEvent<Document>> changeStream = task.getResult();
                     changeStream.addChangeEventListener((BsonValue documentId, ChangeEvent<Document> event) -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            Log.d("stitch",event.toBsonDocument().toJson().toString());
+                            Log.d("stitch",event.toBsonDocument().toJson());
                             NotificationHelper notificationHelper = new NotificationHelper(base);
-                            notificationHelper.notify(127, "My title", "Changement dans les utilisateurs", R.drawable.taskicon_task_chef_icon );
+                            notificationHelper.notify(127, "Au boulot !", "Une nouvelle tâche !", R.drawable.taskicon_task_chef_icon );
                         }
                     });
                 });;
@@ -174,8 +174,8 @@ public class DataBase implements Executor {
 
     public Task<Document> getUserInfo() {
         try {
-            final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection("Users_data");
+            final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
             Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
             StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
             return collection.findOne(new Document("_id", new ObjectId (user.getId())));

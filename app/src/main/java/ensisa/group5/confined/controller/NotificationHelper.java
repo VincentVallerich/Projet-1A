@@ -58,8 +58,8 @@ public class NotificationHelper extends ContextWrapper {
                 .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.taskicon_maid))
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
-                .setContentTitle("A notification title")
-                .setContentText( "Full message" )
+                .setContentTitle(title)
+                .setContentText(message)
                 .setContentIntent( contentIntent )      // On injecte le contentIntent
                 .setVibrate(new long[] { 0, 500, 110, 500, 110, 450, 110, 200, 110,
                         170, 40, 450, 110, 200, 110, 170, 40, 500 } )
