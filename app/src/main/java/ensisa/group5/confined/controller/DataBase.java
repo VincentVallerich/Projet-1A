@@ -174,7 +174,7 @@ public class DataBase implements Executor {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             Log.d("stitch",event.toBsonDocument().toJson());
                             NotificationHelper notificationHelper = new NotificationHelper(base);
-                            notificationHelper.notify(127, "Au boulot !", "Une nouvelle tâche !", R.drawable.taskicon_task_chef_icon );
+                            notificationHelper.notify(128, "Au boulot !", "Une nouvelle tâche !", R.drawable.taskicon_task_chef_icon );
                         }
                     });
                 });;
