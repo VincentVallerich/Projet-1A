@@ -25,12 +25,12 @@
             <TextView
                 android:id="@+id/textView_pseudo"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="80dp"
                 android:layout_weight="4"
                 android:text="pseudo"
-                android:textStyle="bold"
-                android:textSize="20dp">
-            </TextView>
+                android:textAlignment="inherit"
+                android:textSize="20dp"
+                android:textStyle="bold"></TextView>
 
             <TextView
                 android:id="@+id/textView_score"
