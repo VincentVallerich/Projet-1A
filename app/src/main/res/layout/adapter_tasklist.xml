@@ -105,30 +105,12 @@
             android:orientation="horizontal"
             android:weightSum="1"
             >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/newtask_popup_template_frequency_lbl"
-                android:layout_gravity="left"
-                />
-            <TextView
-                android:id="@+id/adapter_tasklist_frequency"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:layout_gravity="left"
-                />
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.1"
-                />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/newtask_popup_template_deadline_lbl"
                 android:layout_gravity="left"
-
                 />
             <TextView
                 android:id="@+id/adapter_tasklist_deadline"
