@@ -7,7 +7,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_weight="1"
     tools:context="ensisa.group5.confined.ui.ProfilActivity">
+    <Button
+        android:id="@+id/modify_profile_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Settings"
+        android:layout_margin="2dp"
+        android:background="@drawable/beautiful_button"/>
 
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:text="@string/logout_text"
+        android:layout_margin="2dp"
+        android:background="@drawable/beautiful_button"/>
 
     <ImageView
         android:id="@+id/profile_icon_image"
@@ -19,7 +36,15 @@
         android:layout_marginStart="100dp"
         android:padding="10dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/taskicon_lawn_mower" />
+        android:src="@drawable/profil_icon_1" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#A9A9A9"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/profile_icon_image"/>
 
     <LinearLayout
         android:id="@+id/text_container"
@@ -43,201 +68,60 @@
 
         </TextView>
 
+        <TextView
+            android:id="@+id/text_email"
+            android:layout_width="match_parent"
+            android:layout_height="89dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="25sp"
+            android:textStyle="italic">
+
+        </TextView>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:padding="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="11dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
 
             <TextView
                 android:id="@+id/text_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:clickable="false"
-                android:text="16"
-                android:textSize="30sp">
+                android:gravity="center"
+                android:text="20M"
+                android:textColor="@color/colorPrimary"
+                android:textSize="24sp" />
 
-            </TextView>
-
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:orientation="horizontal"
-            >
-
-            <Button
-                android:id="@+id/modify_profile_button"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="modify Profile" />
+                android:text="Points"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
+            </LinearLayout>
 
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            >
-
-        </ImageView>
-
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/navigation_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:background="@color/navigation_container_bg"
-        android:orientation="horizontal"
-        android:weightSum="@dimen/navigation_container_weightSum">
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="@dimen/navigation_container_layout_weight"
-            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
-            >
-            <FrameLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                >
-                <ImageButton
-                    android:id="@+id/board_button"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@null"
-                    android:scaleType="fitXY"
-                    android:layout_gravity="center"
-                    android:src="@drawable/board_ico_leaved"
-                    >
-                </ImageButton>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center"
-                    android:clickable="false"
-                    android:textColor="@color/navigation_container_text_color"
-                    android:text="@string/board" >
-                </TextView>
-            </FrameLayout>
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="@dimen/navigation_container_layout_weight"
-            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
-            >
-            <FrameLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                >
-                <ImageButton
-                    android:id="@+id/task_button"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@null"
-                    android:scaleType="fitXY"
-                    android:layout_gravity="center"
-                    android:src="@drawable/task_ico_leave"
-                    >
-                </ImageButton>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center"
-                    android:clickable="false"
-                    android:textColor="@color/navigation_container_text_color"
-                    android:text="@string/mytasks" >
-                </TextView>
-            </FrameLayout>
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="@dimen/navigation_container_layout_weight"
-            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
-            >
-            <FrameLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center">
-                <ImageButton
-                    android:id="@+id/leaderboard_button"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@null"
-                    android:scaleType="fitXY"
-                    android:layout_gravity="center"
-                    android:src="@drawable/leader_ico_leave"
-                    >
-                </ImageButton>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center"
-                    android:clickable="false"
-                    android:textColor="@color/navigation_container_text_color"
-                    android:text="@string/leaderboard"
-                    >
-                </TextView>
-            </FrameLayout>
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="@dimen/navigation_container_layout_weight"
-            android:layout_marginTop="@dimen/navigation_container_btn_marignTop"
-            >
-            <FrameLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center">
-
-                <ImageButton
-                    android:id="@+id/profile_button"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="center"
-                    android:background="@null"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/profile_ico_clicked"></ImageButton>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|center"
-                    android:clickable="false"
-                    android:textColor="@color/navigation_container_text_color"
-                    android:text="@string/profile" >
-                </TextView>
-            </FrameLayout>
         </FrameLayout>
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#A9A9A9"
+        android:layout_below="@id/text_container"/>
 
 
     <LinearLayout
@@ -255,12 +139,11 @@
         android:id="@+id/activity_main_bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
+        android:background="@color/colorPrimary"
         android:visibility="visible"
         app:itemIconTint="@color/navigation_container_text_color"
         app:itemTextColor="@color/navigation_container_text_color"
         app:menu="@menu/bottom_navigation_menu" />
     </LinearLayout>
-
 
 </RelativeLayout>

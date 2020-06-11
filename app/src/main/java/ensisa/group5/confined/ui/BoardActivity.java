@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -35,6 +36,8 @@ import java.util.List;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.DataBase;
+import ensisa.group5.confined.controller.MainActivity;
+import ensisa.group5.confined.controller.NotificationHelper;
 import ensisa.group5.confined.game.ScoreBordActivity;
 import ensisa.group5.confined.model.CTask;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
@@ -68,6 +71,18 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         context = this.getApplicationContext();
 
         dateBase = new DataBase();
+
+
+        Thread t = new Thread() {
+            public void run(){
+                dateBase. watchCollections(context);
+            }
+        };
+        t.start();
+
+
+
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -281,28 +296,24 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         int score = newTaskPopup.getScore();
                         String frequency = newTaskPopup.getFrequency();
                         String deadline = newTaskPopup.getDeadline();
-                        System.out.println("On click");
-                        try {
+                        System.out.println("On click parce qu'on créer un nouveau task");
+
                             Thread t5 = new Thread(new Runnable() {  @Override public void run() {
                                 dateBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener( new OnCompleteListener<RemoteInsertOneResult>()
                                 {
                                         @Override
                                         public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
-
                                             taskListItem.add( new TaskListItem(name,img,description,importance,score,frequency,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asObjectId().toString()));
                                             Log.d("stitch ", "new ID : " + task.getResult().getInsertedId().toString() );
-
                                             TaskListAdapter a = new TaskListAdapter(context,taskListItem);
                                             taskListView.setAdapter(a);
                                             a.notifyDataSetChanged();
                                         }
                                     }
-                            );  } });
+                            );}});
+
                             t5.start();
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                         newTaskPopup.dismiss();
                     }
                 });
@@ -319,8 +330,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                 public void run() {
                                     dateBase.deleteTask(item.getId());
                                     taskListItem.remove(item);
-
-
                                 }
                             });
                             t5.start();
@@ -360,9 +369,25 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.ok_task:
-                // add tasks to user in the db
+                try {
+                    for (int i=0; i<taskListItem.size(); i++) {
+                        if (taskListItem.get(i).isSelected()) {
+                            item = taskListItem.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dateBase.startTask(item.getId());
+                                    taskListItem.remove(item);
+                                }
+                            });
+                            t5.start();
 
-                // del tasks from list of available tasks
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 deleteSelection();
                 hideOk();
                 break;

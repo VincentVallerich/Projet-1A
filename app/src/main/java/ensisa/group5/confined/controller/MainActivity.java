@@ -34,15 +34,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Thread t = new Thread() {
-            public void run(){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    NotificationHelper notificationHelper = new NotificationHelper(MainActivity.this);
-                    notificationHelper.notify(127, "My title", "My content", R.drawable.taskicon_task_chef_icon );
-                }
-            }
-        };
-        t.start();
 
         preferences = getPreferences(MODE_PRIVATE);
 

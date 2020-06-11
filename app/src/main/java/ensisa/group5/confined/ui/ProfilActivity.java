@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.bson.Document;
 import org.json.JSONException;
@@ -33,24 +34,36 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
     private String pseudo;
     private String img;
     private ImageView profileIcon;
+    private TextView textMail;
+
+    private Button logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
 
+        BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
+        bottomNavigationView.getMenu().getItem(3).setChecked(true);
+
+
         dataBase = new DataBase(this, preferences);
         preferences = getPreferences(MODE_PRIVATE);
         activity = this;
+
+        logoutButton =(Button) findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(this);
 
         modifyButton =(Button) findViewById(R.id.modify_profile_button);
         modifyButton.setOnClickListener(this);
 
         textPseudo = (TextView) findViewById(R.id.text_pseudo);
-        textPseudo.setText("retrieving");
 
         textScore = (TextView) findViewById(R.id.text_score);
-        textScore.setText("retrieving");
+
+        textMail = (TextView) findViewById(R.id.text_email);
+        textMail.setText(dataBase.getUserEmail());
 
         profileIcon = findViewById(R.id.profile_icon_image);
 
@@ -71,7 +84,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                         String name = obj.getString("pseudo");
                         textPseudo.setText(name);
                         String score = obj.getString("score");
-                        textScore.setText("Score :"+score);
+                        textScore.setText(score);
                         String profil_image = obj.getString("image");
                         setImg(profil_image);
                     }
@@ -114,7 +127,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         }
 
 
-    private boolean onClickNavigationBar(Integer integer ){
+    private boolean onClickNavigationBar(Integer integer){
         Log.d("stitch","going in onclick" + integer);
         switch (integer) {
             case R.id.action_board:

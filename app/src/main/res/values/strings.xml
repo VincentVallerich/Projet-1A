@@ -47,5 +47,6 @@
     <string name="bottom_navigation_menu_mytasks">Mes taches</string>
     <string name="bottom_navigation_menu_profile">Profil</string>
     <string name="newtask_popup_template_deadline_lbl">Echéance :</string>
+    <string name="logout_text">Log out</string>
 
 </resources>

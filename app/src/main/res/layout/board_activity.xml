@@ -61,15 +61,16 @@
         android:id="@+id/edit_task"
         android:layout_width="@dimen/task_activity_edition_btn_width"
         android:layout_height="@dimen/task_activity_edition_btn_height"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/task_activity_edit_btn_y_margin"
+        android:layout_marginBottom="75dp"
         android:layout_marginEnd="@dimen/task_activity_edit_btn_x_margin"
-        android:padding="@dimen/task_activity_edit_btn_padding"
         android:scaleType="fitCenter"
-        android:visibility="gone"
-        android:src="@drawable/pen_ico"
+        android:visibility="visible"
+        android:background="@null"
+        android:src="@drawable/board_edit_task"
         />
+
 
     <ImageButton
         android:id="@+id/ok_task"
@@ -99,7 +100,7 @@
             android:id="@+id/activity_main_bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
+            android:background="@color/colorPrimary"
             android:visibility="visible"
             app:itemIconTint="@color/navigation_container_text_color"
             app:itemTextColor="@color/navigation_container_text_color"
