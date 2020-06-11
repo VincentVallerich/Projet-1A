@@ -323,16 +323,14 @@ public class DataBase implements Executor {
         initClient();
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
         Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
-        Boolean res;
-        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
+        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn()) {
             Log.d("stitch","successful login");
-            res =true;
+            return true;
         }
         else {
             Log.d("stitch","non successful login");
-            res =false;
+            return false;
         }
-        return res;
     }
 
     public boolean registerUser(String username, String pseudo, String password) {

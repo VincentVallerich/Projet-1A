@@ -292,7 +292,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                             i--;
                         }
                     }
-
+                    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

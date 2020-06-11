@@ -38,13 +38,9 @@ public class PickTaskImgPopup extends Dialog
 
         taskImgItem = new ArrayList<>();
         gridView = (GridView)findViewById(R.id.picktaskimg_popup_template_gridview);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                TaskImgItem item = (TaskImgItem) gridView.getItemAtPosition(i);
-                img = item.getImg();
-            }
+        gridView.setOnItemClickListener((adapterView, view, i, l) -> {
+            TaskImgItem item = (TaskImgItem) gridView.getItemAtPosition(i);
+            img = item.getImg();
         });
 
         Field[] fields = R.drawable.class.getFields();
@@ -60,10 +56,7 @@ public class PickTaskImgPopup extends Dialog
     }
 
     // méthodes
-    public String getImg()
-    {
-        return img;
-    }
+    public String getImg() { return img; }
 
     public Button getCancelButton()
     {

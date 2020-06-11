@@ -60,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
             dataBase.initClient();
-            startBoardActivity(getApplicationContext());
+            startTaskActivity(this);
+            finish();
         }
 
         signinBtn.setEnabled(false);
@@ -127,12 +128,14 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
-                    startBoardActivity(getApplicationContext());
+                    startTaskActivity(this);
+                    finish();
                 } else {
                     if (dataBase.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                        startBoardActivity(getApplicationContext());
+                        startTaskActivity(this);
+                        finish();
                     }
                 }
             } catch (InterruptedException e) {
@@ -162,12 +165,12 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                                startBoardActivity(getApplicationContext());
+                                startTaskActivity(getApplicationContext());
                                 finish();
                                 Toast.makeText(getApplicationContext(),"Inscription réussie"   , Toast.LENGTH_SHORT).show();
                                 try {
                                     if (dataBase.isUserAuthenticated(username,pswd)){
-                                     startBoardActivity(getApplicationContext());
+                                        startTaskActivity(getApplicationContext());
                                     }
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
@@ -182,5 +185,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void startBoardActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
+    public void startTaskActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
 }

@@ -3,6 +3,10 @@ package ensisa.group5.confined.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -14,8 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -39,6 +48,8 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
     private ImageButton calendar;
     private TextView deadline;
 
+    private ImageButton cameraBtn;
+
     private PickTaskImgPopup pickTaskImgPopup;
     private CalendarPopup calendarPopup;
     private TextView title;
@@ -54,7 +65,7 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
 
         //
         title = findViewById(R.id.newtask_popup_template_title);
-
+        cameraBtn = findViewById(R.id.newtask_popup_template_camera_btn);
         imgBtn = findViewById(R.id.newtask_popup_template_taskimg);
         name = findViewById(R.id.newtask_popup_template_name_txtbox);
         description = findViewById(R.id.newtask_popup_template_description_txtbox);
@@ -141,6 +152,11 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
         return addButton;
     }
 
+    public ImageButton getCameraBtn()
+    {
+        return cameraBtn;
+    }
+
     public void setAddButtonName(String name)
     {
         addButton.setText(name);
@@ -171,8 +187,10 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
                     @Override
                     public void onClick(View view) {
                         img = pickTaskImgPopup.getImg();
-                        setImg(img);
-                        pickTaskImgPopup.dismiss();
+                        if (img != null) {
+                            setImg(img);
+                            pickTaskImgPopup.dismiss();
+                        }
                     }
                 });
                 pickTaskImgPopup.build();
@@ -226,5 +244,62 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
     {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         return formatter.format(date);
+    }
+
+    public void getTextFromImage(Bitmap bitmap)
+    {
+        TextRecognizer textRecognizer = new TextRecognizer.Builder(context).build();
+
+        if (!textRecognizer.isOperational())
+            Toast.makeText(context, "Text recognition has failed", Toast.LENGTH_SHORT).show();
+        else
+        {
+            Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+            SparseArray<TextBlock> items = textRecognizer.detect(frame);
+            StringBuilder sb = new StringBuilder();
+
+            for (int i=0; i<items.size(); i++)
+            {
+                TextBlock myItem = items.valueAt(i);
+                sb.append(myItem.getValue());
+                sb.append("\n");
+            }
+            ArrayList fields = new ArrayList(Arrays.asList(sb.toString().split("\n")));
+            fillFields(fields);
+        }
+    }
+
+    private void fillFields(ArrayList<String> fields)
+    {
+        for (int i=0; i<fields.size(); i++)
+        {
+            try {
+                switch (i) {
+                    case 0:
+                        setName(fields.get(0));
+                        break;
+                    case 1:
+                        setDescription(fields.get(1));
+                        break;
+                    case 2:
+
+                        setImportance(Integer.parseInt(fields.get(2)));
+                        break;
+                    case 3:
+                        setScore(Integer.parseInt(fields.get(3)));
+                        break;
+                    case 4:
+                        setDeadline(fields.get(4));
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Bitmap bitmap = (Bitmap)data.getExtras().get("data");
+        getTextFromImage(bitmap);
     }
 }

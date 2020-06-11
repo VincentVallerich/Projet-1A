@@ -25,6 +25,8 @@
         android:layout_margin="2dp"
         android:background="@drawable/beautiful_button"/>
 
+
+
     <ImageView
         android:id="@+id/profile_icon_image"
         android:layout_width="190dp"
@@ -34,8 +36,8 @@
         android:layout_marginEnd="0dp"
         android:layout_marginStart="100dp"
         android:padding="10dp"
-        android:scaleType="fitCenter" />
-
+        android:scaleType="fitCenter"
+        android:src="@drawable/profil_icon_1" />
 
     <View
         android:id="@+id/line"
@@ -70,11 +72,14 @@
         <TextView
             android:id="@+id/text_email"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="89dp"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:textSize="18sp"
             android:textAlignment="center"
+            android:textSize="25sp"
+            android:textStyle="italic">
+
+        </TextView>
             android:textStyle="italic" />
 
         <FrameLayout
@@ -109,10 +114,7 @@
 
             </LinearLayout>
 
-
         </FrameLayout>
-
-
 
     </LinearLayout>
 
@@ -122,8 +124,6 @@
         android:layout_height="1dp"
         android:background="#A9A9A9"
         android:layout_below="@id/text_container"/>
-
-
 
 
     <LinearLayout
@@ -147,4 +147,5 @@
         app:itemTextColor="@color/navigation_container_text_color"
         app:menu="@menu/bottom_navigation_menu" />
     </LinearLayout>
+
 </RelativeLayout>

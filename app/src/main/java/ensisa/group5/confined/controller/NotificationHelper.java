@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.app.Notification;
-//import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
@@ -40,9 +39,6 @@ public class NotificationHelper extends ContextWrapper {
         notificationChannelDefault.setShowBadge( false );
         notifManager.createNotificationChannel( notificationChannelDefault );
     }
-
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void notify(int id, String title, String message, int largeIcon ) {
