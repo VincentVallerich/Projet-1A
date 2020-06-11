@@ -26,6 +26,9 @@ import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
@@ -138,31 +141,31 @@ public class DataBase implements Executor {
         RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
         RemoteMongoCollection<Document> collection_user = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
         RemoteMongoCollection<Document> collection_task = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameTasks);
-
-        collection_user.watch()
-                .addOnCompleteListener(task -> {
+        collection_user.watch() .addOnCompleteListener(task -> {
                     AsyncChangeStream<Document, ChangeEvent<Document>> changeStream = task.getResult();
                     changeStream.addChangeEventListener((BsonValue documentId, ChangeEvent<Document> event) -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+
 
                             NotificationHelper notificationHelper = new NotificationHelper(base);
                             notificationHelper.notify(127, "Nouveau balayeur !", "Un bagnard est arrivé !", R.drawable.taskicon_task_chef_icon );
                         }
                     });
                 });
-
-
-        collection_task.watch()
-                .addOnCompleteListener(task -> {
+        collection_task.watch().addOnCompleteListener(task -> {
                     AsyncChangeStream<Document, ChangeEvent<Document>> changeStream = task.getResult();
                     changeStream.addChangeEventListener((BsonValue documentId, ChangeEvent<Document> event) -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            Log.d("stitch",event.toBsonDocument().toJson());
-                            NotificationHelper notificationHelper = new NotificationHelper(base);
-                            notificationHelper.notify(127, "Au boulot !", "Une nouvelle tâche !", R.drawable.taskicon_task_chef_icon );
-                        }
+
+                                    NotificationHelper notificationHelper = new NotificationHelper(base);
+
+                                    notificationHelper.notify(128, "Au boulot !", "Une nouvelle tâche !", R.drawable.taskicon_task_chef_icon );
+                                }
+
                     });
-                });;
+
+                });
     }
 
     public Task<Document> getUserInfo() {

@@ -79,7 +79,7 @@ public class ScoreBordActivity extends AppCompatActivity {
     }
     public void createNewLeaderBoard() {
         List<Document> docs = new ArrayList<Document>();
-        database.getLeaderBoard().into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+        database.getLeaderBoard().sort( new Document().append("score", -1) ).into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
                 try {
