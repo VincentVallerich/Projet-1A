@@ -5,13 +5,10 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -51,7 +48,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private boolean editMode;
     private TaskListItem item;
 
-    private DataBase dateBase;
+    private DataBase dataBase;
     private SharedPreferences preferences;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -63,15 +60,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         activity = this;
         context = this.getApplicationContext();
 
-        dateBase = new DataBase();
-
-
-        Thread t = new Thread() {
-            public void run(){
-                dateBase. watchCollections(context);
-            }
-        };
-        t.start();
+        dataBase = new DataBase();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -151,7 +140,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                     int score = modifyTaskPopup.getScore();
                     String deadline = modifyTaskPopup.getDeadline();
                      //update the db
-                    dateBase.modifyTask(item.getId(),name, img, description, importance, score, formatDate(deadline));
+                    dataBase.modifyTask(item.getId(),name, img, description, importance, score, formatDate(deadline));
                     //add new tasks in the list
                     taskListItem.remove(item);
                     taskListItem.add(new TaskListItem(name, img, description, importance, score, deadline, "NON_ATTRIBUATE", item.getId()));
@@ -171,14 +160,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         });
 
         preferences = getPreferences(MODE_PRIVATE);
-        dateBase = new DataBase(this, preferences);
+        dataBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
 
     }
 
     public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
-        dateBase.getNonAssignedTasks().into(docs).addOnSuccessListener((OnSuccessListener<List<Document>>) documents -> {
+        dataBase.getNonAssignedTasks().into(docs).addOnSuccessListener((OnSuccessListener<List<Document>>) documents -> {
             try {
                 for (Document d : docs) {
                     // ici je récupère directement les infos du JSON,
@@ -255,9 +244,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                     int importance = newTaskPopup.getImportance();
                     int score = newTaskPopup.getScore();
                     String deadline = newTaskPopup.getDeadline();
-                        Thread t5 = new Thread(() -> dateBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener(task -> {
-                            Toast.makeText(context,task.getResult().getInsertedId().asDocument().getObjectId("_id").toString()  , Toast.LENGTH_SHORT).show();
-                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asDocument().getObjectId("_id").toString()));
+                        Thread t5 = new Thread(() -> dataBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener(task -> {
+                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().toString()));
                             Toast.makeText(context," Création de tâche réussie !"  , Toast.LENGTH_SHORT).show();
                             TaskListAdapter a = new TaskListAdapter(context,taskListItem);
                             taskListView.setAdapter(a);
@@ -278,7 +266,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         if (taskListItem.get(i).isSelected()) {
                             item = taskListItem.get(i);
                             Thread t5 = new Thread(() -> {
-                                dateBase.deleteTask(item.getId())
+                                dataBase.deleteTask(item.getId())
                                         .addOnCompleteListener(task ->
                                                 Toast.makeText(context,"Tâche supprimée !"  , Toast.LENGTH_SHORT).show());
                                 taskListItem.remove(item);
@@ -321,7 +309,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         if (taskListItem.get(i).isSelected()) {
                             item = taskListItem.get(i);
                             Thread t5 = new Thread(() -> {
-                                dateBase.startTask(item.getId()).addOnCompleteListener(
+                                dataBase.startTask(item.getId()).addOnCompleteListener(
                                         task -> Toast.makeText(context,"Vous avez une nouvelle tâche !"  , Toast.LENGTH_SHORT).show()
 
                                 );

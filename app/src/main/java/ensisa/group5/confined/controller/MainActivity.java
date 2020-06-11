@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -34,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         preferences = getPreferences(MODE_PRIVATE);
 
         dataBase = new DataBase(this, preferences);
@@ -52,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
             dataBase.initClient();
             startTaskActivity(this);
-            finish();
         }
 
         signinBtn.setEnabled(false);
@@ -120,13 +117,11 @@ public class MainActivity extends AppCompatActivity {
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
                     startTaskActivity(this);
-                    finish();
                 } else {
                     if (dataBase.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
                         startTaskActivity(this);
-                        finish();
                     }
                 }
             } catch (InterruptedException e) {
@@ -150,11 +145,19 @@ public class MainActivity extends AppCompatActivity {
                 if (dataBase.registerUser(username, pseudo, pswd)) {
                     preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
                     startTaskActivity(this);
-                    finish();
                 }
             }
         });
     }
 
-    public void startTaskActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
+    public void startTaskActivity(Context context) {
+        startActivity(new Intent(context, TaskActivity.class));
+        Thread t = new Thread() {
+            public void run(){
+                dataBase. watchCollections(context);
+            }
+        };
+        t.start();
+        finish();
+    }
 }
