@@ -201,8 +201,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
-        dateBase.getNonAssignedTasks()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+        dateBase.getNonAssignedTasks().into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
                 try {
@@ -221,9 +220,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         String status = obj.getString("task_status").toString();
                         String strDate = obj.getString("task_limit_date").toString();
                         strDate = strDate.replace("{\"$date\":","").replace("}","");
-
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
+
                         TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
                         taskListItem.add(t);
                     }
@@ -286,14 +285,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         int importance = newTaskPopup.getImportance();
                         int score = newTaskPopup.getScore();
                         String deadline = newTaskPopup.getDeadline();
-                        System.out.println("On click parce qu'on créer un nouveau task");
-
                             Thread t5 = new Thread(new Runnable() {  @Override public void run() {
                                 dateBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener( new OnCompleteListener<RemoteInsertOneResult>()
                                 {
                                         @Override
                                         public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
-                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asObjectId().toString()));
+                                            Toast.makeText(context,task.getResult().getInsertedId().asDocument().getObjectId("_id").toString()  , Toast.LENGTH_SHORT).show();
+                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asDocument().getObjectId("_id").toString()));
                                             Toast.makeText(context," Création de tâche réussie !"  , Toast.LENGTH_SHORT).show();
                                             TaskListAdapter a = new TaskListAdapter(context,taskListItem);
                                             taskListView.setAdapter(a);
@@ -380,6 +378,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                 }
                             });
                             t5.start();
+                            i--;
                         }
                     }
                 } catch (Exception e) {

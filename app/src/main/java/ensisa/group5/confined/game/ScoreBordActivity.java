@@ -70,6 +70,7 @@ public class ScoreBordActivity extends AppCompatActivity {
                        UserListItem t = new UserListItem(obj.getString("pseudo"),obj.getInt("score"));
                         userList.add(t);
                     }
+
                     scoreboardListView.setAdapter(new UserListAdapter(context, userList));
                 }
                 catch (JSONException e) {

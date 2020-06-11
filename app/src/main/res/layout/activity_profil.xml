@@ -72,12 +72,11 @@
             android:id="@+id/text_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvName"
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:textSize="18sp"
             android:textAlignment="center"
-            android:textStyle="italic"></TextView>
+            android:textStyle="italic" />
 
         <FrameLayout
             android:layout_width="match_parent"
