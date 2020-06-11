@@ -326,26 +326,23 @@ public class DataBase implements Executor {
         UserPasswordCredential credential = new UserPasswordCredential(email, password );
         initClient();
         Stitch.getDefaultAppClient().getAuth().loginWithCredential(credential);
-        Boolean res;
-        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn() ) {
+        if (Stitch.getDefaultAppClient().getAuth().isLoggedIn()) {
             Log.d("stitch","successful login");
-            res =true;
+            return true;
         }
         else {
             Log.d("stitch","non successful login");
-            res =false;
+            return false;
         }
-        return res;
     }
 
     public boolean registerUser(String username, String pseudo, String password) {
         AtomicReference<Boolean> res = new AtomicReference<>(false);
         initClient();
-        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth() .getProviderClient(UserPasswordAuthProviderClient.factory);
+        UserPasswordAuthProviderClient emailPassClient = Stitch.getDefaultAppClient().getAuth().getProviderClient(UserPasswordAuthProviderClient.factory);
         emailPassClient.registerWithEmail(username, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        res.set(true);
                         try {
                             if (isUserAuthenticated(username, password)) {
                                 RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
@@ -358,8 +355,9 @@ public class DataBase implements Executor {
                                         .append(field_user_master, false);
 
                                 collection.insertOne(registerUser);
-                                Log.d("stitch", "Successfully sent account confirmation email");
-                            }
+                                res.set(true);
+                            } else
+                                Log.e("stitch", "Error registering new user:");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

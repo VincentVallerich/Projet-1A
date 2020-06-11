@@ -51,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
             dataBase.initClient();
-            startBoardActivity(getApplicationContext());
+            startTaskActivity(this);
+            finish();
         }
 
         signinBtn.setEnabled(false);
@@ -118,12 +119,14 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
-                    startBoardActivity(getApplicationContext());
+                    startTaskActivity(this);
+                    finish();
                 } else {
                     if (dataBase.isUserAuthenticated(username,pswd)) {
                         // enregistrer les preferences
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                        startBoardActivity(getApplicationContext());
+                        startTaskActivity(this);
+                        finish();
                     }
                 }
             } catch (InterruptedException e) {
@@ -144,13 +147,16 @@ public class MainActivity extends AppCompatActivity {
 
             String pseudo = pseudoEdit.getText().toString();
             if (dataBase.isUsernameFormatCorrect(username) && dataBase.isUsernameFormatCorrect(pseudo)) {
-                if (dataBase.registerUser(username, pseudo, pswd)) {
+                boolean test = dataBase.registerUser(username, pseudo, pswd);
+                System.out.println("test" + test);
+                if (test) {
                     preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                    startBoardActivity(getApplicationContext());
+                    startTaskActivity(this);
+                    finish();
                 }
             }
         });
     }
 
-    public void startBoardActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
+    public void startTaskActivity(Context context) { startActivity(new Intent(context, TaskActivity.class)); }
 }
