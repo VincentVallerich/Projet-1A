@@ -142,5 +142,4 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         profileIcon.setImageResource(drawableId);
     }
 
-
     }
