@@ -6,8 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -36,48 +41,58 @@ public class ScoreBordActivity extends AppCompatActivity {
     private ListView scoreboardListView;
     private Context context;
     private ScoreBordActivity activity;
+
+    ListView listView;
+    private int[] imagesRankList = {R.drawable.score_1, R.drawable.score_2, R.drawable.score_3, R.drawable.score_4, R.drawable.score_5, R.drawable.score_6, R.drawable.score_7, R.drawable.score_8, R.drawable.score_9, R.drawable.score_10, R.drawable.score_11, R.drawable.score_12 };
+    String[] pseudoList = {"Neo", "Arwen", "Granger", "HarryPotter"};
+    String[] scoreList = {"3990", "1990", "987", "2"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score_bord);
-        activity = this;
-        context = activity.getApplicationContext();
 
-
-        database = new DataBase();
-
-        BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
-        bottomNavigationView.getMenu().getItem(1).setChecked(true);
-        userList = new ArrayList<>();
-        scoreboardListView = findViewById(R.id.scoreboard_listview);
-        Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
-        t2.start();
-
-
+        listView = (ListView) findViewById(R.id.scoreboard_listview);
+        CustomAdapter customAdapter = new CustomAdapter();
+        listView.setAdapter(customAdapter);
     }
-    public void createLeaderboard( ){
-        List<Document> docs = new ArrayList<Document>();
-        database.getLeaderBoard()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        JSONObject obj = new JSONObject(d.toJson());
-                        Log.d("stitch", obj.toString());
-                       UserListItem t = new UserListItem(obj.getString("pseudo"),obj.getInt("score"));
-                        userList.add(t);
-                    }
-                    scoreboardListView.setAdapter(new UserListAdapter(context, userList));
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
-            }
-        });
+    class CustomAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return pseudoList.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            convertView = getLayoutInflater().inflate(R.layout.custom_list_view_scoreboard, null);
+
+            ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView_rank);
+            TextView textView_pseudo = (TextView) convertView.findViewById(R.id.textView_pseudo);
+            TextView textView_score = (TextView) convertView.findViewById(R.id.textView_score);
+
+            imageView.setImageResource(imagesRankList[position]);
+            textView_pseudo.setText(pseudoList[position]);
+            textView_score.setText(scoreList[position]);
+
+            return convertView;
+        }
     }
+
+
+
+
     private boolean onClickNavigationBar(Integer integer ){
         switch (integer) {
 
