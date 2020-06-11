@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -25,15 +24,11 @@ import java.util.List;
 import ensisa.group5.confined.R;
 
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
 import org.json.JSONException;
@@ -158,38 +153,35 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
         List<Document> docs = new ArrayList<Document>();
         dataBase.getTasksByUser()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        JSONObject obj = new JSONObject(d.toJson());
-                        String name = obj.getString("task_name").toString();
-                        String img = obj.getString("task_name").toString();
-                        String description = obj.getString("task_desc").toString();
-                        int importance = (int)Integer.parseInt(obj.getString("task_priority"));
-                        int score = (int)Integer.parseInt( obj.getString("task_score"));
-                        String frequency = obj.getString("task_priority").toString();
-                        String status = obj.getString("task_status").toString();
+                .into(docs).addOnSuccessListener((OnSuccessListener<List<Document>>) documents -> {
+                    try {
+                        for (Document d : docs) {
+                            JSONObject obj = new JSONObject(d.toJson());
+                            String name = obj.getString("task_name").toString();
+                            String img = obj.getString("task_name").toString();
+                            String description = obj.getString("task_desc").toString();
+                            int importance = (int)Integer.parseInt(obj.getString("task_priority"));
+                            int score = (int)Integer.parseInt( obj.getString("task_score"));
+                            String frequency = obj.getString("task_priority").toString();
+                            String status = obj.getString("task_status").toString();
 
-                        String strDate = obj.getString("task_limit_date").toString();
-                        strDate = strDate.replace("{\"$date\":","").replace("}","");
-                        long date = (long)Long.parseLong(strDate);
-                        String deadline = formatDate(new Date(date));
+                            String strDate = obj.getString("task_limit_date").toString();
+                            strDate = strDate.replace("{\"$date\":","").replace("}","");
+                            long date = (long)Long.parseLong(strDate);
+                            String deadline = formatDate(new Date(date));
 
-                        String id = d.getObjectId("_id").toString();
+                            String id = d.getObjectId("_id").toString();
 
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
-                        taskList.add(t);
+                            TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
+                            taskList.add(t);
+                        }
+                        createEvents();
+                        displayTaskForCurrentDay();
                     }
-                    createEvents();
-                    displayTaskForCurrentDay();
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
     private boolean onClickNavigationBar(Integer integer ){
         Log.d("stitch","going in onclick" + integer);

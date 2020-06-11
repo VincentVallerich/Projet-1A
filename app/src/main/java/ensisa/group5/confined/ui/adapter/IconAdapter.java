@@ -12,7 +12,6 @@ import java.util.List;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.model.IconImgItem;
-import ensisa.group5.confined.ui.model.TaskImgItem;
 
 public class IconAdapter extends BaseAdapter
 {

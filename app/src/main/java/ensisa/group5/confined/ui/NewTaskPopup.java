@@ -5,12 +5,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
@@ -25,12 +23,10 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import ensisa.group5.confined.R;
-import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 
 public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedListener
 {

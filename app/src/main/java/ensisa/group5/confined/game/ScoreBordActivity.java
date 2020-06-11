@@ -7,11 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,7 +20,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import ensisa.group5.confined.R;
@@ -35,8 +30,6 @@ import ensisa.group5.confined.ui.BoardActivity;
 
 import ensisa.group5.confined.ui.ProfilActivity;
 import ensisa.group5.confined.ui.TaskActivity;
-import ensisa.group5.confined.ui.adapter.TaskListAdapter;
-import ensisa.group5.confined.ui.model.TaskListItem;
 
 public class ScoreBordActivity extends AppCompatActivity {
     private DataBase database;

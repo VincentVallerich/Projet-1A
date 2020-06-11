@@ -1,9 +1,5 @@
 package ensisa.group5.confined.ui.model;
 
-/**
- * Replace by CTask
- */
-
 public class TaskListItem
 {
     private String name;
