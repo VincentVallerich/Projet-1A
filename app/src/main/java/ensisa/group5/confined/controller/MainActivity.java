@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.TaskActivity;
@@ -122,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
                         // enregistrer les preferences
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
                         startTaskActivity(this);
+                    } else {
+                        Toast.makeText(this,"Mauvais nom d'utilisateur ou mot de passe", Toast.LENGTH_SHORT);
                     }
                 }
             } catch (InterruptedException e) {
@@ -145,7 +148,11 @@ public class MainActivity extends AppCompatActivity {
                 if (dataBase.registerUser(username, pseudo, pswd)) {
                     preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
                     startTaskActivity(this);
+                } else {
+                    Toast.makeText(this,"E-mail déjà existant !", Toast.LENGTH_SHORT);
                 }
+            } else {
+                Toast.makeText(this,"Au moins 2 caractères !", Toast.LENGTH_SHORT);
             }
         });
     }
