@@ -74,7 +74,7 @@ import ensisa.group5.confined.ui.model.IconImgItem;
                         }
                         gridView.setAdapter(new IconAdapter(context, iconImgItem));
                         try {
-                            sleep(500);
+                            sleep(200);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -121,9 +121,9 @@ import ensisa.group5.confined.ui.model.IconImgItem;
         }
 
         public int getRewardRank(){
-            int i=10;
+            int i=5;
             int step=0;
-            while(userScore> i)
+            while(userScore > i)
             {
                 step+=1;
                 i+=5;

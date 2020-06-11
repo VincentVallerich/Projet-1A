@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.StitchAppClient;
 import com.mongodb.stitch.android.core.auth.StitchUser;
@@ -24,8 +23,6 @@ import com.mongodb.stitch.core.services.mongodb.remote.RemoteDeleteResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
-import org.bson.BsonBoolean;
-import org.bson.BsonDocument;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -38,7 +35,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.model.CTask;
-import ensisa.group5.confined.ui.BoardActivity;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -136,6 +132,7 @@ public class DataBase implements Executor {
 
         return collection.find();
     }
+
     /*
      *Retourne un task qui contient un document
      * Le Document contient le JSON des informations de l'utilisateur connecté à l'application
