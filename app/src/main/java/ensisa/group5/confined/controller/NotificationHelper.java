@@ -52,7 +52,7 @@ public class NotificationHelper extends ContextWrapper {
 
 
         notification = new Notification.Builder(context,CHANNEL_DEFAULT_ID)
-                .setSmallIcon(R.drawable.taskicon_task_chef_icon)     // drawable for API 26
+                .setSmallIcon(R.drawable.logoapp)     // drawable for API 26
                 .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.taskicon_maid))
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
