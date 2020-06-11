@@ -40,31 +40,19 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
         bottomNavigationView.getMenu().getItem(3).setChecked(true);
-
-
         dataBase = new DataBase(this, preferences);
         preferences = getPreferences(MODE_PRIVATE);
         activity = this;
-
         modifyButton =(Button) findViewById(R.id.modify_profile_button);
         modifyButton.setOnClickListener(this);
-
         textPseudo = (TextView) findViewById(R.id.text_pseudo);
-
         textScore = (TextView) findViewById(R.id.text_score);
-
         textMail = (TextView) findViewById(R.id.text_email);
         textMail.setText(dataBase.getUserEmail());
-
         profileIcon = findViewById(R.id.profile_icon_image);
-
-
-
-
         Thread t6 = new Thread(new Runnable() {  @Override public void run() {  createUserProfile();  } });
         t6.start();
 
@@ -91,7 +79,6 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                 }
             });
         }
-
         public void onClick(View view)
         {
             switch(view.getId())
@@ -147,10 +134,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
         return false;
-
     }
-
-
     public void setImg(String img)
     {
         this.img = img;
