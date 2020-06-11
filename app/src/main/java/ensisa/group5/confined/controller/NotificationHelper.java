@@ -1,7 +1,5 @@
 package ensisa.group5.confined.controller;
 
-
-
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Intent;

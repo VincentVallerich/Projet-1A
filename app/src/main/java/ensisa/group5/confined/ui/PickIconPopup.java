@@ -3,12 +3,8 @@ package ensisa.group5.confined.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.bson.Document;
 import org.json.JSONException;

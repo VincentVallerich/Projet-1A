@@ -59,12 +59,8 @@ public class DataBase implements Executor {
     public static final String field_user_score = "score";
     public static final String field_user_pseudo = "pseudo";
     public static final String field_user_image = "image";
-    public static final String field_user_master = "master";
     public static final String field_task_img = "task_image";
     public static final String field_task_limit_date = "task_limit_date";
-
-    public static final int DEFAULT_SCORE = 0;
-    public static final String DEFAULT_IMAGE = "profil_icon_1";
 
     public DataBase() {
     }
@@ -124,7 +120,7 @@ public class DataBase implements Executor {
     public RemoteFindIterable<Document> getLeaderBoard() {
         try {
             RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
-            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection("Users_data");
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
             Log.d("stitch", "Récupération des utilisateurs");
             return collection.find();
         } catch (Exception ex) {
@@ -171,8 +167,8 @@ public class DataBase implements Executor {
 
     public Task<Document> getUserInfo() {
         try {
-            final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, "Mongo-Confined");
-            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection("Users_data");
+            final RemoteMongoClient remoteMongoClient = Stitch.getDefaultAppClient().getServiceClient(RemoteMongoClient.factory, serviceName);
+            RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
             Log.d("stitch", "Récupération des utilisateurs pour afficher leurs scores");
             StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
             return collection.findOne(new Document("_id", new ObjectId (user.getId())));

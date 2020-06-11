@@ -1,12 +1,10 @@
 package ensisa.group5.confined.controller;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,12 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.auth.providers.userpassword.UserPasswordAuthProviderClient;
 
-import java.util.concurrent.atomic.AtomicReference;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.ui.TaskActivity;
@@ -52,9 +47,6 @@ public class MainActivity extends AppCompatActivity {
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
         registerBtn = (Button) findViewById(R.id.register_btn);
-
-        /* for clear all preferences, to use in the case of disconnect */
-        preferences.edit().clear().apply();
 
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {
@@ -129,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
                     startTaskActivity(this);
                 } else {
                     if (dataBase.isUserAuthenticated(username,pswd)) {
-                        // enregistrer les preferences
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
                         startTaskActivity(this);
                     } else {
@@ -160,14 +151,13 @@ public class MainActivity extends AppCompatActivity {
                             .getProviderClient(UserPasswordAuthProviderClient.factory);
                     emailPassClient.registerWithEmail(username, pswd).addOnCompleteListener(task -> {
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                        startTaskActivity(getApplicationContext());
-                        finish();
-                        Toast.makeText(getApplicationContext(),"Inscription réussie", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,"Inscription réussie", Toast.LENGTH_SHORT).show();
+                        startTaskActivity(this);
                         try {
                             if (dataBase.isUserAuthenticated(username,pswd)){
                                 dataBase.setPseudo(pseudo);
                                 dataBase.setScore(0);
-                                startTaskActivity(getApplicationContext());
+                                startTaskActivity(this);
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();

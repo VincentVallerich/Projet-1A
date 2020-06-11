@@ -19,7 +19,6 @@ public class TaskListAdapter extends BaseAdapter
 {
     private Context context;
     private List<TaskListItem> taskListItem;
-    //private LayoutInflater inflater;
     private boolean longClick;
     private boolean showCheckBoxOnClick;
 

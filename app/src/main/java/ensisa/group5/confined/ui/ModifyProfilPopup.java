@@ -4,26 +4,18 @@ package ensisa.group5.confined.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RatingBar;
-import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.DataBase;
-import ensisa.group5.confined.ui.PickTaskImgPopup;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class ModifyProfilPopup extends Dialog {
     private Button cancelButton;

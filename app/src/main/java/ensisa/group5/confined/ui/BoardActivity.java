@@ -230,7 +230,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         switch (view.getId())
         {
             case R.id.add_task:
-                //Toast.makeText(activity, "Clicked", Toast.LENGTH_SHORT).show();
                 newTaskPopup = new NewTaskPopup(activity);
                 newTaskPopup.getCancelButton().setOnClickListener(view1 -> newTaskPopup.dismiss());
                 newTaskPopup.getCameraBtn().setOnClickListener(view12 -> {
