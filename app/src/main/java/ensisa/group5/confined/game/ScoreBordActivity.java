@@ -43,10 +43,7 @@ public class ScoreBordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_score_bord);
         activity = this;
         context = activity.getApplicationContext();
-
-
         database = new DataBase();
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
         bottomNavigationView.getMenu().getItem(1).setChecked(true);
