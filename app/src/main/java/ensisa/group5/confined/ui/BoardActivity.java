@@ -22,7 +22,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteDeleteResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
 import org.json.JSONException;
@@ -169,14 +171,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                             int importance = modifyTaskPopup.getImportance();
                             int score = modifyTaskPopup.getScore();
                             String deadline = modifyTaskPopup.getDeadline();
-
-                            //check fields
-
-                            //update the db
-
+                             //update the db
+                            dateBase.modifyTask(item.getId(),name, img, description, importance, score, formatDate(deadline));
                             //add new tasks in the list
                             taskListItem.remove(item);
-                            taskListItem.add(new TaskListItem(name, img, description, importance, score, deadline, "NON_ATTRIBUATE", ""));
+                            taskListItem.add(new TaskListItem(name, img, description, importance, score, deadline, "NON_ATTRIBUATE", item.getId()));
                             taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                             modifyTaskPopup.dismiss();
                         }
@@ -202,8 +201,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
-        dateBase.getNonAssignedTasks()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
+        dateBase.getNonAssignedTasks().into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
                 try {
@@ -222,9 +220,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         String status = obj.getString("task_status").toString();
                         String strDate = obj.getString("task_limit_date").toString();
                         strDate = strDate.replace("{\"$date\":","").replace("}","");
-
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
+
                         TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
                         taskListItem.add(t);
                     }
@@ -287,15 +285,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         int importance = newTaskPopup.getImportance();
                         int score = newTaskPopup.getScore();
                         String deadline = newTaskPopup.getDeadline();
-                        System.out.println("On click parce qu'on créer un nouveau task");
-
                             Thread t5 = new Thread(new Runnable() {  @Override public void run() {
                                 dateBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener( new OnCompleteListener<RemoteInsertOneResult>()
                                 {
                                         @Override
                                         public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
-                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asObjectId().toString()));
-                                            Log.d("stitch ", "new ID : " + task.getResult().getInsertedId().toString() );
+                                            Toast.makeText(context,task.getResult().getInsertedId().asDocument().getObjectId("_id").toString()  , Toast.LENGTH_SHORT).show();
+                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asDocument().getObjectId("_id").toString()));
+                                            Toast.makeText(context," Création de tâche réussie !"  , Toast.LENGTH_SHORT).show();
                                             TaskListAdapter a = new TaskListAdapter(context,taskListItem);
                                             taskListView.setAdapter(a);
                                             a.notifyDataSetChanged();
@@ -319,24 +316,25 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                             Thread t5 = new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    dateBase.deleteTask(item.getId());
+                                    dateBase.deleteTask(item.getId()).addOnCompleteListener(new OnCompleteListener<RemoteDeleteResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<RemoteDeleteResult> task) {
+                                            Toast.makeText(context,"Tâche supprimée !"  , Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                     taskListItem.remove(item);
                                 }
                             });
                             t5.start();
-
                         }
                     }
-
                     TaskListAdapter a = new TaskListAdapter(context,taskListItem);
                     taskListView.setAdapter(a);
                     a.notifyDataSetChanged();
                 }
-
                 catch (Exception e) {
                 e.printStackTrace();
             }
-
         disableSelectionMode();
         // + del on db
         break;
@@ -367,7 +365,15 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                             Thread t5 = new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    dateBase.startTask(item.getId());
+                                    dateBase.startTask(item.getId()).addOnCompleteListener(
+                                            new OnCompleteListener<RemoteUpdateResult>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<RemoteUpdateResult> task) {
+                                                    Toast.makeText(context,"Vous avez une nouvelle tâche !"  , Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+                                    );
                                     taskListItem.remove(item);
                                 }
                             });
@@ -375,7 +381,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                             i--;
                         }
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
