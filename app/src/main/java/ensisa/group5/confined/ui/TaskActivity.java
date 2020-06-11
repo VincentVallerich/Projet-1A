@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -24,11 +25,15 @@ import java.util.List;
 import ensisa.group5.confined.R;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
 import org.json.JSONException;
@@ -271,19 +276,27 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.finish_task:
                 findViewById(R.id.finish_task).setVisibility(View.GONE);
                 findViewById(R.id.abort_task).setVisibility(View.GONE);
-                for (int i=0; i<taskList.size(); i++)
-                    if (taskList.get(i).isSelected())
-                    {
-                        item = taskList.get(i);
-                        try {
-                            Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.finishTask(item.getId()); }  });
-                            t1.start();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+
+                try {
+                    for (int i=0; i<taskList.size(); i++) {
+                        if (taskList.get(i).isSelected()) {
+                            item = taskList.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dataBase.finishTask(item.getId(),item.getScore());
+                                    taskList.remove(item);
+                                }
+                            });
+                            t5.start();
+                            i--;
                         }
-                        taskList.remove(i);
-                        i--;
                     }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 createEvents();
                 displayTaskForCurrentDay();
                 break;
@@ -291,19 +304,25 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 findViewById(R.id.finish_task).setVisibility(View.GONE);
                 findViewById(R.id.abort_task).setVisibility(View.GONE);
 
-                for (int i=0; i<taskList.size(); i++)
-                    if (taskList.get(i).isSelected())
-                    {
-                        item = taskList.get(i);
-                        try {
-                            Thread t1 = new Thread(new Runnable() { @Override public void run() { dataBase.abandonTask(item.getId()); }  });
-                            t1.start();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                try {
+                    for (int i=0; i<taskList.size(); i++) {
+                        if (taskList.get(i).isSelected()) {
+                            item = taskList.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dataBase.abandonTask(item.getId(),item.getScore());
+                                    taskList.remove(item);
+                                }
+                            });
+                            t5.start();
+                            i--;
                         }
-                        taskList.remove(i);
-                        i--;
                     }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 createEvents();
                 displayTaskForCurrentDay();
                 break;

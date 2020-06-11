@@ -36,8 +36,13 @@
         android:layout_marginEnd="0dp"
         android:layout_marginStart="100dp"
         android:padding="10dp"
+<<<<<<< HEAD
         android:scaleType="fitCenter"
         android:src="@drawable/profil_icon_1" />
+=======
+        android:scaleType="fitCenter" />
+
+>>>>>>> 63520330bb5aa7819a48366683015c5c60b1c0ae
 
     <View
         android:id="@+id/line"
@@ -64,7 +69,7 @@
             android:layout_gravity="center"
             android:clickable="false"
             android:gravity="center"
-            android:text="bonjour"
+            android:text=""
             android:textSize="30sp">
 
         </TextView>
@@ -72,14 +77,22 @@
         <TextView
             android:id="@+id/text_email"
             android:layout_width="match_parent"
+<<<<<<< HEAD
             android:layout_height="89dp"
+=======
+            android:layout_height="wrap_content"
+>>>>>>> 63520330bb5aa7819a48366683015c5c60b1c0ae
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:textAlignment="center"
+<<<<<<< HEAD
             android:textSize="25sp"
             android:textStyle="italic">
 
         </TextView>
+=======
+            android:textStyle="italic" />
+>>>>>>> 63520330bb5aa7819a48366683015c5c60b1c0ae
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -100,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="20M"
+                android:text=""
                 android:textColor="@color/colorPrimary"
                 android:textSize="24sp" />
 

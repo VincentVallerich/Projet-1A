@@ -18,11 +18,15 @@
         android:id="@+id/title_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/task_activity_day_container">
+        android:layout_below="@+id/task_activity_day_container"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp">
+
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/troophy"></ImageView>
+            android:src="@drawable/troophy">
+        </ImageView>
 
         <TextView
             android:layout_width="392dp"
@@ -31,10 +35,18 @@
             android:gravity="center"
             android:text="Classement"
             android:textColor="@color/red"
-            android:textSize="35sp"></TextView>
+            android:textSize="35sp">
+        </TextView>
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/troophy">
+        </ImageView>
 
 
     </LinearLayout>
+
 
     <ListView
         android:id="@+id/scoreboard_listview"
@@ -42,9 +54,11 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/navigation_container"
         android:layout_below="@+id/title_container"
-        android:visibility="visible"
-        />
-
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="16dp"
+        android:background="@drawable/rounded_corner_listview"
+        android:visibility="visible">
+    </ListView>
 
     <LinearLayout
         android:id="@+id/navigation_container"
