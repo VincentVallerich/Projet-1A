@@ -23,6 +23,7 @@ import com.mongodb.stitch.core.services.mongodb.remote.RemoteDeleteResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
+import org.bson.BsonInt32;
 import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -253,7 +254,7 @@ public class DataBase implements Executor {
         RemoteMongoCollection<Document> collection = remoteMongoClient.getDatabase(databaseName).getCollection(collectionNameUsersData);
         StitchUser user = Stitch.getDefaultAppClient().getAuth().getUser();
         final Document filterDoc = new Document( "_id", new ObjectId(user.getId()));
-        Document updateDoc = new Document().append("$set",new Document().append("score", score));
+        Document updateDoc = new Document().append("$set",new Document().append("score", new BsonInt32(score)));
         collection.updateOne(filterDoc, updateDoc);
     }
 

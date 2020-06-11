@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -150,11 +151,11 @@ public class MainActivity extends AppCompatActivity {
                             .getProviderClient(UserPasswordAuthProviderClient.factory);
                     emailPassClient.registerWithEmail(username, pswd).addOnCompleteListener(task -> {
                         preferences.edit().putString(getString(R.string.PREF_KEY_MAIL), username).apply();
-                        Toast.makeText(this,"Inscription réussie", Toast.LENGTH_SHORT).show();
-                        startTaskActivity(this);
+
                         try {
                             if (dataBase.isUserAuthenticated(username,pswd)){
                                 dataBase.setPseudo(pseudo);
+                                Toast.makeText(this,"Inscription réussie", Toast.LENGTH_SHORT).show();
                                 dataBase.setScore(0);
                                 startTaskActivity(this);
                             }

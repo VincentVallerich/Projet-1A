@@ -139,6 +139,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                 Intent intent4 = new Intent(this, ProfilActivity.class);
                 Log.d("stitch","going in profile");
                 startActivity(intent4);
+
                 break;
         }
         return false;
