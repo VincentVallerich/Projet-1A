@@ -30,6 +30,7 @@ import ensisa.group5.confined.game.adapter.UserListAdapter;
 import ensisa.group5.confined.game.model.UserListItem;
 import ensisa.group5.confined.ui.BoardActivity;
 
+import ensisa.group5.confined.ui.ProfilActivity;
 import ensisa.group5.confined.ui.TaskActivity;
 import ensisa.group5.confined.ui.model.TaskListItem;
 
@@ -110,8 +111,8 @@ public class ScoreBordActivity extends AppCompatActivity {
                 startActivity(intent3);
                 break;
             case R.id.action_profile:
-             //   Intent intent4 = new Intent(this, ProfileActivity.class);
-         //       startActivity(intent4);
+                Intent intent4 = new Intent(this, ProfilActivity.class);
+                startActivity(intent4);
                 break;
         }
         return false;

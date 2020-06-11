@@ -8,24 +8,25 @@ public class TaskListItem
 {
     private String name;
     private String img;
+    private final static String DEFAULT_IMG="taskicon_cleaning";
     private String description;
     private int importance;
     private int score;
-    private String frequency;
     private String deadline;
     private boolean selected = false;
     private String status;
+    private String id;
 
-    public TaskListItem(String name, String img, String description, int importance, int score, String frequency, String deadline, String status)
+    public TaskListItem(String name, String img, String description, int importance, int score, String deadline, String status, String id)
     {
         this.name = name;
         this.img = img;
         this.description = description;
         this.importance = importance;
         this.score = score;
-        this.frequency = frequency;
         this.deadline = deadline;
         this.status = status;
+        this.id = id;
     }
 
     public String getName()
@@ -35,6 +36,8 @@ public class TaskListItem
 
     public String getImg()
     {
+        if (img == null)
+            return DEFAULT_IMG;
         return img;
     }
 
@@ -53,11 +56,6 @@ public class TaskListItem
         return score;
     }
 
-    public String getFrequency()
-    {
-        return frequency;
-    }
-
     public String getDeadline()
     {
         return deadline;
@@ -66,6 +64,11 @@ public class TaskListItem
     public String getStatus()
     {
         return status;
+    }
+
+    public String getId()
+    {
+        return id;
     }
 
     public boolean isSelected()

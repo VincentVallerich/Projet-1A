@@ -36,7 +36,6 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
     private EditText description;
     private RatingBar importance;
     private RatingBar score;
-    private EditText frequency;
     private ImageButton calendar;
     private TextView deadline;
 
@@ -61,7 +60,6 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
         description = findViewById(R.id.newtask_popup_template_description_txtbox);
         importance = findViewById(R.id.newtask_popup_template_importance_ratingBar);
         score = findViewById(R.id.newtask_popup_template_score_ratingBar);
-        frequency = findViewById(R.id.newtask_popup_template_frequency_txtbox);
         calendar = findViewById(R.id.newtask_popup_template_deadline_calendar_btn);
         deadline = findViewById(R.id.newtask_popup_template_deadline_lbl);
 
@@ -77,6 +75,7 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
 
     public void setImg(String img)
     {
+        imgBtn.setImageResource(0);
         this.img = img;
         int imgId = context.getResources().getIdentifier(img, "drawable", context.getPackageName());
         imgBtn.setBackgroundResource(imgId);
@@ -120,16 +119,6 @@ public class NewTaskPopup extends Dialog implements AdapterView.OnItemSelectedLi
     public void setScore(int rating)
     {
         this.score.setRating(rating);
-    }
-
-    public String getFrequency()
-    {
-        return frequency.getText().toString();
-    }
-
-    public void setFrequency(String txt)
-    {
-        this.frequency.setText(txt);
     }
 
     public String getDeadline()

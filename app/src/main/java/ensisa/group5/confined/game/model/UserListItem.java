@@ -19,6 +19,4 @@ public class UserListItem {
         return score;
     }
 
-
-
 }

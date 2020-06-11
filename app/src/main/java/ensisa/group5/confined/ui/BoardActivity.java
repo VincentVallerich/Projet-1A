@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,15 +15,20 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 
 import org.bson.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +36,10 @@ import java.util.List;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.DataBase;
+import ensisa.group5.confined.controller.MainActivity;
+import ensisa.group5.confined.controller.NotificationHelper;
 import ensisa.group5.confined.game.ScoreBordActivity;
+import ensisa.group5.confined.model.CTask;
 import ensisa.group5.confined.ui.adapter.TaskListAdapter;
 import ensisa.group5.confined.ui.model.TaskListItem;
 
@@ -46,10 +55,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private boolean selectionMode;
     private boolean managerMode;
     private boolean editMode;
+    private TaskListItem item;
 
-    private ImageButton taskButton;
-
-    private DataBase loginValidation;
+    private DataBase dateBase;
     private SharedPreferences preferences;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -61,7 +69,15 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         activity = this;
         context = this.getApplicationContext();
 
-        loginValidation = new DataBase();
+        dateBase = new DataBase();
+
+
+        Thread t = new Thread() {
+            public void run(){
+                dateBase. watchCollections(context);
+            }
+        };
+        t.start();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -84,6 +100,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         // need to check if user is manager instead
         managerMode = true;
+        try {
+            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
+            t3.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (managerMode)
             enableManagerMode();
@@ -129,7 +152,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                     modifyTaskPopup.setDescription(item.getDescription());
                     modifyTaskPopup.setImportance(item.getImportance());
                     modifyTaskPopup.setScore(item.getScore());
-                    modifyTaskPopup.setFrequency(item.getFrequency());
                     modifyTaskPopup.setDeadline(item.getDeadline());
                     modifyTaskPopup.setAddButtonName(getString(R.string.modifytask_popup_add_button_name));
                     modifyTaskPopup.getCancelButton().setOnClickListener(new View.OnClickListener() {
@@ -146,7 +168,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                             String description = modifyTaskPopup.getDescription();
                             int importance = modifyTaskPopup.getImportance();
                             int score = modifyTaskPopup.getScore();
-                            String frequency = modifyTaskPopup.getFrequency();
                             String deadline = modifyTaskPopup.getDeadline();
 
                             //check fields
@@ -155,7 +176,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                             //add new tasks in the list
                             taskListItem.remove(item);
-                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE"));
+                            taskListItem.add(new TaskListItem(name, img, description, importance, score, deadline, "NON_ATTRIBUATE", ""));
                             taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                             modifyTaskPopup.dismiss();
                         }
@@ -165,34 +186,23 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 else if (!editMode)
                 {
                     item.setSelected(!item.isSelected());
-                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem, false, true));
-                    if (!selectionMode && isItemSelected())
-                        showOk();
-                    else
+                    if (selectionMode && !isItemSelected())
                         hideOk();
+                    else
+                        showOk();
                 }
             }
         });
 
         preferences = getPreferences(MODE_PRIVATE);
-        loginValidation = new DataBase(this, preferences);
+        dateBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
-        try {
-            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
-            t3.start();
-            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
-            t4.start();
-            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
-            t5.start();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void createUnassignedTaskDisplay() {
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getNonAssignedTasks()
+        dateBase.getNonAssignedTasks()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -202,20 +212,20 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
                         // Ensuite ajouter la tâche en tant que ListItem;
                         JSONObject obj = new JSONObject(d.toJson());
+                        String id = d.getObjectId("_id").toString();
                         String name = obj.getString("task_name").toString();
-                        String img = obj.getString("task_name").toString();
+                        String img = obj.getString("task_image").toString();
                         String description = obj.getString("task_desc").toString();
                         int importance = (int)Integer.parseInt(obj.getString("task_priority"));
                         int score = (int)Integer.parseInt( obj.getString("task_score"));
                         String frequency = obj.getString("task_priority").toString();
                         String status = obj.getString("task_status").toString();
-
                         String strDate = obj.getString("task_limit_date").toString();
                         strDate = strDate.replace("{\"$date\":","").replace("}","");
+
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
-
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status);
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
                         taskListItem.add(t);
                     }
                     taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
@@ -246,9 +256,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent3);
                 break;
             case R.id.action_profile:
-             //   Intent intent4 = new Intent(this, ProfileActivity.class);
+                Intent intent4 = new Intent(this, ProfilActivity.class);
                 Log.d("stitch","going in profile");
-               // startActivity(intent4);
+                startActivity(intent4);
                 break;
         }
         return false;
@@ -276,26 +286,60 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         String description = newTaskPopup.getDescription();
                         int importance = newTaskPopup.getImportance();
                         int score = newTaskPopup.getScore();
-                        String frequency = newTaskPopup.getFrequency();
                         String deadline = newTaskPopup.getDeadline();
+                        System.out.println("On click parce qu'on créer un nouveau task");
 
-                        //check fields
+                            Thread t5 = new Thread(new Runnable() {  @Override public void run() {
+                                dateBase.createTask(name, img, description, importance, score, formatDate(deadline)).addOnCompleteListener( new OnCompleteListener<RemoteInsertOneResult>()
+                                {
+                                        @Override
+                                        public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
+                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asObjectId().toString()));
+                                            Log.d("stitch ", "new ID : " + task.getResult().getInsertedId().toString() );
+                                            TaskListAdapter a = new TaskListAdapter(context,taskListItem);
+                                            taskListView.setAdapter(a);
+                                            a.notifyDataSetChanged();
+                                        }
+                                    }
+                            );}});
 
-                        //store the new task in the bdd
+                            t5.start();
 
-                        //add new tasks in the list
-                        taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE"));
-                        taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                         newTaskPopup.dismiss();
                     }
                 });
                 newTaskPopup.build();
                 break;
             case R.id.del_task:
-                deleteSelection();
-                disableSelectionMode();
-                // + del on db
-                break;
+                //deleteSelection();
+                try {
+                    for (int i=0; i<taskListItem.size(); i++) {
+                        if (taskListItem.get(i).isSelected()) {
+                            item = taskListItem.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dateBase.deleteTask(item.getId());
+                                    taskListItem.remove(item);
+                                }
+                            });
+                            t5.start();
+
+                        }
+                    }
+
+                    TaskListAdapter a = new TaskListAdapter(context,taskListItem);
+                    taskListView.setAdapter(a);
+                    a.notifyDataSetChanged();
+                }
+
+                catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        disableSelectionMode();
+        // + del on db
+        break;
             case R.id.back_task:
                 if (selectionMode && editMode)
                 {
@@ -316,9 +360,25 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.ok_task:
-                // add tasks to user in the db
+                try {
+                    for (int i=0; i<taskListItem.size(); i++) {
+                        if (taskListItem.get(i).isSelected()) {
+                            item = taskListItem.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dateBase.startTask(item.getId());
+                                    taskListItem.remove(item);
+                                }
+                            });
+                            t5.start();
+                            i--;
+                        }
+                    }
 
-                // del tasks from list of available tasks
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 deleteSelection();
                 hideOk();
                 break;
@@ -401,11 +461,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     private void showOk()
     {
-        selectionMode = true;
         if (managerMode)
             findViewById(R.id.edit_task).setVisibility(View.GONE);
+        selectionMode = true;
         findViewById(R.id.ok_task).setVisibility(View.VISIBLE);
         findViewById(R.id.back_task).setVisibility(View.VISIBLE);
+        taskListView.setAdapter(new TaskListAdapter(context, taskListItem, false, true));
     }
 
     private void deleteSelection()
@@ -430,5 +491,16 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         return formatter.format(date);
+    }
+
+    public Date formatDate(String strDate){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = null;
+        try {
+            date = formatter.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 }

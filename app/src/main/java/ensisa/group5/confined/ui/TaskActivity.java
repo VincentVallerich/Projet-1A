@@ -3,17 +3,13 @@ package ensisa.group5.confined.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,8 +24,6 @@ import java.util.List;
 import ensisa.group5.confined.R;
 
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
@@ -51,7 +45,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private TaskActivity activity;
     private List<TaskListItem> taskInProgressItem;
     private List<TaskListItem> taskDoneItem;
+    private List<TaskListItem> allTaskList;
     private List<TaskListItem> taskList;
+    private TaskListItem item;
     private ListView taskInProgress;
     private ListView taskDone;
     private ListView allTask;
@@ -69,7 +65,10 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private CalendarPopup calendarPopup;
 
     private String deadline;
-    private DataBase loginValidation;
+    private DataBase dataBase;
+
+    private ImageButton finishTask;
+    private ImageButton abortTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -80,7 +79,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         activity = this;
         context = activity.getApplicationContext();
 
-        loginValidation = new DataBase();
+        dataBase = new DataBase();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -103,8 +102,11 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         ImageButton calendarButton = findViewById(R.id.show_calendar_button);
         calendarButton.setOnClickListener(this);
 
-        ImageButton finishTask = findViewById(R.id.finish_task);
+        finishTask = findViewById(R.id.finish_task);
         finishTask.setOnClickListener(this);
+
+        abortTask = findViewById(R.id.abort_task);
+        abortTask.setOnClickListener(this);
 
         taskInProgressItem = new ArrayList<>();
         taskInProgress = findViewById(R.id.task_in_progress_list_view);
@@ -114,10 +116,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 TaskListItem item = taskInProgressItem.get(i);
                 item.setSelected(!item.isSelected());
                 taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem, false, true));
-                if (isItemSelected())
-                    findViewById(R.id.finish_task).setVisibility(View.VISIBLE);
-                else
-                    findViewById(R.id.finish_task).setVisibility(View.GONE);
+                showButtons();
             }
         });
 
@@ -125,98 +124,35 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         taskDone = findViewById(R.id.task_done_list_view);
 
         taskList = new ArrayList<>();
+
+        allTaskList = new ArrayList<>();
         allTask = findViewById(R.id.all_task_list_view);
-
-        /*taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaner_1", "", 2, 1, "0", "09-06-2020", "IN_PROGRESS"));
-        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaning_14", "", 3, 4, "0", "10-06-2020", "IN_PROGRESS"));
-        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaner_2", "", 4, 0, "0", "09-06-2020", "FINISHED"));
-        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaning_10", "", 5, 0, "0", "09-06-2020", "IN_PROGRESS"));
-        taskList.add(new TaskListItem("Faire la cuisine", "taskicon_cleaning", "", 0, 2, "0", "09-06-2020", "FINISHED"));
-
-        allTask.setAdapter(new TaskListAdapter(context, taskList));
-        displayTaskForCurrentDay();*/
+        allTask.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                TaskListItem item = allTaskList.get(i);
+                item.setSelected(!item.isSelected());
+                allTask.setAdapter(new TaskListAdapter(context, allTaskList, false, true));
+                showButtons();
+            }
+        });
 
         preferences = getPreferences(MODE_PRIVATE);
-        loginValidation = new DataBase(this, preferences);
+        dataBase = new DataBase(this, preferences);
         // les threads rempliront la page lorsque les informations seront récupérées depuis la base de données.
         try {
             Thread t1 = new Thread(new Runnable() { @Override public void run() { createUserTasksDisplay(); }  });
             t1.start();
-            Thread t2 = new Thread(new Runnable() {  @Override public void run() {  createLeaderboard();  } });
-            // t2.start();
-            Thread t3 = new Thread(new Runnable() {  @Override public void run() {  createUnassignedTaskDisplay();  } });
-            //t3.start();
-            Thread t4 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.finishTask("5edb9d925f4b418aee1abdf7");  } });
-            t4.start();
-            Thread t5 = new Thread(new Runnable() {  @Override public void run() {  loginValidation.startTask("5edb9d925f4b418aee1abdf7");  } });
-            t5.start();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void createLeaderboard( ){
-        List<Document> docs = new ArrayList<Document>();
-        loginValidation.getLeaderBoard()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        JSONObject obj = new JSONObject(d.toJson());
-                        Log.d("stitch", obj.toString());
-                    }
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-    }
-    public void createUnassignedTaskDisplay() {
-        List<Document> docs = new ArrayList<Document>();
-        loginValidation.getNonAssignedTasks()
-                .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
-            @Override
-            public void onSuccess(List<Document> documents) {
-                try {
-                    for (Document d : docs) {
-                        // ici je récupère directement les infos du JSON,
-                        // Il faudrait peut etre transformer dans un premier temps le json en un object Tâche concret
-                        // Ensuite ajouter la tâche en tant que ListItem;
-                        JSONObject obj = new JSONObject(d.toJson());
-                        String name = obj.getString("task_name").toString();
-                        String img = obj.getString("task_name").toString();
-                        String description = obj.getString("task_desc").toString();
-                        int importance = (int)Integer.parseInt(obj.getString("task_priority"));
-                        int score = (int)Integer.parseInt( obj.getString("task_score"));
-                        String frequency = obj.getString("task_priority").toString();
-                        String status = obj.getString("task_status").toString();
-
-                        String strDate = obj.getString("task_limit_date").toString();
-                        strDate = strDate.replace("{\"$date\":","").replace("}","");
-                        long date = (long)Long.parseLong(strDate);
-                        String deadline = formatDate(new Date(date));
-
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status);
-                        taskList.add(t);
-                    }
-                    allTask.setAdapter(new TaskListAdapter(context, taskList));
-                    createEvents();
-                    displayTaskForCurrentDay();
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
     public void createUserTasksDisplay() {
 
         List<Document> docs = new ArrayList<Document>();
-        loginValidation.getTasksByUser()
+        dataBase.getTasksByUser()
                 .into(docs).addOnSuccessListener(new OnSuccessListener<List<Document>>() {
             @Override
             public void onSuccess(List<Document> documents) {
@@ -236,10 +172,11 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
 
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status);
+                        String id = d.getObjectId("_id").toString();
+
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
                         taskList.add(t);
                     }
-                    allTask.setAdapter(new TaskListAdapter(context, taskList));
                     createEvents();
                     displayTaskForCurrentDay();
                 }
@@ -267,8 +204,8 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent3);
                 break;
             case R.id.action_profile:
-             //   Intent intent4 = new Intent(this, ProfilActivity.class);
-               // startActivity(intent4);
+                Intent intent4 = new Intent(this, ProfilActivity.class);
+                startActivity(intent4);
                 break;
         }
         return false;
@@ -281,6 +218,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         {
             case R.id.show_calendar_button:
                 calendarPopup = new CalendarPopup(activity);
+                calendarPopup.getCalendar().removeAllEvents();
                 calendarPopup.getCalendar().addEvents(events);
                 calendarPopup.getMonthLabel().setText(formatDateMonth(calendarPopup.getCalendar().getFirstDayOfCurrentMonth()));
                 calendarPopup.getCalendar().setListener(new CompactCalendarView.CompactCalendarViewListener() {
@@ -309,6 +247,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 findViewById(R.id.task_in_progress_list_view).setVisibility(View.VISIBLE);
                 findViewById(R.id.task_done_list_view).setVisibility(View.GONE);
                 findViewById(R.id.all_task_list_view).setVisibility(View.GONE);
+                turnOffSelection();
                 break;
             case R.id.task_done_tab:
                 taskInProgressTabButton.setBackground(ContextCompat.getDrawable(activity.getApplicationContext(), R.drawable.tab_button));
@@ -331,14 +270,56 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.finish_task:
                 findViewById(R.id.finish_task).setVisibility(View.GONE);
-                for (int i=0; i<taskInProgressItem.size(); i++)
-                    if (taskInProgressItem.get(i).isSelected())
-                    {
-                        taskDoneItem.add(taskInProgressItem.get(i));
-                        taskInProgressItem.remove(i);
-                        i--;
+                findViewById(R.id.abort_task).setVisibility(View.GONE);
+
+                try {
+                    for (int i=0; i<taskList.size(); i++) {
+                        if (taskList.get(i).isSelected()) {
+                            item = taskList.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dataBase.finishTask(item.getId());
+                                    taskList.remove(item);
+                                }
+                            });
+                            t5.start();
+                            i--;
+                        }
                     }
-                taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                createEvents();
+                displayTaskForCurrentDay();
+                break;
+            case R.id.abort_task:
+                findViewById(R.id.finish_task).setVisibility(View.GONE);
+                findViewById(R.id.abort_task).setVisibility(View.GONE);
+
+                try {
+                    for (int i=0; i<taskList.size(); i++) {
+                        if (taskList.get(i).isSelected()) {
+                            item = taskList.get(i);
+                            Thread t5 = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dataBase.abandonTask(item.getId());
+                                    taskList.remove(item);
+                                }
+                            });
+                            t5.start();
+                            i--;
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                createEvents();
+                displayTaskForCurrentDay();
                 break;
         }
     }
@@ -347,13 +328,18 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     {
         taskInProgressItem = new ArrayList<>();
         taskDoneItem = new ArrayList<>();
-        for (TaskListItem item : taskList)
+        allTaskList = new ArrayList<>();
+        for (TaskListItem item : taskList) {
+            if (item.getStatus().equals("IN_PROGRESS"))
+                allTaskList.add(item);
             if (item.getDeadline().equals(deadline) && item.getStatus().equals("IN_PROGRESS"))
                 taskInProgressItem.add(item);
             else if (item.getStatus().equals("FINISHED"))
                 taskDoneItem.add(item);
+        }
         taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
         taskDone.setAdapter(new TaskListAdapter(context, taskDoneItem));
+        allTask.setAdapter(new TaskListAdapter(context, allTaskList));
     }
 
     public String formatDate(Date date)
@@ -381,7 +367,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean isItemSelected()
     {
-        for (TaskListItem item : taskInProgressItem)
+        for (TaskListItem item : taskList)
             if (item.isSelected())
                 return true;
         return false;
@@ -390,15 +376,31 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
     private void turnOffSelection()
     {
         findViewById(R.id.finish_task).setVisibility(View.GONE);
+        findViewById(R.id.abort_task).setVisibility(View.GONE);
         for (TaskListItem item : taskInProgressItem)
             item.setSelected(false);
         taskInProgress.setAdapter(new TaskListAdapter(context, taskInProgressItem));
+        allTask.setAdapter(new TaskListAdapter(context, allTaskList));
     }
 
     private void createEvents()
     {
+        events = new ArrayList<>();
         for (TaskListItem item : taskList)
             if (item.getStatus().equals("IN_PROGRESS"))
                 events.add(new Event(Color.YELLOW, formatDate(item.getDeadline()).getTime(), item.getName()));
+    }
+
+    private void showButtons()
+    {
+        if (isItemSelected()) {
+            findViewById(R.id.finish_task).setVisibility(View.VISIBLE);
+            findViewById(R.id.abort_task).setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            findViewById(R.id.finish_task).setVisibility(View.GONE);
+            findViewById(R.id.abort_task).setVisibility(View.GONE);
+        }
     }
 }

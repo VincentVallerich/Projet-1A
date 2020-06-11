@@ -5,20 +5,26 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#bdc3c7"
+    android:background="#fdfffc"
     tools:context=".controller.MainActivity">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#2c3e50"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:text="@string/app_name"
-        android:textAlignment="center"
-        android:textColor="#ecf0f1"
-        android:textSize="30dp"
-        android:fontFamily="sans-serif-thin"/>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#C52233">
+
+
+
+        <ImageView
+            android:id="@+id/adapter_taskimg_icon"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:src="@mipmap/logoapp"
+            />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/login_username_edit"
@@ -66,7 +72,8 @@
         android:paddingRight="@dimen/login_padding_sides"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/login_btn_marginTop"
-        android:text="@string/action_sign_in" />
+        android:text="@string/action_sign_in"
+        android:background="@drawable/beautiful_button"/>
 
 
     <Button
@@ -77,8 +84,11 @@
         android:paddingTop="@dimen/login_padding_top_bottom"
         android:paddingLeft="@dimen/login_padding_sides"
         android:paddingRight="@dimen/login_padding_sides"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        android:text="@string/action_register" />
+        android:text="@string/action_register"
+        android:background="@drawable/beautiful_button"
+        />
 
 </LinearLayout>
 
