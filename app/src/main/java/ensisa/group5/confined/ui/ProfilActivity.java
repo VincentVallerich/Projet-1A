@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import ensisa.group5.confined.R;
 import ensisa.group5.confined.controller.DataBase;
+import ensisa.group5.confined.controller.MainActivity;
 import ensisa.group5.confined.game.ScoreBordActivity;
 
 public class ProfilActivity extends AppCompatActivity implements View.OnClickListener{
@@ -35,38 +36,29 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
     private String img;
     private ImageView profileIcon;
     private TextView textMail;
-
     private Button logoutButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
         bottomNavigationView.getMenu().getItem(3).setChecked(true);
-
-
         dataBase = new DataBase(this, preferences);
         preferences = getPreferences(MODE_PRIVATE);
         activity = this;
 
         logoutButton =(Button) findViewById(R.id.logout_button);
         logoutButton.setOnClickListener(this);
-
         modifyButton =(Button) findViewById(R.id.modify_profile_button);
         modifyButton.setOnClickListener(this);
-
         textPseudo = (TextView) findViewById(R.id.text_pseudo);
-
         textScore = (TextView) findViewById(R.id.text_score);
-
         textMail = (TextView) findViewById(R.id.text_email);
         textMail.setText(dataBase.getUserEmail());
-
         profileIcon = findViewById(R.id.profile_icon_image);
-
 
         Thread t6 = new Thread(new Runnable() {  @Override public void run() {  createUserProfile();  } });
         t6.start();
@@ -94,7 +86,6 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                 }
             });
         }
-
         public void onClick(View view)
         {
             switch(view.getId())
@@ -122,6 +113,11 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                         modifyProfilPopup.setBasePseudo();
                     }
                     modifyProfilPopup.dismiss();
+                    break;
+                case R.id.logout_button:
+                    Intent intent5 = new Intent(this, MainActivity.class);
+                    startActivity(intent5);
+                    Log.d("stitch","going in main");
                     break;
             }
         }
@@ -152,7 +148,6 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
         return false;
-
     }
 
     public void setImg(String img)
@@ -161,6 +156,5 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         int drawableId = this.getResources().getIdentifier(img, "drawable", this.getPackageName());
         profileIcon.setImageResource(drawableId);
     }
-
 
     }

@@ -56,7 +56,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     private boolean managerMode;
     private boolean editMode;
     private TaskListItem item;
-    private ImageButton taskButton;
 
     private DataBase dateBase;
     private SharedPreferences preferences;
@@ -79,10 +78,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             }
         };
         t.start();
-
-
-
-
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
@@ -157,7 +152,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                     modifyTaskPopup.setDescription(item.getDescription());
                     modifyTaskPopup.setImportance(item.getImportance());
                     modifyTaskPopup.setScore(item.getScore());
-                    modifyTaskPopup.setFrequency(item.getFrequency());
                     modifyTaskPopup.setDeadline(item.getDeadline());
                     modifyTaskPopup.setAddButtonName(getString(R.string.modifytask_popup_add_button_name));
                     modifyTaskPopup.getCancelButton().setOnClickListener(new View.OnClickListener() {
@@ -174,7 +168,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                             String description = modifyTaskPopup.getDescription();
                             int importance = modifyTaskPopup.getImportance();
                             int score = modifyTaskPopup.getScore();
-                            String frequency = modifyTaskPopup.getFrequency();
                             String deadline = modifyTaskPopup.getDeadline();
 
                             //check fields
@@ -183,7 +176,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                             //add new tasks in the list
                             taskListItem.remove(item);
-                            taskListItem.add(new TaskListItem(name, img, description, importance, score, frequency, deadline, "NON_ATTRIBUATE", ""));
+                            taskListItem.add(new TaskListItem(name, img, description, importance, score, deadline, "NON_ATTRIBUATE", ""));
                             taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
                             modifyTaskPopup.dismiss();
                         }
@@ -193,11 +186,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 else if (!editMode)
                 {
                     item.setSelected(!item.isSelected());
-                    taskListView.setAdapter(new TaskListAdapter(context, taskListItem, false, true));
-                    if (!selectionMode && isItemSelected())
-                        showOk();
-                    else
+                    if (selectionMode && !isItemSelected())
                         hideOk();
+                    else
+                        showOk();
                 }
             }
         });
@@ -222,7 +214,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         JSONObject obj = new JSONObject(d.toJson());
                         String id = d.getObjectId("_id").toString();
                         String name = obj.getString("task_name").toString();
-                        String img = obj.getString("task_name").toString();
+                        String img = obj.getString("task_image").toString();
                         String description = obj.getString("task_desc").toString();
                         int importance = (int)Integer.parseInt(obj.getString("task_priority"));
                         int score = (int)Integer.parseInt( obj.getString("task_score"));
@@ -233,7 +225,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                         long date = (long)Long.parseLong(strDate);
                         String deadline = formatDate(new Date(date));
-                        TaskListItem t = new TaskListItem(name,img,description,importance,score,frequency,deadline,status,id);
+                        TaskListItem t = new TaskListItem(name,img,description,importance,score,deadline,status,id);
                         taskListItem.add(t);
                     }
                     taskListView.setAdapter(new TaskListAdapter(context, taskListItem));
@@ -294,7 +286,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         String description = newTaskPopup.getDescription();
                         int importance = newTaskPopup.getImportance();
                         int score = newTaskPopup.getScore();
-                        String frequency = newTaskPopup.getFrequency();
                         String deadline = newTaskPopup.getDeadline();
                         System.out.println("On click parce qu'on créer un nouveau task");
 
@@ -303,7 +294,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                                 {
                                         @Override
                                         public void onComplete(@NonNull Task<RemoteInsertOneResult> task) {
-                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,frequency,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asObjectId().toString()));
+                                            taskListItem.add( new TaskListItem(name,img,description,importance,score,deadline,"NON_ATTRIBUATE",task.getResult().getInsertedId().asObjectId().toString()));
                                             Log.d("stitch ", "new ID : " + task.getResult().getInsertedId().toString() );
                                             TaskListAdapter a = new TaskListAdapter(context,taskListItem);
                                             taskListView.setAdapter(a);
@@ -470,11 +461,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
     private void showOk()
     {
-        selectionMode = true;
         if (managerMode)
             findViewById(R.id.edit_task).setVisibility(View.GONE);
+        selectionMode = true;
         findViewById(R.id.ok_task).setVisibility(View.VISIBLE);
         findViewById(R.id.back_task).setVisibility(View.VISIBLE);
+        taskListView.setAdapter(new TaskListAdapter(context, taskListItem, false, true));
     }
 
     private void deleteSelection()

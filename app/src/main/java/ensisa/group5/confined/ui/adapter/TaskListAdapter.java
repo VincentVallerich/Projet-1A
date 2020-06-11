@@ -91,11 +91,6 @@ public class TaskListAdapter extends BaseAdapter
         RatingBar score = convertView.findViewById(R.id.adapter_tasklist_score);
         score.setRating(taskScore);
 
-        // frequency
-        String taskFrequency = currentItem.getFrequency();
-        TextView frequency = convertView.findViewById(R.id.adapter_tasklist_frequency);
-        frequency.setText(taskFrequency);
-
         // deadline
         String taskDeadline = currentItem.getDeadline();
         TextView deadline = convertView.findViewById(R.id.adapter_tasklist_deadline);

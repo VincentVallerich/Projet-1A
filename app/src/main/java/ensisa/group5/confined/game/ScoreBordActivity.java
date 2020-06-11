@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -37,6 +40,8 @@ public class ScoreBordActivity extends AppCompatActivity {
     private ListView scoreboardListView;
     private Context context;
     private ScoreBordActivity activity;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +84,8 @@ public class ScoreBordActivity extends AppCompatActivity {
             }
         });
     }
+
+
     private boolean onClickNavigationBar(Integer integer ){
         switch (integer) {
 

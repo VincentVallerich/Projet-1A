@@ -15,16 +15,17 @@
         android:text="Settings"
         android:layout_margin="2dp"
         android:background="@drawable/beautiful_button"/>
-
     <Button
         android:id="@+id/logout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:gravity="center"
-        android:text="@string/logout_text"
+        android:text="Logout"
         android:layout_margin="2dp"
         android:background="@drawable/beautiful_button"/>
+
+
 
     <ImageView
         android:id="@+id/profile_icon_image"
