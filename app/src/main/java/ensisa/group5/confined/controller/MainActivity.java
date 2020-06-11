@@ -32,13 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     private DataBase dataBase;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        preferences = getPreferences(MODE_PRIVATE);
 
         dataBase = new DataBase(this, preferences);
         usernameEdit = (EditText) findViewById(R.id.login_username_edit);
@@ -47,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         confirmEdit = (EditText) findViewById(R.id.login_confirm_edit);
         signinBtn = (Button) findViewById(R.id.signin_btn);
         registerBtn = (Button) findViewById(R.id.register_btn);
+
+        preferences = getSharedPreferences("Pref",MODE_PRIVATE);
 
         /* if user connected so redirect instantly */
         if (preferences.contains(getString(R.string.PREF_KEY_MAIL))) {

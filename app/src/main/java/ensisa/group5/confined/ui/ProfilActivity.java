@@ -44,7 +44,7 @@ public class ProfilActivity extends AppCompatActivity implements View.OnClickLis
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
         bottomNavigationView.getMenu().getItem(3).setChecked(true);
         dataBase = new DataBase(this, preferences);
-        preferences = getPreferences(MODE_PRIVATE);
+        preferences = getSharedPreferences("Pref",MODE_PRIVATE);
         activity = this;
 
         logoutButton =(Button) findViewById(R.id.logout_button);
