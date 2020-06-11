@@ -62,13 +62,21 @@ public class UserListAdapter extends BaseAdapter
         convertView = inflater.inflate(R.layout.adapter_userlist, null);
         UserListItem currentItem = (UserListItem) getItem(position);
         // main text
+        // img
+
+        String taskImg = currentItem.getImg();
+        ImageView img = convertView.findViewById(R.id.imageView_rank);
+        int imgId = context.getResources().getIdentifier(taskImg, "drawable", context.getPackageName());
+        img.setImageResource(imgId);
+
         String userPseudo = currentItem.getPseudo();
-        TextView pseudo = convertView.findViewById(R.id.adapter_userlist_pseudo);
+        TextView pseudo = convertView.findViewById(R.id.textView_pseudo);
         pseudo.setText(userPseudo);
         // description
         int userScore = currentItem.getScore();
-        TextView description = convertView.findViewById(R.id.adapter_userlist_score);
+        TextView description = convertView.findViewById(R.id.textView_score);
         description.setText(String.valueOf(userScore));
+
         return convertView;
     }
 }

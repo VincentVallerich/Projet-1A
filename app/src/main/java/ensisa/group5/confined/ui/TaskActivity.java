@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -28,8 +29,11 @@ import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mongodb.stitch.core.services.mongodb.remote.RemoteUpdateResult;
 
 import org.bson.Document;
 import org.json.JSONException;
@@ -280,7 +284,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                             Thread t5 = new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    dataBase.finishTask(item.getId());
+                                    dataBase.finishTask(item.getId(),item.getScore());
                                     taskList.remove(item);
                                 }
                             });
@@ -307,7 +311,7 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
                             Thread t5 = new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    dataBase.abandonTask(item.getId());
+                                    dataBase.abandonTask(item.getId(),item.getScore());
                                     taskList.remove(item);
                                 }
                             });

@@ -43,10 +43,7 @@ public class ScoreBordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_score_bord);
         activity = this;
         context = activity.getApplicationContext();
-
-
         database = new DataBase();
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> onClickNavigationBar(item.getItemId()));
         bottomNavigationView.getMenu().getItem(1).setChecked(true);
@@ -67,9 +64,10 @@ public class ScoreBordActivity extends AppCompatActivity {
                     for (Document d : docs) {
                         JSONObject obj = new JSONObject(d.toJson());
                         Log.d("stitch", obj.toString());
-                       UserListItem t = new UserListItem(obj.getString("pseudo"),obj.getInt("score"));
+                        UserListItem t = new UserListItem(obj.getString("pseudo"),obj.getInt("score"),obj.getString("image"));
                         userList.add(t);
                     }
+
                     scoreboardListView.setAdapter(new UserListAdapter(context, userList));
                 }
                 catch (JSONException e) {
